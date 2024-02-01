@@ -1,3 +1,4 @@
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -5,11 +6,10 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import { selectUser } from 'app/store/user/userSlice';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { selectUser } from 'app/store/user/userSlice';
 
 /**
  * The user menu.
@@ -33,6 +33,7 @@ function UserMenu() {
 				className="min-h-40 min-w-40 p-0 md:px-16 md:py-6"
 				onClick={userMenuClick}
 				color="inherit"
+				sx={{ color: 'white' }}
 			>
 				<div className="mx-4 hidden flex-col items-end md:flex">
 					<Typography
@@ -43,7 +44,7 @@ function UserMenu() {
 					</Typography>
 					<Typography
 						className="text-11 font-medium capitalize"
-						color="text.secondary"
+						color="HighlightText"
 					>
 						{user.role.toString()}
 						{(!user.role || (Array.isArray(user.role) && user.role.length === 0)) && 'Guest'}
