@@ -1,6 +1,7 @@
 import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
+import '../../../../styles/navCustom.css';
 import FuseNavItem from '../FuseNavItem';
 import { FuseNavigationProps } from '../FuseNavigation';
 import { FuseNavItemType } from '../types/FuseNavItemType';
