@@ -35,7 +35,7 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 				sx={{
 					backgroundColor: theme =>
 						theme.palette.mode === 'light'
-							? "#00ABC8" //toolbarTheme.palette.background.paper
+							? theme.palette.primary.main
 							: toolbarTheme.palette.background.default
 				}}
 				position="static"
@@ -61,13 +61,18 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 						)}
 
 						<div className='w-2/3'>
-							<TextField fullWidth variant='filled' style={{ backgroundColor: '#4cc4d8', borderRadius: '10px' }} InputProps={{ startAdornment: (<FuseSvgIcon color="#ffffff">heroicons-outline:search</FuseSvgIcon>) }} />
+							<TextField fullWidth variant='filled' sx={{
+								backgroundColor: theme =>
+									theme.palette.mode === 'light'
+										? theme.palette.primary.light
+										: toolbarTheme.palette.background.default, borderRadius: '10px'
+							}} InputProps={{ startAdornment: (<FuseSvgIcon color="#fff">heroicons-outline:search</FuseSvgIcon>) }} />
 
 						</div>
 					</div>
 
 					<div className="flex h-full items-center overflow-x-auto px-8">
-						<FuseSvgIcon color="#ffffff">heroicons-outline:bell</FuseSvgIcon>
+						<FuseSvgIcon color="#fff">heroicons-outline:bell</FuseSvgIcon>
 						<UserMenu />
 					</div>
 

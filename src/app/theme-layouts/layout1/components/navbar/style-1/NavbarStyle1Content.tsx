@@ -7,7 +7,7 @@ import NavbarToggleButton from '../../../../shared-components/NavbarToggleButton
 import Navigation from '../../../../shared-components/Navigation';
 
 const Root = styled('div')(({ theme }) => ({
-	backgroundColor: '#f3f3f3', //theme.palette.background.default
+	backgroundColor: theme.palette.grey[50],
 	color: theme.palette.text.primary,
 	'& ::-webkit-scrollbar-thumb': {
 		boxShadow: `inset 0 0 0 20px ${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.24)' : 'rgba(255, 255, 255, 0.24)'
