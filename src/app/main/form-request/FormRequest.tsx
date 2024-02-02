@@ -1,11 +1,11 @@
-
 import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, Input, InputLabel, MenuItem, OutlinedInput, Paper, Select, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, Input, InputLabel, MenuItem, OutlinedInput, Paper, Select, TextField, Typography, useTheme } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { Theme } from '@mui/material/styles';
 import { DatePicker } from "@mui/x-date-pickers";
 import { useState } from "react";
+import CreatableOptions, { ProductOptionType } from "../../components/CreatableOptions";
 import CustomizedTables from '../../components/CustomizedTables';
 
 
@@ -23,8 +23,10 @@ const MenuProps = {
 const names = [
     "Boleto",
     "Cartão de crédito",
+    "Cartão corporativo",
     "Pix",
-    "Transferência bancária"
+    "Transferência bancária",
+
 ];
 
 function getStyles(name: string, personName: string[], theme: Theme) {
@@ -36,11 +38,23 @@ function getStyles(name: string, personName: string[], theme: Theme) {
     };
 }
 
+const productsArray = [
+    { product: 'café', brand: 'melita' },
+    { product: 'cafézes', brand: 'tres corações' },
+    { product: 'cane azul', brand: 'sei lá' },
+]
+
 
 export default function FormRequest() {
     const theme = useTheme();
     const [formaDePagamento, setFormaDePagamento] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [valueProducts, setValueProducts] = useState<{ product: string, brand: string } | null>(null)
+    const [inputValueProducts, setInputValueProducts] = useState("")
+    const [hasProof, setHasProof] = useState<boolean>(false)
+    const [isRatiable, setIsRatiable] = useState<boolean>(false);
+    const [tableData, setTableData] = useState([])
+
 
     const currentDate = new Date();
     const minDate = new Date();
@@ -61,25 +75,26 @@ export default function FormRequest() {
         console.log(files);
     };
 
-    const [valueProducts, setValueProducts] = useState("")
-    const [inputValueProducts, setInputValueProducts] = useState("")
-    const productsArray = ["Folha de oficio", "Caneta bic", "Mouse", "Teclado", "Mousepad", "Headset", "Café"]
-
-    const [tableData, setTableData] = useState([])
-
-
-
     function handleAdd() {
-        if (valueProducts.trim() !== "") {
-            const newProduct = { produto: valueProducts, marca: "Marca" };
+        if (valueProducts) {
+            console.log('handle add', valueProducts)
+            const newProduct = { produto: valueProducts.product, marca: valueProducts.brand };
             setTableData([...tableData, newProduct]);
-            setValueProducts(""); // Limpa o campo após adicionar
+            setValueProducts(null); // Limpa o campo após adicionar
         }
     }
 
-    const [hasProof, setHasProof] = useState<boolean | null>(null)
-    const [isRatiable, setIsRatiable] = useState<boolean | null>(null);
+    function testeCreatable(data: ProductOptionType) {
+        const newProduct = { produto: data.product, marca: data.brand };
+        setTableData([...tableData, newProduct]);
+        setValueProducts(null);
 
+    }
+    function getDataFromCreatable(data: ProductOptionType) {
+
+        setValueProducts({ product: data.product, brand: data.brand })
+
+    }
 
 
 
@@ -94,7 +109,7 @@ export default function FormRequest() {
                 </Paper>
 
                 <Paper elevation={4} className="mt-24 p-36 flex flex-col gap-24">
-                    <div className="flex">
+                    <div className="flex gap-24">
                         <TextField fullWidth disabled label="Usuário solicitante" value='Misael Soares' />
                         <TextField fullWidth disabled label="Email" value='misa@gmail.com' />
                         <TextField fullWidth disabled label="Centro de custo" value='Dev' />
@@ -103,24 +118,10 @@ export default function FormRequest() {
                     <Typography color='GrayText'>Adicione os produtos para solicitação de pagamento</Typography>
 
 
-                    <div className="flex items-center">
-                        {/* <TextField id="products" label="Produto" inputProps={{ sx: { color: 'grey' } }} defaultValue="Buscar Produto" fullWidth InputProps={{ startAdornment: (<FuseSvgIcon>heroicons-outline:search</FuseSvgIcon>) }} /> */}
+                    <div className="flex items-center gap-24">
 
-                        <Autocomplete
-                            sx={{ width: "100%", marginRight: '10px' }}
-                            value={valueProducts}
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            onChange={(_event: any, newValue: string | null) => {
-                                setValueProducts(newValue);
-                            }}
-                            inputValue={inputValueProducts}
-                            onInputChange={(_event, newInputValue) => {
-                                setInputValueProducts(newInputValue);
-                            }}
-                            id="controllable-states-demo"
-                            options={inputValueProducts === "" ? [""] : productsArray.map((f) => f)}
-                            renderInput={(params) => <TextField sx={{ margin: 1 }} {...params} name="factory" label="Produto" />}
-                        />
+
+                        <CreatableOptions selectedData={getDataFromCreatable} newData={testeCreatable} products={productsArray} />
 
                         <Button onClick={handleAdd} sx={{ borderRadius: '7px' }} variant="contained" startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}>
                             ADICIONAR
@@ -130,7 +131,7 @@ export default function FormRequest() {
 
                     <TextField multiline rows={4} label="Descrição da solicitação" />
 
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-24">
                         <TextField type="number" label="Valor total" InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }} />
                         <DatePicker label="Vencimento" minDate={minDate} onChange={(d) => setSelectedDate(d)} />
 
@@ -160,12 +161,14 @@ export default function FormRequest() {
 
                     </div>
                     {formaDePagamento[0] === "Pix" && <TextField label="Informe a chave pix" />}
-                    {formaDePagamento[0] === "Transferência bancária" && <div>
+                    {formaDePagamento[0] === "Transferência bancária" && <div className="flex justify-around gap-24">
                         <TextField label="Banco" />
                         <TextField label="Numero da conta" />
                         <TextField label="Dígito" />
                         <TextField label="Agência" />
                     </div>}
+                    {formaDePagamento.some(option => option.includes("Cartão")) && <TextField label="selecionar ao portador" />}
+
 
                     <div className="flex items-center">
                         <Typography className="mr-10" color='GrayText'>Possui comprovante</Typography>
