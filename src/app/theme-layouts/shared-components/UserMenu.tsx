@@ -88,7 +88,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:lock-closed</FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Sign In" />
+							<ListItemText primary="Login" />
 						</MenuItem>
 						<MenuItem
 							component={Link}
@@ -98,7 +98,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:user-add </FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Sign up" />
+							<ListItemText primary="Sair" />
 						</MenuItem>
 					</>
 				) : (
