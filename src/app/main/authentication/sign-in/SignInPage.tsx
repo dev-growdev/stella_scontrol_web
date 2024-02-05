@@ -1,19 +1,23 @@
+import { useIsAuthenticated, useMsal } from "@azure/msal-react";
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, useForm } from 'react-hook-form';
+import _ from '@lodash';
+import MicrosoftIcon from '@mui/icons-material/Microsoft';
+import Avatar from '@mui/material/Avatar';
+import AvatarGroup from '@mui/material/AvatarGroup';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
+import { loginRequest } from 'app/configs/authConfig';
+import { useEffect } from "react";
+import { Controller, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import _ from '@lodash';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import AvatarGroup from '@mui/material/AvatarGroup';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 
 /**
  * Form Validation Schema
@@ -47,6 +51,39 @@ function FullScreenReversedSignInPage() {
 		defaultValues,
 		resolver: yupResolver(schema)
 	});
+	const navigate = useNavigate()
+
+	const { instance } = useMsal();
+
+	const isAuthenticated = useIsAuthenticated();
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate('/solicitacoes')
+		}
+	}, [isAuthenticated])
+
+
+	function handleMicrosoftAD() {
+		instance.loginPopup(loginRequest)
+			.then((loginResponse) => {
+				const account = loginResponse.account
+				console.log(loginResponse)
+				//enviar token, email, nome
+			})
+			.catch((e) => {
+				console.log(e)
+			})
+
+	}
+
+
+	function handleLogoutMicrosoft() {
+		instance.logoutPopup({
+			postLogoutRedirectUri: "/login",
+			mainWindowRedirectUri: "/login",
+		})
+	}
 
 	const { isValid, dirtyFields, errors } = formState;
 
@@ -267,6 +304,13 @@ function FullScreenReversedSignInPage() {
 						</div>
 
 						<div className="mt-32 flex items-center space-x-16">
+							<Button onClick={handleLogoutMicrosoft}>LOGOUT TESTE</Button>
+							<Button onClick={handleMicrosoftAD}
+								variant="outlined"
+								className="flex-auto"
+							>
+								<MicrosoftIcon />
+							</Button>
 							<Button
 								variant="outlined"
 								className="flex-auto"
