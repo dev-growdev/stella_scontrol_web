@@ -3,8 +3,6 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import _ from '@lodash';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -14,7 +12,8 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { loginRequest } from 'app/configs/authConfig';
-import { useEffect } from "react";
+import { useAppDispatch } from "app/store";
+import { setUser } from "app/store/user/userSlice";
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
@@ -52,31 +51,32 @@ function FullScreenReversedSignInPage() {
 		resolver: yupResolver(schema)
 	});
 	const navigate = useNavigate()
+	const dispatch = useAppDispatch()
 
 	const { instance } = useMsal();
 
 	const isAuthenticated = useIsAuthenticated();
 
-	useEffect(() => {
-		if (isAuthenticated) {
-			navigate('/solicitacoes')
-		}
-	}, [isAuthenticated])
-
-
 	function handleMicrosoftAD() {
 		instance.loginPopup(loginRequest)
 			.then((loginResponse) => {
-				const account = loginResponse.account
 				console.log(loginResponse)
+				//accessToken: loginResponse.accessToken,
+				const user = {
+					role: ['admin'],
+					data: {
+						displayName: loginResponse.account.name,
+						email: loginResponse.account.username
+					}
+				}
+				dispatch(setUser(user))
+
 				//enviar token, email, nome
 			})
 			.catch((e) => {
 				console.log(e)
 			})
-
 	}
-
 
 	function handleLogoutMicrosoft() {
 		instance.logoutPopup({
@@ -93,101 +93,7 @@ function FullScreenReversedSignInPage() {
 
 	return (
 		<div className="flex min-w-0 flex-auto flex-col items-center sm:flex-row sm:justify-center md:items-start md:justify-start">
-			<Box
-				className="relative hidden h-full flex-auto items-center justify-center overflow-hidden p-64 md:flex lg:px-112 "
-				sx={{ backgroundColor: 'primary.main' }}
-			>
-				<svg
-					className="pointer-events-none absolute inset-0"
-					viewBox="0 0 960 540"
-					width="100%"
-					height="100%"
-					preserveAspectRatio="xMidYMax slice"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<Box
-						component="g"
-						sx={{ color: 'primary.light' }}
-						className="opacity-20"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="100"
-					>
-						<circle
-							r="234"
-							cx="196"
-							cy="23"
-						/>
-						<circle
-							r="234"
-							cx="790"
-							cy="491"
-						/>
-					</Box>
-				</svg>
-				<Box
-					component="svg"
-					className="absolute -right-64 -top-64 opacity-20"
-					sx={{ color: 'primary.light' }}
-					viewBox="0 0 220 192"
-					width="220px"
-					height="192px"
-					fill="none"
-				>
-					<defs>
-						<pattern
-							id="837c3e70-6c3a-44e6-8854-cc48c737b659"
-							x="0"
-							y="0"
-							width="20"
-							height="20"
-							patternUnits="userSpaceOnUse"
-						>
-							<rect
-								x="0"
-								y="0"
-								width="4"
-								height="4"
-								fill="currentColor"
-							/>
-						</pattern>
-					</defs>
-					<rect
-						width="220"
-						height="192"
-						fill="url(#837c3e70-6c3a-44e6-8854-cc48c737b659)"
-					/>
-				</Box>
 
-				<div className="relative z-10 w-full max-w-2xl">
-					<div className="text-7xl font-bold leading-none text-gray-100">
-						<div>Welcome to</div>
-						<div>our community</div>
-					</div>
-					<div className="mt-24 text-lg leading-6 tracking-tight text-gray-400">
-						Fuse helps developers to build organized and well coded dashboards full of beautiful and rich
-						modules. Join us and start building your application today.
-					</div>
-					<div className="mt-32 flex items-center">
-						<AvatarGroup
-							sx={{
-								'& .MuiAvatar-root': {
-									borderColor: 'primary.main'
-								}
-							}}
-						>
-							<Avatar src="assets/images/avatars/female-18.jpg" />
-							<Avatar src="assets/images/avatars/female-11.jpg" />
-							<Avatar src="assets/images/avatars/male-09.jpg" />
-							<Avatar src="assets/images/avatars/male-16.jpg" />
-						</AvatarGroup>
-
-						<div className="ml-16 font-medium tracking-tight text-gray-400">
-							More than 17k people joined us, it's your turn
-						</div>
-					</div>
-				</div>
-			</Box>
 
 			<Paper className="h-full w-full px-16 py-32 ltr:border-l-1 rtl:border-r-1 sm:h-auto sm:w-auto sm:rounded-2xl sm:p-48 sm:shadow md:flex md:h-full md:rounded-none md:p-64 md:pt-96 md:shadow-none">
 				<div className="mx-auto w-full max-w-320 sm:mx-0 sm:w-320">
@@ -304,12 +210,12 @@ function FullScreenReversedSignInPage() {
 						</div>
 
 						<div className="mt-32 flex items-center space-x-16">
-							<Button onClick={handleLogoutMicrosoft}>LOGOUT TESTE</Button>
 							<Button onClick={handleMicrosoftAD}
 								variant="outlined"
 								className="flex-auto"
 							>
 								<MicrosoftIcon />
+
 							</Button>
 							<Button
 								variant="outlined"
@@ -348,6 +254,15 @@ function FullScreenReversedSignInPage() {
 					</form>
 				</div>
 			</Paper>
+
+			<Box
+				className="relative bg-cover bg-no-repeat hidden h-full flex-auto items-center justify-center overflow-hidden p-64 md:flex lg:px-112"
+				sx={{
+					backgroundImage: `url('assets/images//pages/login-page/login-background.svg')`
+				}}
+			>
+
+			</Box>
 		</div>
 	);
 }
