@@ -60,13 +60,15 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 							</>
 						)}
 
-						<div className='w-2/3'>
-							<TextField fullWidth variant='filled' sx={{
+						<div className='w-2/3 flex justify-center items-center'>
+							<TextField fullWidth sx={{
 								backgroundColor: theme =>
 									theme.palette.mode === 'light'
 										? theme.palette.primary.light
-										: toolbarTheme.palette.background.default, borderRadius: '10px'
-							}} InputProps={{ startAdornment: (<FuseSvgIcon color="#fff">heroicons-outline:search</FuseSvgIcon>) }} />
+										: toolbarTheme.palette.background.default,
+								borderRadius: '10px',
+								height: '70%'
+							}} InputProps={{ startAdornment: (<FuseSvgIcon sx={{ marginRight: '10px' }} color="#fff">heroicons-outline:search</FuseSvgIcon>) }} />
 
 						</div>
 					</div>

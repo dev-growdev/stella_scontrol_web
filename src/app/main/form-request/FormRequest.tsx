@@ -4,7 +4,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { Theme } from '@mui/material/styles';
 import { DatePicker } from "@mui/x-date-pickers";
+import { createRequest } from "app/configs/service/request.service";
+import { useAppDispatch } from "app/store";
+import { showMessage } from "app/store/fuse/messageSlice";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import CreatableOptions, { ProductOptionType } from "../../components/CreatableOptions";
 import CustomizedTables from '../../components/CustomizedTables';
 
@@ -48,12 +52,16 @@ const productsArray = [
 export default function FormRequest() {
     const theme = useTheme();
     const [formaDePagamento, setFormaDePagamento] = useState<string[]>([]);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [dueDate, setDueDate] = useState<Date | null>(null);
     const [valueProducts, setValueProducts] = useState<{ product: string, brand: string } | null>(null)
     const [inputValueProducts, setInputValueProducts] = useState("")
-    const [hasProof, setHasProof] = useState<boolean>(false)
+    const [requiredReceipt, setRequiredReceipt] = useState<boolean>(false)
     const [isRatiable, setIsRatiable] = useState<boolean>(false);
     const [tableData, setTableData] = useState([])
+    const [description, setDescription] = useState("")
+    const [totalValue, setTotalValue] = useState("")
+    const navigate = useNavigate()
+    const dispatch = useAppDispatch()
 
 
     const currentDate = new Date();
@@ -91,9 +99,39 @@ export default function FormRequest() {
 
     }
     function getDataFromCreatable(data: ProductOptionType) {
-
         setValueProducts({ product: data.product, brand: data.brand })
+    }
 
+
+    async function handleSubmitRequest() {
+        const newRequest = {
+            description,
+            requiredReceipt,
+            totalRequestValue: +totalValue,
+            dueDate
+        }
+        const res = await createRequest(newRequest)
+
+        if (res.code === 201) {
+            dispatch(showMessage({
+                message: "Solicitação cadastrada",
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'center'
+                },
+                variant: 'success'
+            }))
+            navigate('/solicitações')
+        } else {
+            dispatch(showMessage({
+                message: `${res.message}`,
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'center'
+                },
+                variant: 'error'
+            }))
+        }
     }
 
 
@@ -105,11 +143,11 @@ export default function FormRequest() {
                 <Button variant='text'>VOLTAR</Button>
 
                 <Paper elevation={4} className="p-28">
-                    <Typography component='h1' variant="h4" fontWeight={400}>Abrir nova solicitação</Typography>
+                    <Typography className="text-20 md:text-28" component='h1' variant="h4" fontWeight={400}>Abrir nova solicitação</Typography>
                 </Paper>
 
                 <Paper elevation={4} className="mt-24 p-36 flex flex-col gap-24">
-                    <div className="flex gap-24">
+                    <div className="flex flex-col gap-24 sm:flex-row">
                         <TextField fullWidth disabled label="Usuário solicitante" value='Misael Soares' />
                         <TextField fullWidth disabled label="Email" value='misa@gmail.com' />
                         <TextField fullWidth disabled label="Centro de custo" value='Dev' />
@@ -118,24 +156,21 @@ export default function FormRequest() {
                     <Typography color='GrayText'>Adicione os produtos para solicitação de pagamento</Typography>
 
 
-                    <div className="flex items-center gap-24">
-
-
+                    <div className="flex items-center gap-24 flex-col sm:flex-row">
                         <CreatableOptions selectedData={getDataFromCreatable} newData={testeCreatable} products={productsArray} />
-
-                        <Button onClick={handleAdd} sx={{ borderRadius: '7px' }} variant="contained" startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}>
+                        <Button className="w-full sm:w-144" onClick={handleAdd} sx={{ borderRadius: '7px' }} variant="contained" startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}>
                             ADICIONAR
                         </Button>
                     </div>
                     <CustomizedTables tableHead={["PRODUTO", 'MARCA']} tableData={tableData} />
 
-                    <TextField multiline rows={4} label="Descrição da solicitação" />
+                    <TextField onChange={(e) => setDescription(e.target.value)} multiline rows={4} label="Descrição da solicitação" />
 
-                    <div className="flex items-center gap-24">
-                        <TextField type="number" label="Valor total" InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }} />
-                        <DatePicker label="Vencimento" minDate={minDate} onChange={(d) => setSelectedDate(d)} />
+                    <div className="flex flex-col sm:flex-row items-center gap-24">
+                        <TextField onChange={(e) => setTotalValue(e.target.value)} className="w-full" type="number" label="Valor total" InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }} />
+                        <DatePicker className="w-full" label="Vencimento" minDate={minDate} onChange={(d) => setDueDate(d)} />
 
-                        <FormControl sx={{ m: 1, width: 300 }}>
+                        <FormControl className="w-full">
                             <InputLabel id="demo-multiple-name-label">Forma de pagamento</InputLabel>
                             <Select
                                 labelId="demo-multiple-name-label"
@@ -173,10 +208,10 @@ export default function FormRequest() {
                     <div className="flex items-center">
                         <Typography className="mr-10" color='GrayText'>Possui comprovante</Typography>
                         <FormGroup className="flex flex-row">
-                            <FormControlLabel control={<Checkbox onClick={() => setHasProof(true)} checked={hasProof ? true : false} />} label="Sim" />
-                            <FormControlLabel control={<Checkbox onClick={() => setHasProof(false)} checked={hasProof === false ? true : false} />} label="Não" />
+                            <FormControlLabel control={<Checkbox onClick={() => setRequiredReceipt(true)} checked={requiredReceipt ? true : false} />} label="Sim" />
+                            <FormControlLabel control={<Checkbox onClick={() => setRequiredReceipt(false)} checked={requiredReceipt === false ? true : false} />} label="Não" />
                         </FormGroup>
-                        {hasProof && <div>
+                        {requiredReceipt && <div>
                             <Input
                                 id="file-upload"
                                 type="file"
@@ -207,14 +242,14 @@ export default function FormRequest() {
 
                         <Button variant="text" startIcon={<FuseSvgIcon>heroicons-outline:printer</FuseSvgIcon>}>IMPRIMIR</Button>
                         <Button sx={{ borderRadius: '7px' }} variant="outlined">CANCELAR</Button>
-                        <Button sx={{ borderRadius: '7px' }} variant="contained">ENVIAR</Button>
+                        <Button onClick={handleSubmitRequest} sx={{ borderRadius: '7px' }} variant="contained">ENVIAR</Button>
                     </div>
 
                 </Paper>
 
-            </div>
+            </div >
 
-        </Box>
+        </Box >
 
     )
 }
