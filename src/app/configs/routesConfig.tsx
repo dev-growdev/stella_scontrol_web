@@ -6,9 +6,9 @@ import { Navigate } from 'react-router-dom';
 import Error404Page from '../main/404/Error404Page';
 import authenticationConfig from '../main/authentication/authenticationConfig';
 import ExampleConfig from '../main/example/ExampleConfig';
-import Requests from '../main/form-request/Request';
+import requestPageConfig from '../main/form-request/RequestConfig';
 
-const routeConfigs: FuseRouteConfigsType = [ExampleConfig, ...authenticationConfig];
+const routeConfigs: FuseRouteConfigsType = [ExampleConfig, requestPageConfig, ...authenticationConfig];
 
 /**
  * The routes of the application.
@@ -31,10 +31,6 @@ const routes: FuseRoutesType = [
 	{
 		path: '*',
 		element: <Navigate to="404" />
-	},
-	{
-		path: 'solicitacoes',
-		element: <Requests />
 	}
 ];
 

@@ -1,5 +1,4 @@
 import { FuseRouteConfigsType } from '@fuse/utils/FuseUtils';
-import requestPageConfig from '../form-request/RequestConfig';
 import confirmationRequiredConfig from './confirmation-required/confirmationRequiredConfig';
 import forgotPasswordConfig from './forgot-password/forgotPasswordConfig';
 import resetPasswordConfig from './reset-password/resetPasswordConfig';
@@ -18,8 +17,8 @@ const authenticationPagesConfigs: FuseRouteConfigsType = [
 	forgotPasswordConfig,
 	resetPasswordConfig,
 	confirmationRequiredConfig,
-	unlockSessionConfig,
-	requestPageConfig
+	unlockSessionConfig
+
 ];
 
 export default authenticationPagesConfigs;

@@ -30,7 +30,7 @@ const requestPageConfig: FuseRouteConfigType = {
             }
         }
     },
-    auth: authRoles.user,
+    auth: authRoles.onlyGuest,
     routes: [
         {
             path: 'solicitacoes',
