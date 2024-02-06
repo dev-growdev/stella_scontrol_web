@@ -1,5 +1,4 @@
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import _ from '@lodash';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
@@ -14,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import { loginRequest } from 'app/configs/authConfig';
 import { useAppDispatch } from "app/store";
 import { setUser } from "app/store/user/userSlice";
+import axios from "axios";
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
@@ -57,32 +57,29 @@ function FullScreenReversedSignInPage() {
 
 	const isAuthenticated = useIsAuthenticated();
 
+
 	function handleMicrosoftAD() {
 		instance.loginPopup(loginRequest)
-			.then((loginResponse) => {
-				console.log(loginResponse)
-				//accessToken: loginResponse.accessToken,
+			.then(async (loginResponse) => {
+
+				const me = await axios.get("https://graph.microsoft.com/v1.0/me", { headers: { Authorization: `Bearer ${loginResponse.accessToken}` } })
+
+				console.log(me)
 				const user = {
 					role: ['admin'],
 					data: {
-						displayName: loginResponse.account.name,
-						email: loginResponse.account.username
-					}
+						displayName: me.data.displayName,
+						email: me.data.userPrincipalName
+					},
 				}
-				dispatch(setUser(user))
 
-				//enviar token, email, nome
+				dispatch(setUser(user))
+				//login({ name: loginResponse.account.name, email: loginResponse.account.username, accessToken: loginResponse.accessToken })
+
 			})
 			.catch((e) => {
 				console.log(e)
 			})
-	}
-
-	function handleLogoutMicrosoft() {
-		instance.logoutPopup({
-			postLogoutRedirectUri: "/login",
-			mainWindowRedirectUri: "/login",
-		})
 	}
 
 	const { isValid, dirtyFields, errors } = formState;
@@ -98,23 +95,17 @@ function FullScreenReversedSignInPage() {
 			<Paper className="h-full w-full px-16 py-32 ltr:border-l-1 rtl:border-r-1 sm:h-auto sm:w-auto sm:rounded-2xl sm:p-48 sm:shadow md:flex md:h-full md:rounded-none md:p-64 md:pt-96 md:shadow-none">
 				<div className="mx-auto w-full max-w-320 sm:mx-0 sm:w-320">
 					<img
-						className="w-48"
-						src="assets/images/logo/logo.svg"
+						src="assets/images/logo/scontrol.svg"
 						alt="logo"
 					/>
 
-					<Typography className="mt-32 text-4xl font-extrabold leading-tight tracking-tight">
-						Sign in
+					<Typography className="mt-20 text-3xl font-normal leading-tight tracking-tight">
+						Boas - Vindas
 					</Typography>
-					<div className="mt-2 flex items-baseline font-medium">
-						<Typography>Don't have an account?</Typography>
-						<Link
-							className="ml-4"
-							to="/sign-up"
-						>
-							Sign up
-						</Link>
-					</div>
+					<Typography className="mt-20 text-15 font-normal leading-tight tracking-tight">
+						Para acessar sua conta insira seu email e senha cadastrados.
+					</Typography>
+
 
 					<form
 						name="loginForm"
@@ -129,7 +120,7 @@ function FullScreenReversedSignInPage() {
 								<TextField
 									{...field}
 									className="mb-24"
-									label="Email"
+									label="Insira um e-mail válido"
 									autoFocus
 									type="email"
 									error={!!errors.email}
@@ -148,7 +139,7 @@ function FullScreenReversedSignInPage() {
 								<TextField
 									{...field}
 									className="mb-24"
-									label="Password"
+									label="Insira sua senha cadastrada"
 									type="password"
 									error={!!errors.password}
 									helperText={errors?.password?.message}
@@ -166,7 +157,7 @@ function FullScreenReversedSignInPage() {
 								render={({ field }) => (
 									<FormControl>
 										<FormControlLabel
-											label="Remember me"
+											label="Lembrar-me"
 											control={
 												<Checkbox
 													size="small"
@@ -182,7 +173,7 @@ function FullScreenReversedSignInPage() {
 								className="text-md font-medium"
 								to="/pages/auth/forgot-password"
 							>
-								Forgot password?
+								Esqueci minha senha
 							</Link>
 						</div>
 
@@ -194,8 +185,9 @@ function FullScreenReversedSignInPage() {
 							disabled={_.isEmpty(dirtyFields) || !isValid}
 							type="submit"
 							size="large"
+							sx={{ borderRadius: '7px' }}
 						>
-							Sign in
+							ENTRAR
 						</Button>
 
 						<div className="mt-32 flex items-center">
@@ -204,7 +196,7 @@ function FullScreenReversedSignInPage() {
 								className="mx-8"
 								color="text.secondary"
 							>
-								Or continue with
+								Ou continue com uma conta Microsoft:
 							</Typography>
 							<div className="mt-px flex-auto border-t" />
 						</div>
@@ -213,43 +205,12 @@ function FullScreenReversedSignInPage() {
 							<Button onClick={handleMicrosoftAD}
 								variant="outlined"
 								className="flex-auto"
+								sx={{ borderRadius: '7px' }}
 							>
 								<MicrosoftIcon />
 
 							</Button>
-							<Button
-								variant="outlined"
-								className="flex-auto"
-							>
-								<FuseSvgIcon
-									size={20}
-									color="action"
-								>
-									feather:facebook
-								</FuseSvgIcon>
-							</Button>
-							<Button
-								variant="outlined"
-								className="flex-auto"
-							>
-								<FuseSvgIcon
-									size={20}
-									color="action"
-								>
-									feather:twitter
-								</FuseSvgIcon>
-							</Button>
-							<Button
-								variant="outlined"
-								className="flex-auto"
-							>
-								<FuseSvgIcon
-									size={20}
-									color="action"
-								>
-									feather:github
-								</FuseSvgIcon>
-							</Button>
+
 						</div>
 					</form>
 				</div>
