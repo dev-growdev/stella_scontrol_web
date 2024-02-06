@@ -1,6 +1,6 @@
 import { fuseDark, skyBlue } from '@fuse/colors';
-import { blueGrey } from '@mui/material/colors';
 import { FuseThemesType } from '@fuse/core/FuseSettings/FuseSettings';
+import { blueGrey } from '@mui/material/colors';
 
 /**
  * The lightPaletteText object defines the text color palette for the light theme.
@@ -41,7 +41,7 @@ export const themesConfig: FuseThemesType = {
 			},
 			secondary: {
 				// light: '#818cf8',
-				main: '#FF8533',
+				main: '#00abc8',
 				// dark: '#3730a3',
 				contrastText: darkPaletteText.primary
 			},
