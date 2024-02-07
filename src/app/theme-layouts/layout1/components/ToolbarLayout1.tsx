@@ -1,22 +1,15 @@
-import { ThemeProvider } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Hidden from '@mui/material/Hidden';
 import Toolbar from '@mui/material/Toolbar';
+import { ThemeProvider } from '@mui/material/styles';
+import { selectFuseNavbar } from 'app/store/fuse/navbarSlice';
+import { selectFuseCurrentLayoutConfig, selectToolbarTheme } from 'app/store/fuse/settingsSlice';
+import { Layout1ConfigDefaultsType } from 'app/theme-layouts/layout1/Layout1Config';
 import clsx from 'clsx';
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { selectFuseCurrentLayoutConfig, selectToolbarTheme } from 'app/store/fuse/settingsSlice';
-import { selectFuseNavbar } from 'app/store/fuse/navbarSlice';
-import { Layout1ConfigDefaultsType } from 'app/theme-layouts/layout1/Layout1Config';
-import AdjustFontSize from '../../shared-components/AdjustFontSize';
-import FullScreenToggle from '../../shared-components/FullScreenToggle';
-import LanguageSwitcher from '../../shared-components/LanguageSwitcher';
-import NotificationPanelToggleButton from '../../shared-components/notificationPanel/NotificationPanelToggleButton';
-import NavigationShortcuts from '../../shared-components/NavigationShortcuts';
-import NavigationSearch from '../../shared-components/NavigationSearch';
 import NavbarToggleButton from '../../shared-components/NavbarToggleButton';
 import UserMenu from '../../shared-components/UserMenu';
-import QuickPanelToggleButton from '../../shared-components/quickPanel/QuickPanelToggleButton';
 
 type ToolbarLayout1Props = {
 	className?: string;
@@ -65,18 +58,10 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 							</>
 						)}
 
-						<Hidden lgDown>
-							<NavigationShortcuts />
-						</Hidden>
 					</div>
 
 					<div className="flex h-full items-center overflow-x-auto px-8">
-						<LanguageSwitcher />
-						<AdjustFontSize />
-						<FullScreenToggle />
-						<NavigationSearch />
-						<QuickPanelToggleButton />
-						<NotificationPanelToggleButton />
+
 						<UserMenu />
 					</div>
 
