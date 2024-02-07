@@ -10,6 +10,7 @@ import { selectFuseCurrentSettings, setDefaultSettings } from 'app/store/fuse/se
 type NavbarToggleButtonProps = {
 	className?: string;
 	children?: React.ReactNode;
+	textColor?: string
 };
 
 /**
@@ -21,12 +22,14 @@ function NavbarToggleButton(props: NavbarToggleButtonProps) {
 		children = (
 			<FuseSvgIcon
 				size={20}
-				color="#00ABC8"
+				color='inherit'
+				sx={{ color: props.textColor }}
 			>
 				heroicons-outline:view-list
 			</FuseSvgIcon>
 		)
 	} = props;
+
 
 	const dispatch = useAppDispatch();
 	const isMobile = useThemeMediaQuery(theme => theme.breakpoints.down('lg'));

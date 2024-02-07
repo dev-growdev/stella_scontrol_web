@@ -3,15 +3,17 @@ import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, Input,
 import InputAdornment from '@mui/material/InputAdornment';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { Theme } from '@mui/material/styles';
-import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { createRequest } from "app/configs/service/request.service";
 import { useAppDispatch } from "app/store";
 import { showMessage } from "app/store/fuse/messageSlice";
+import { ptBR } from 'date-fns/locale';
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import '../../../styles/muiCustomComponents.css';
 import CreatableOptions, { ProductOptionType } from "../../components/CreatableOptions";
 import CustomizedTables from '../../components/CustomizedTables';
-
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -168,7 +170,10 @@ export default function FormRequest() {
 
                     <div className="flex flex-col sm:flex-row items-center gap-24">
                         <TextField onChange={(e) => setTotalValue(e.target.value)} className="w-full" type="number" label="Valor total" InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }} />
-                        <DatePicker className="w-full" label="Vencimento" minDate={minDate} onChange={(d) => setDueDate(d)} />
+
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+                            <DatePicker className="w-full" label="Vencimento" minDate={minDate} format="dd/MM/yyyy" onChange={(d) => setDueDate(d)} />
+                        </LocalizationProvider>
 
                         <FormControl className="w-full">
                             <InputLabel id="demo-multiple-name-label">Forma de pagamento</InputLabel>
@@ -219,14 +224,16 @@ export default function FormRequest() {
                                 onChange={handleFileChange}
                             />
                             <label htmlFor="file-upload">
-                                <Button
-                                    sx={{ borderRadius: '7px' }}
-                                    variant="outlined"
-                                    component="span"
-                                    endIcon={<FuseSvgIcon>heroicons-outline:upload</FuseSvgIcon>}
-                                >
-                                    ANEXAR DOCUMENTO
-                                </Button>
+                                <div style={{ border: `2px solid ${theme.palette.primary.main}`, borderRadius: '7px', height: '30px' }} className="flex flex-row items-center">
+                                    <Button
+                                        variant="text"
+                                        component="span"
+                                    >
+                                        ANEXAR DOCUMENTO
+                                    </Button>
+                                    <FuseSvgIcon sx={{ border: `2px solid ${theme.palette.primary.main}`, borderRadius: '0 7px 7px 0', color: theme.palette.common.white, backgroundColor: theme.palette.primary.main, margin: '0', height: "30px" }}>heroicons-outline:upload</FuseSvgIcon>
+
+                                </div>
                             </label>
                         </div>}
                     </div>
@@ -240,9 +247,9 @@ export default function FormRequest() {
                     </div>
                     <div className="flex justify-end gap-10">
 
-                        <Button variant="text" startIcon={<FuseSvgIcon>heroicons-outline:printer</FuseSvgIcon>}>IMPRIMIR</Button>
-                        <Button sx={{ borderRadius: '7px' }} variant="outlined">CANCELAR</Button>
-                        <Button onClick={handleSubmitRequest} sx={{ borderRadius: '7px' }} variant="contained">ENVIAR</Button>
+                        <Button variant="text" startIcon={<FuseSvgIcon sx={{ color: theme.palette.secondary.light }}>heroicons-outline:printer</FuseSvgIcon>}>IMPRIMIR</Button>
+                        <Button variant="outlined">CANCELAR</Button>
+                        <Button onClick={handleSubmitRequest} variant="contained">ENVIAR</Button>
                     </div>
 
                 </Paper>
