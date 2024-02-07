@@ -142,7 +142,7 @@ export default function FormRequest() {
 
         <Box className="flex flex-col w-full">
             <div className="p-32 mt-20">
-                <Button variant='text'>VOLTAR</Button>
+                <Button variant='text' startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}>VOLTAR</Button>
 
                 <Paper elevation={4} className="p-28">
                     <Typography className="text-20 md:text-28" component='h1' variant="h4" fontWeight={400}>Abrir nova solicitação</Typography>
@@ -247,15 +247,12 @@ export default function FormRequest() {
                     </div>
                     <div className="flex justify-end gap-10">
 
-                        <Button variant="text" startIcon={<FuseSvgIcon sx={{ color: theme.palette.secondary.light }}>heroicons-outline:printer</FuseSvgIcon>}>IMPRIMIR</Button>
-                        <Button variant="outlined">CANCELAR</Button>
-                        <Button onClick={handleSubmitRequest} variant="contained">ENVIAR</Button>
+                        <Button sx={{ color: theme.palette.common.black }} variant="text" startIcon={<FuseSvgIcon sx={{ color: theme.palette.common.black }}>heroicons-outline:printer</FuseSvgIcon>}>IMPRIMIR</Button>
+                        <Button variant="outlined" sx={{ borderRadius: '7px' }}>CANCELAR</Button>
+                        <Button onClick={handleSubmitRequest} sx={{ borderRadius: '7px' }} variant="contained">ENVIAR</Button>
                     </div>
-
                 </Paper>
-
             </div >
-
         </Box >
 
     )
