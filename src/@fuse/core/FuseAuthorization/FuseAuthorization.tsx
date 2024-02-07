@@ -1,17 +1,17 @@
-import { Component, ReactNode } from 'react';
-import { matchRoutes } from 'react-router-dom';
-import FuseUtils from '@fuse/utils';
-import AppContext, { AppContextType } from 'app/AppContext';
-import withRouter from '@fuse/core/withRouter';
-import history from '@history';
-import { WithRouterProps } from '@fuse/core/withRouter/withRouter';
-import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
 import {
 	getSessionRedirectUrl,
 	resetSessionRedirectUrl,
 	setSessionRedirectUrl
 } from '@fuse/core/FuseAuthorization/sessionRedirectUrl';
 import FuseLoading from '@fuse/core/FuseLoading';
+import withRouter from '@fuse/core/withRouter';
+import { WithRouterProps } from '@fuse/core/withRouter/withRouter';
+import FuseUtils from '@fuse/utils';
+import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
+import history from '@history';
+import AppContext, { AppContextType } from 'app/AppContext';
+import { Component, ReactNode } from 'react';
+import { matchRoutes } from 'react-router-dom';
 
 type FuseAuthorizationProps = {
 	children: ReactNode;
@@ -105,12 +105,13 @@ class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 		const { userRole, loginRedirectUrl } = this.props;
 		const redirectUrl = getSessionRedirectUrl() || loginRedirectUrl;
 
+
 		/*
 		User is guest
 		Redirect to Login Page
 		*/
 		if (!userRole || userRole.length === 0) {
-			setTimeout(() => history.push('/sign-in'), 0);
+			setTimeout(() => history.push('/login'), 0);
 		} else {
 			/*
 		  User is member
@@ -119,6 +120,7 @@ class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 			*/
 			setTimeout(() => history.push(redirectUrl), 0);
 			resetSessionRedirectUrl();
+
 		}
 	}
 

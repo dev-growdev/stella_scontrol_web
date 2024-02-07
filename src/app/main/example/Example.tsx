@@ -1,38 +1,43 @@
-import DemoContent from '@fuse/core/DemoContent';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { useTranslation } from 'react-i18next';
-import { styled } from '@mui/material/styles';
+import { useMsal } from '@azure/msal-react';
+import { Button, Typography } from '@mui/material';
+import { graphConfig, loginRequest } from 'app/configs/authConfig';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
 
 function Example() {
-	const { t } = useTranslation('examplePage');
+	const { instance, accounts } = useMsal();
+	const [graphData, setGraphData] = useState<any>(null);
+
+	useEffect(() => {
+		console.log(graphData, '=== graph data')
+	}, [graphData])
+
+
+	//faz o request do user para ver se o user ainda é válido, se for segue o fluxo,
+	//se nao for, precisamos descobrir o que acontece
+
+	//retorna 401 se não tem acesso
+	function RequestProfileData() {
+		instance
+			.acquireTokenSilent({
+				...loginRequest,
+				account: accounts[0]
+			})
+			.then((response) => {
+				axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${response.accessToken}` } })
+					.then((response) => {
+						setGraphData(response)
+					})
+			})
+	}
+
 
 	return (
-		<Root
-			header={
-				<div className="p-24">
-					<h4>{t('TITLE')}</h4>
-				</div>
-			}
-			content={
-				<div className="p-24">
-					<h4>Content</h4>
-					<br />
-					<DemoContent />
-				</div>
-			}
-		/>
+		<>
+			<Typography variant="h1">Solicitações</Typography>
+			<Button onClick={RequestProfileData} variant='contained'>RequestProfileData</Button>
+		</>
 	);
 }
 

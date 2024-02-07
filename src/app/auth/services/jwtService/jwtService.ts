@@ -1,7 +1,7 @@
 import FuseUtils from '@fuse/utils/FuseUtils';
+import UserType from 'app/store/user/UserType';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import UserType from 'app/store/user/UserType';
 import { PartialDeep } from 'type-fest';
 import jwtServiceConfig from './jwtServiceConfig';
 /* eslint-disable camelcase, class-methods-use-this */
@@ -10,7 +10,9 @@ import jwtServiceConfig from './jwtServiceConfig';
  * The JwtService class is a utility class for handling JSON Web Tokens (JWTs) in the Fuse application.
  * It provides methods for initializing the service, setting interceptors, and handling authentication.
  */
+
 class JwtService extends FuseUtils.EventEmitter {
+
 	/**
 	 * Initializes the JwtService by setting interceptors and handling authentication.
 	 */
@@ -126,6 +128,10 @@ class JwtService extends FuseUtils.EventEmitter {
 	/**
 	 * Signs in with the provided provider.
 	 */
+
+
+
+
 	signInWithToken = () =>
 		new Promise<UserType>((resolve, reject) => {
 			axios
@@ -134,10 +140,23 @@ class JwtService extends FuseUtils.EventEmitter {
 						access_token: getAccessToken()
 					}
 				})
-				.then((response: AxiosResponse<{ user: UserType; access_token: string }>) => {
-					if (response.data.user) {
-						_setSession(response.data.access_token);
-						resolve(response.data.user);
+
+				.then((response: AxiosResponse<{ data: { user: { uid: string, name: string, email: string, idUserAd: string, jobTitle: string }; access_token: string } }>) => {
+					if (response.data.data.user) {
+						//aqui vai a treta
+
+						_setSession(response.data.data.access_token);
+						const user = {
+							uid: response.data.data.user.uid,
+							idUserAd: response.data.data.user.idUserAd,
+							jobTile: response.data.data.user.jobTitle,
+							role: ["admin"],
+							data: {
+								displayName: response.data.data.user.name,
+								email: response.data.data.user.email
+							}
+						}
+						resolve(user);
 					} else {
 						this.logout();
 						reject(new Error('Failed to login with token.'));
@@ -148,6 +167,39 @@ class JwtService extends FuseUtils.EventEmitter {
 					reject(new Error('Failed to login with token.'));
 				});
 		});
+
+	signInWithId = (data: any) => {
+		return new Promise<UserType>((resolve, reject) => {
+			axios
+				.post(jwtServiceConfig.accessById, data)
+				.then((response: AxiosResponse<{ data: { user: { uid: string, name: string, email: string, idUserAd: string, jobTitle: string }; access_token: string } }>) => {
+
+					if (response.data.data) {
+						_setSession(response.data.data.access_token);
+						const user = {
+							uid: response.data.data.user.uid,
+							idUserAd: response.data.data.user.idUserAd,
+							jobTile: response.data.data.user.jobTitle,
+							role: ["admin"],
+							data: {
+								displayName: response.data.data.user.name,
+								email: response.data.data.user.email
+							}
+						}
+						resolve(user);
+					} else {
+
+						this.logout();
+						reject(new Error('Failed to login with token.'));
+					}
+				})
+				.catch(() => {
+
+					this.logout();
+					reject(new Error('Failed to login with token.'));
+				});
+		})
+	}
 
 	/**
 	 * Updates the user data.
@@ -169,6 +221,7 @@ class JwtService extends FuseUtils.EventEmitter {
 /**
  * Sets the session by storing the access token in the local storage and setting the default authorization header.
  */
+
 function _setSession(access_token: string | null) {
 	if (access_token) {
 		setAccessToken(access_token);
@@ -219,6 +272,6 @@ function removeAccessToken() {
 	return window.localStorage.removeItem('jwt_access_token');
 }
 
-const instance = new JwtService();
+const instanceJwt = new JwtService();
 
-export default instance;
+export default instanceJwt;
