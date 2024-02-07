@@ -1,6 +1,4 @@
-import { useMsal } from '@azure/msal-react';
 import FuseUtils from '@fuse/utils/FuseUtils';
-import { graphConfig, loginRequest } from 'app/configs/authConfig';
 import UserType from 'app/store/user/UserType';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
@@ -157,9 +155,6 @@ class JwtService extends FuseUtils.EventEmitter {
 								email: response.data.data.user.data.email
 							}
 						}
-						// console.log("antes da funcção")
-						// const tokenAd = getTokenMsal()
-						// console.log(tokenAd, '---- token ad')
 
 						resolve(user);
 					} else {
@@ -274,22 +269,6 @@ function setAccessToken(access_token: string) {
  */
 function removeAccessToken() {
 	return window.localStorage.removeItem('jwt_access_token');
-}
-
-function getTokenMsal() {
-	const { instance, accounts } = useMsal();
-
-	instance
-		.acquireTokenSilent({
-			...loginRequest,
-			account: accounts[0]
-		})
-		.then((response) => {
-			axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${response.accessToken}` } })
-				.then((response) => {
-					console.log(response)
-				})
-		})
 }
 
 const instanceJwt = new JwtService();
