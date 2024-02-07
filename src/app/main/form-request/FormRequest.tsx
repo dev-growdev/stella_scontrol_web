@@ -75,7 +75,6 @@ export default function FormRequest() {
             target: { value },
         } = event;
         setFormaDePagamento(
-            // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
     };
@@ -90,7 +89,7 @@ export default function FormRequest() {
             console.log('handle add', valueProducts)
             const newProduct = { produto: valueProducts.product, marca: valueProducts.brand };
             setTableData([...tableData, newProduct]);
-            setValueProducts(null); // Limpa o campo após adicionar
+            setValueProducts(null);
         }
     }
 
@@ -139,7 +138,6 @@ export default function FormRequest() {
 
 
     return (
-
         <Box className="flex flex-col w-full">
             <div className="p-32 mt-20">
                 <Button variant='text' startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}>VOLTAR</Button>
@@ -156,7 +154,6 @@ export default function FormRequest() {
                     </div>
 
                     <Typography color='GrayText'>Adicione os produtos para solicitação de pagamento</Typography>
-
 
                     <div className="flex items-center gap-24 flex-col sm:flex-row">
                         <CreatableOptions selectedData={getDataFromCreatable} newData={testeCreatable} products={productsArray} />
@@ -202,40 +199,60 @@ export default function FormRequest() {
                     </div>
                     {formaDePagamento[0] === "Pix" && <TextField label="Informe a chave pix" />}
                     {formaDePagamento[0] === "Transferência bancária" && <div className="flex justify-around gap-24">
-                        <TextField label="Banco" />
-                        <TextField label="Numero da conta" />
-                        <TextField label="Dígito" />
-                        <TextField label="Agência" />
+                        <div className="flex flex-col sm:flex-row gap-7">
+                            <TextField label="Banco" />
+                            <TextField label="Numero da conta" />
+                            <TextField label="Dígito" />
+                            <TextField label="Agência" />
+                        </div>
                     </div>}
                     {formaDePagamento.some(option => option.includes("Cartão")) && <TextField label="selecionar ao portador" />}
 
 
                     <div className="flex items-center">
-                        <Typography className="mr-10" color='GrayText'>Possui comprovante</Typography>
-                        <FormGroup className="flex flex-row">
-                            <FormControlLabel control={<Checkbox onClick={() => setRequiredReceipt(true)} checked={requiredReceipt ? true : false} />} label="Sim" />
-                            <FormControlLabel control={<Checkbox onClick={() => setRequiredReceipt(false)} checked={requiredReceipt === false ? true : false} />} label="Não" />
-                        </FormGroup>
-                        {requiredReceipt && <div>
-                            <Input
-                                id="file-upload"
-                                type="file"
-                                style={{ display: 'none' }}
-                                onChange={handleFileChange}
-                            />
-                            <label htmlFor="file-upload">
-                                <div style={{ border: `2px solid ${theme.palette.primary.main}`, borderRadius: '7px', height: '30px' }} className="flex flex-row items-center">
-                                    <Button
-                                        variant="text"
-                                        component="span"
-                                    >
-                                        ANEXAR DOCUMENTO
-                                    </Button>
-                                    <FuseSvgIcon sx={{ border: `2px solid ${theme.palette.primary.main}`, borderRadius: '0 7px 7px 0', color: theme.palette.common.white, backgroundColor: theme.palette.primary.main, margin: '0', height: "30px" }}>heroicons-outline:upload</FuseSvgIcon>
+                        <div className="flex flex-col sm:flex-row items-center">
+                            <Typography className="mr-10" color='GrayText'>Possui comprovante</Typography>
+                            <FormGroup className="flex flex-row flex-nowrap">
+                                <FormControlLabel control={
+                                    <Checkbox onClick={() => setRequiredReceipt(true)} checked={requiredReceipt ? true : false} />
+                                } label="Sim" />
+                                <FormControlLabel control={
+                                    <Checkbox onClick={() => setRequiredReceipt(false)} checked={requiredReceipt === false ? true : false} />
+                                } label="Não" />
+                            </FormGroup>
+                            {requiredReceipt && <div>
+                                <Input
+                                    id="file-upload"
+                                    type="file"
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
+                                />
+                                <label htmlFor="file-upload">
+                                    <div style={{
+                                        border: `2px solid ${theme.palette.primary.main}`,
+                                        borderRadius: '7px',
+                                        height: '30px'
+                                    }}
+                                        className="flex flex-row items-center">
+                                        <Button
+                                            variant="text"
+                                            component="span"
+                                        >
+                                            ANEXAR DOCUMENTO
+                                        </Button>
+                                        <FuseSvgIcon sx={{
+                                            border: `2px solid ${theme.palette.primary.main}`,
+                                            borderRadius: '0 7px 7px 0',
+                                            color: theme.palette.common.white,
+                                            backgroundColor: theme.palette.primary.main,
+                                            margin: '0',
+                                            height: "30px"
+                                        }}>heroicons-outline:upload</FuseSvgIcon>
 
-                                </div>
-                            </label>
-                        </div>}
+                                    </div>
+                                </label>
+                            </div>}
+                        </div>
                     </div>
 
                     <div className="flex items-center">
@@ -245,9 +262,16 @@ export default function FormRequest() {
                             <FormControlLabel control={<Checkbox onClick={() => setIsRatiable(false)} checked={isRatiable === false ? true : false} />} label="Não" />
                         </FormGroup>
                     </div>
-                    <div className="flex justify-end gap-10">
+                    <div className="flex justify-end gap-10 flex-col sm:flex-row">
 
-                        <Button sx={{ color: theme.palette.common.black }} variant="text" startIcon={<FuseSvgIcon sx={{ color: theme.palette.common.black }}>heroicons-outline:printer</FuseSvgIcon>}>IMPRIMIR</Button>
+                        <Button sx={{ color: theme.palette.common.black }} variant="text" startIcon={
+                            <FuseSvgIcon sx={{
+                                color: theme.palette.common.black
+                            }}>
+                                heroicons-outline:printer
+                            </FuseSvgIcon>}>
+                            IMPRIMIR
+                        </Button>
                         <Button variant="outlined" sx={{ borderRadius: '7px' }}>CANCELAR</Button>
                         <Button onClick={handleSubmitRequest} sx={{ borderRadius: '7px' }} variant="contained">ENVIAR</Button>
                     </div>
