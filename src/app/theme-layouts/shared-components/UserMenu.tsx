@@ -11,6 +11,7 @@ import { selectUser } from 'app/store/user/userSlice';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import JwtService from 'src/app/auth/services/jwtService';
 
 /**
  * The user menu.
@@ -34,6 +35,7 @@ function UserMenu() {
 			postLogoutRedirectUri: "/login",
 			mainWindowRedirectUri: "/login",
 		})
+		JwtService.logout()
 	}
 
 	return (
