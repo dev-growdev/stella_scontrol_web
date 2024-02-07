@@ -15,9 +15,6 @@ type ToolbarLayout1Props = {
 	className?: string;
 };
 
-/**
- * The toolbar layout 1.
- */
 function ToolbarLayout1(props: ToolbarLayout1Props) {
 	const { className } = props;
 	const config = useSelector(selectFuseCurrentLayoutConfig) as Layout1ConfigDefaultsType;
@@ -57,11 +54,9 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 								</Hidden>
 							</>
 						)}
-
 					</div>
 
 					<div className="flex h-full items-center overflow-x-auto px-8">
-
 						<UserMenu />
 					</div>
 

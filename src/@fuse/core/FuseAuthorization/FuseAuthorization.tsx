@@ -28,10 +28,6 @@ function isUserGuest(role: string[] | string) {
 	return !role || (Array.isArray(role) && role.length === 0);
 }
 
-/**
- * FuseAuthorization is a higher-order component that wraps its child component which handles the authorization logic of the app.
- * It checks the provided Auth property from FuseRouteItemType (auth property) against the current logged-in user role.
- */
 class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 	constructor(props: FuseAuthorizationProps, context: AppContextType) {
 		super(props);
@@ -88,10 +84,6 @@ class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 			setSessionRedirectUrl(pathname);
 		}
 
-		/**
-		 * If user is member but don't have permission to view the route
-		 * redirected to main route '/'
-		 */
 		if (!userHasPermission && !isGuest && !ignoredPaths.includes(pathname)) {
 			setSessionRedirectUrl('/');
 		}
@@ -105,22 +97,11 @@ class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 		const { userRole, loginRedirectUrl } = this.props;
 		const redirectUrl = getSessionRedirectUrl() || loginRedirectUrl;
 
-
-		/*
-		User is guest
-		Redirect to Login Page
-		*/
 		if (!userRole || userRole.length === 0) {
 			setTimeout(() => history.push('/login'), 0);
 		} else {
-			/*
-		  User is member
-		  User must be on unAuthorized page or just logged in
-		  Redirect to dashboard or loginRedirectUrl
-			*/
 			setTimeout(() => history.push(redirectUrl), 0);
 			resetSessionRedirectUrl();
-
 		}
 	}
 

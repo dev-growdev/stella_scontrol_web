@@ -34,17 +34,15 @@ export const themesConfig: FuseThemesType = {
 				white: 'rgb(255, 255, 255)'
 			},
 			primary: {
-				background: '#e5f7fa',
-				light: '#00d3f6',
-				main: '#00abc8',
-				dark: '#02798D',
+				// light: '#64748b',
+				main: '#212A42',
+				// dark: '#0f172a',
 				contrastText: darkPaletteText.primary
 			},
 			secondary: {
-				background: '#f3f3f3',
-				light: '#acacac',
-				main: '#00abc8',//'#565656'
-				dark: '#363636',
+				// light: '#818cf8',
+				main: '#FF8533',
+				// dark: '#3730a3',
 				contrastText: darkPaletteText.primary
 			},
 			background: {

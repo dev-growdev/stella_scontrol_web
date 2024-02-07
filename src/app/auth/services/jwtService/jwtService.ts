@@ -2,28 +2,16 @@ import FuseUtils from '@fuse/utils/FuseUtils';
 import UserType from 'app/store/user/UserType';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import { PartialDeep } from 'type-fest';
 import jwtServiceConfig from './jwtServiceConfig';
 /* eslint-disable camelcase, class-methods-use-this */
 
-/**
- * The JwtService class is a utility class for handling JSON Web Tokens (JWTs) in the Fuse application.
- * It provides methods for initializing the service, setting interceptors, and handling authentication.
- */
-
 class JwtService extends FuseUtils.EventEmitter {
 
-	/**
-	 * Initializes the JwtService by setting interceptors and handling authentication.
-	 */
 	init() {
 		this.setInterceptors();
 		this.handleAuthentication();
 	}
 
-	/**
-	 * Sets the interceptors for the Axios instance.
-	 */
 	setInterceptors = () => {
 		axios.interceptors.response.use(
 			(response: AxiosResponse<unknown>) => response,
@@ -39,9 +27,6 @@ class JwtService extends FuseUtils.EventEmitter {
 		);
 	};
 
-	/**
-	 * Handles authentication by checking for a valid access token and emitting events based on the result.
-	 */
 	handleAuthentication = () => {
 		const access_token = getAccessToken();
 
@@ -60,81 +45,13 @@ class JwtService extends FuseUtils.EventEmitter {
 		}
 	};
 
-	/**
-	 * Creates a new user account.
-	 */
-	createUser = (data: {
-		displayName: UserType['data']['displayName'];
-		password: string;
-		email: UserType['data']['email'];
-	}) =>
-		new Promise((resolve, reject) => {
-			axios.post(jwtServiceConfig.signUp, data).then(
-				(
-					response: AxiosResponse<{
-						user: UserType;
-						access_token: string;
-						error?: {
-							type: 'email' | 'password' | `root.${string}` | 'root';
-							message: string;
-						}[];
-					}>
-				) => {
-					if (response.data.user) {
-						_setSession(response.data.access_token);
-						resolve(response.data.user);
-						this.emit('onLogin', response.data.user);
-					} else {
-						reject(response.data.error);
-					}
-				}
-			);
-		});
-
-	/**
-	 * Signs in with the provided email and password.
-	 */
-	signInWithEmailAndPassword = (email: string, password: string) =>
-		new Promise((resolve, reject) => {
-			axios
-				.get(jwtServiceConfig.signIn, {
-					data: {
-						email,
-						password
-					}
-				})
-				.then(
-					(
-						response: AxiosResponse<{
-							user: UserType;
-							access_token: string;
-							error?: {
-								type: 'email' | 'password' | `root.${string}` | 'root';
-								message: string;
-							}[];
-						}>
-					) => {
-						if (response.data.user) {
-							_setSession(response.data.access_token);
-							this.emit('onLogin', response.data.user);
-							resolve(response.data.user);
-						} else {
-							reject(response.data.error);
-						}
-					}
-				);
-		});
-
-	/**
-	 * Signs in with the provided provider.
-	 */
-
-
 	signInWithToken = () => {
 		const token = getAccessToken()
+
 		if (token) {
 			_setSession(token);
 		}
+
 		return new Promise<UserType>((resolve, reject) => {
 			axios
 				.get(jwtServiceConfig.accessToken, {
@@ -143,16 +60,33 @@ class JwtService extends FuseUtils.EventEmitter {
 					}
 				})
 
-				.then((response: AxiosResponse<{ data: { user: { uid: string, name: string, email: string, idUserAd: string, jobTitle: string, data: { displayName: string, email: string } }; access_token: string } }>) => {
-					if (response.data.data.user) {
+				.then((response: AxiosResponse<{
+					data: {
+						user: {
+							uid: string,
+							name: string,
+							email: string,
+							idUserAd: string,
+							jobTitle: string,
+							data: {
+								displayName: string,
+								email: string
+							}
+						};
+						access_token: string
+					}
+				}>) => {
+					const userFromResponse = response.data.data.user
+
+					if (userFromResponse) {
 						const user = {
-							uid: response.data.data.user.uid,
-							idUserAd: response.data.data.user.idUserAd,
-							jobTile: response.data.data.user.jobTitle,
+							uid: userFromResponse.uid,
+							idUserAd: userFromResponse.idUserAd,
+							jobTile: userFromResponse.jobTitle,
 							role: ["admin"],
 							data: {
-								displayName: response.data.data.user.data.displayName,
-								email: response.data.data.user.data.email
+								displayName: userFromResponse.data.displayName,
+								email: userFromResponse.data.email
 							}
 						}
 
@@ -169,22 +103,34 @@ class JwtService extends FuseUtils.EventEmitter {
 		});
 	}
 
-
 	signInWithId = (data: any) => {
 		return new Promise<UserType>((resolve, reject) => {
 			axios
 				.post(jwtServiceConfig.accessById, data)
-				.then((response: AxiosResponse<{ data: { user: { uid: string, name: string, email: string, idUserAd: string, jobTitle: string }; access_token: string } }>) => {
-					if (response.data.data) {
-						_setSession(response.data.data.access_token);
+				.then((response: AxiosResponse<{
+					data: {
+						user: {
+							uid: string,
+							name: string,
+							email: string,
+							idUserAd: string,
+							jobTitle: string
+						};
+						access_token: string
+					}
+				}>) => {
+					const userFromResponse = response.data.data.user
+					if (userFromResponse) {
+						const token = response.data.data.access_token
+						_setSession(token);
 						const user = {
-							uid: response.data.data.user.uid,
-							idUserAd: response.data.data.user.idUserAd,
-							jobTile: response.data.data.user.jobTitle,
+							uid: userFromResponse.uid,
+							idUserAd: userFromResponse.idUserAd,
+							jobTile: userFromResponse.jobTitle,
 							role: ["admin"],
 							data: {
-								displayName: response.data.data.user.name,
-								email: response.data.data.user.email
+								displayName: userFromResponse.name,
+								email: userFromResponse.email
 							}
 						}
 						resolve(user);
@@ -200,26 +146,11 @@ class JwtService extends FuseUtils.EventEmitter {
 		})
 	}
 
-	/**
-	 * Updates the user data.
-	 */
-	updateUserData = (user: PartialDeep<UserType>) =>
-		axios.post(jwtServiceConfig.updateUser, {
-			user
-		});
-
-	/**
-	 * Signs out the user.
-	 */
 	logout = () => {
 		_setSession(null);
 		this.emit('onLogout', 'Logged out');
 	};
 }
-
-/**
- * Sets the session by storing the access token in the local storage and setting the default authorization header.
- */
 
 function _setSession(access_token: string | null) {
 	if (access_token) {
@@ -231,9 +162,6 @@ function _setSession(access_token: string | null) {
 	}
 }
 
-/**
- * Checks if the access token is valid.
- */
 function isAuthTokenValid(access_token: string) {
 	if (!access_token) {
 		return false;
@@ -250,23 +178,14 @@ function isAuthTokenValid(access_token: string) {
 	return true;
 }
 
-/**
- * Gets the access token from the local storage.
- */
 function getAccessToken() {
 	return window.localStorage.getItem('jwt_access_token');
 }
 
-/**
- * Sets the access token in the local storage.
- */
 function setAccessToken(access_token: string) {
 	return window.localStorage.setItem('jwt_access_token', access_token);
 }
 
-/**
- * Removes the access token from the local storage.
- */
 function removeAccessToken() {
 	return window.localStorage.removeItem('jwt_access_token');
 }

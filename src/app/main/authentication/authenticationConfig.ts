@@ -7,9 +7,6 @@ import signOutConfig from './sign-out/signOutConfig';
 import signUpConfig from './sign-up/signUpConfig';
 import unlockSessionConfig from './unlock-session/unlockSessionConfig';
 
-/**
- * The authentication pages config.
- */
 const authenticationPagesConfigs: FuseRouteConfigsType = [
 	signInConfig,
 	signUpConfig,
@@ -18,7 +15,6 @@ const authenticationPagesConfigs: FuseRouteConfigsType = [
 	resetPasswordConfig,
 	confirmationRequiredConfig,
 	unlockSessionConfig
-
 ];
 
 export default authenticationPagesConfigs;
