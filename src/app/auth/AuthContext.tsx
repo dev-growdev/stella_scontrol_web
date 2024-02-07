@@ -1,11 +1,11 @@
+import FuseSplashScreen from '@fuse/core/FuseSplashScreen';
+import { useAppDispatch } from 'app/store';
+import { showMessage } from 'app/store/fuse/messageSlice';
+import { UserType } from 'app/store/user';
+import { logoutUser, setUser } from 'app/store/user/userSlice';
+import { AxiosError } from 'axios';
 import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
-import FuseSplashScreen from '@fuse/core/FuseSplashScreen';
-import { showMessage } from 'app/store/fuse/messageSlice';
-import { logoutUser, setUser } from 'app/store/user/userSlice';
-import { useAppDispatch } from 'app/store';
-import { AxiosError } from 'axios';
-import { UserType } from 'app/store/user';
 import jwtService from './services/jwtService';
 
 /**
@@ -27,7 +27,6 @@ function AuthProvider(props: AuthProviderProps) {
 
 	useEffect(() => {
 		jwtService.on('onAutoLogin', () => {
-			dispatch(showMessage({ message: 'Signing in with JWT' }));
 
 			/**
 			 * Sign in and retrieve user data with stored token
@@ -35,7 +34,7 @@ function AuthProvider(props: AuthProviderProps) {
 			jwtService
 				.signInWithToken()
 				.then(user => {
-					success(user as UserType, 'Signed in with JWT');
+					success(user as UserType, '');
 				})
 				.catch((error: AxiosError) => {
 					pass(error.message);
@@ -68,7 +67,6 @@ function AuthProvider(props: AuthProviderProps) {
 			Promise.all([
 				dispatch(setUser(user))
 
-				// You can receive data in here before app initialization
 			]).then(() => {
 				if (message) {
 					dispatch(showMessage({ message }));
@@ -100,4 +98,5 @@ function useAuth() {
 	return context;
 }
 
-export { useAuth, AuthProvider };
+export { AuthProvider, useAuth };
+

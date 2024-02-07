@@ -1,4 +1,6 @@
+import { useMsal } from '@azure/msal-react';
 import FuseUtils from '@fuse/utils/FuseUtils';
+import { graphConfig, loginRequest } from 'app/configs/authConfig';
 import UserType from 'app/store/user/UserType';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
@@ -130,10 +132,12 @@ class JwtService extends FuseUtils.EventEmitter {
 	 */
 
 
-
-
-	signInWithToken = () =>
-		new Promise<UserType>((resolve, reject) => {
+	signInWithToken = () => {
+		const token = getAccessToken()
+		if (token) {
+			_setSession(token);
+		}
+		return new Promise<UserType>((resolve, reject) => {
 			axios
 				.get(jwtServiceConfig.accessToken, {
 					data: {
@@ -141,21 +145,22 @@ class JwtService extends FuseUtils.EventEmitter {
 					}
 				})
 
-				.then((response: AxiosResponse<{ data: { user: { uid: string, name: string, email: string, idUserAd: string, jobTitle: string }; access_token: string } }>) => {
+				.then((response: AxiosResponse<{ data: { user: { uid: string, name: string, email: string, idUserAd: string, jobTitle: string, data: { displayName: string, email: string } }; access_token: string } }>) => {
 					if (response.data.data.user) {
-						//aqui vai a treta
-
-						_setSession(response.data.data.access_token);
 						const user = {
 							uid: response.data.data.user.uid,
 							idUserAd: response.data.data.user.idUserAd,
 							jobTile: response.data.data.user.jobTitle,
 							role: ["admin"],
 							data: {
-								displayName: response.data.data.user.name,
-								email: response.data.data.user.email
+								displayName: response.data.data.user.data.displayName,
+								email: response.data.data.user.data.email
 							}
 						}
+						// console.log("antes da funcção")
+						// const tokenAd = getTokenMsal()
+						// console.log(tokenAd, '---- token ad')
+
 						resolve(user);
 					} else {
 						this.logout();
@@ -167,13 +172,14 @@ class JwtService extends FuseUtils.EventEmitter {
 					reject(new Error('Failed to login with token.'));
 				});
 		});
+	}
+
 
 	signInWithId = (data: any) => {
 		return new Promise<UserType>((resolve, reject) => {
 			axios
 				.post(jwtServiceConfig.accessById, data)
 				.then((response: AxiosResponse<{ data: { user: { uid: string, name: string, email: string, idUserAd: string, jobTitle: string }; access_token: string } }>) => {
-
 					if (response.data.data) {
 						_setSession(response.data.data.access_token);
 						const user = {
@@ -188,13 +194,11 @@ class JwtService extends FuseUtils.EventEmitter {
 						}
 						resolve(user);
 					} else {
-
 						this.logout();
 						reject(new Error('Failed to login with token.'));
 					}
 				})
 				.catch(() => {
-
 					this.logout();
 					reject(new Error('Failed to login with token.'));
 				});
@@ -270,6 +274,22 @@ function setAccessToken(access_token: string) {
  */
 function removeAccessToken() {
 	return window.localStorage.removeItem('jwt_access_token');
+}
+
+function getTokenMsal() {
+	const { instance, accounts } = useMsal();
+
+	instance
+		.acquireTokenSilent({
+			...loginRequest,
+			account: accounts[0]
+		})
+		.then((response) => {
+			axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${response.accessToken}` } })
+				.then((response) => {
+					console.log(response)
+				})
+		})
 }
 
 const instanceJwt = new JwtService();
