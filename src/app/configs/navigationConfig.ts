@@ -15,7 +15,6 @@ const navigationConfig: FuseNavigationType = [
 	{
 		id: 'clipboard-list',
 		title: 'Solicitações',
-		translate: 'Solicitações',
 		type: 'item',
 		icon: 'heroicons-outline:clipboard-list',
 		url: 'example'
@@ -23,7 +22,6 @@ const navigationConfig: FuseNavigationType = [
 	{
 		id: 'document-add',
 		title: 'Nova Solicitação',
-		translate: 'Nova Solicitação',//com espaçamento ele adiciona -navigation antes
 		type: 'item',
 		icon: 'heroicons-outline:document-add',
 		url: 'example'
@@ -31,7 +29,6 @@ const navigationConfig: FuseNavigationType = [
 	{
 		id: 'clock',
 		title: 'Cadastros',
-		translate: 'Cadastros',
 		type: 'item',
 		icon: 'heroicons-outline:clock',
 		url: 'example'
@@ -39,7 +36,6 @@ const navigationConfig: FuseNavigationType = [
 	{
 		id: 'cog',
 		title: 'Configurações',
-		translate: 'Configurações',
 		type: 'item',
 		icon: 'heroicons-outline:cog',
 		url: 'example'
