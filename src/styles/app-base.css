@@ -21,7 +21,7 @@
 html {
 	font-size: 62.5%;
 	font-family:
-		'Inter var',
+		'Montserrat',
 		Roboto,
 		Helvetica Neue,
 		Arial,
@@ -90,8 +90,8 @@ h6,
 	font-size: 12px;
 }
 
-.ps > .ps__rail-y,
-.ps > .ps__rail-x {
+.ps>.ps__rail-y,
+.ps>.ps__rail-x {
 	z-index: 99;
 }
 

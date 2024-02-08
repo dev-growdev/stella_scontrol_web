@@ -44,6 +44,7 @@ function UserMenu() {
 				className="min-h-40 min-w-40 p-0 md:px-16 md:py-6"
 				onClick={userMenuClick}
 				color="inherit"
+				sx={{ color: 'white' }}
 			>
 				<div className="mx-4 hidden flex-col items-end md:flex">
 					<Typography
@@ -54,7 +55,7 @@ function UserMenu() {
 					</Typography>
 					<Typography
 						className="text-11 font-medium capitalize"
-						color="text.secondary"
+						color="HighlightText"
 					>
 						{user.role.toString()}
 						{(!user.role || (Array.isArray(user.role) && user.role.length === 0)) && 'Guest'}
@@ -98,7 +99,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:lock-closed</FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Sign In" />
+							<ListItemText primary="Login" />
 						</MenuItem>
 						<MenuItem
 							component={Link}
@@ -108,7 +109,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:user-add </FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Sign up" />
+							<ListItemText primary="Sair" />
 						</MenuItem>
 					</>
 				) : (
