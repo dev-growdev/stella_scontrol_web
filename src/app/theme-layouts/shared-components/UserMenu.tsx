@@ -1,3 +1,4 @@
+import { useMsal } from '@azure/msal-react';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -9,7 +10,8 @@ import Typography from '@mui/material/Typography';
 import { selectUser } from 'app/store/user/userSlice';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import JwtService from 'src/app/auth/services/jwtService';
 
 /**
  * The user menu.
@@ -18,6 +20,7 @@ function UserMenu() {
 	const user = useSelector(selectUser);
 
 	const [userMenu, setUserMenu] = useState<HTMLElement | null>(null);
+	const { instance } = useMsal();
 
 	const userMenuClick = (event: React.MouseEvent<HTMLElement>) => {
 		setUserMenu(event.currentTarget);
@@ -26,6 +29,14 @@ function UserMenu() {
 	const userMenuClose = () => {
 		setUserMenu(null);
 	};
+
+	function handleLogout() {
+		instance.logoutPopup({
+			postLogoutRedirectUri: "/login",
+			mainWindowRedirectUri: "/login",
+		})
+		JwtService.logout()
+	}
 
 	return (
 		<>
@@ -58,7 +69,7 @@ function UserMenu() {
 						src={user.data.photoURL}
 					/>
 				) : (
-					<Avatar className="md:mx-4">{user.data.displayName[0]}</Avatar>
+					<Avatar className="md:mx-4">{user.data.photoURL}</Avatar>
 				)}
 			</Button>
 
@@ -103,11 +114,7 @@ function UserMenu() {
 					</>
 				) : (
 					<MenuItem
-						component={NavLink}
-						to="/sign-out"
-						onClick={() => {
-							userMenuClose();
-						}}
+						onClick={handleLogout}
 					>
 						<ListItemIcon className="min-w-40">
 							<FuseSvgIcon>heroicons-outline:logout</FuseSvgIcon>

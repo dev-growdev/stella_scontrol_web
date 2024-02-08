@@ -3,14 +3,17 @@
 // import { create } from 'jss';
 // import jssExtend from 'jss-plugin-extend';
 // import rtl from 'jss-rtl';
-import Provider from 'react-redux/es/components/Provider';
+import { PublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
+import { StyledEngineProvider } from '@mui/material/styles';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { StyledEngineProvider } from '@mui/material/styles';
 import routes from 'app/configs/routesConfig';
 import { useMemo } from 'react';
-import store from './store';
+import Provider from 'react-redux/es/components/Provider';
 import AppContext from './AppContext';
+import { msalConfig } from './configs/authConfig';
+import store from './store';
 
 type ComponentProps = {
 	name?: string;
@@ -34,16 +37,20 @@ function withAppProviders(Component: React.ComponentType<ComponentProps>) {
 			[routes]
 		);
 
+		const msalInstance = new PublicClientApplication(msalConfig);
+
 		return (
-			<AppContext.Provider value={val}>
-				<LocalizationProvider dateAdapter={AdapterDateFns}>
-					<Provider store={store}>
-						<StyledEngineProvider injectFirst>
-							<Component {...props} />
-						</StyledEngineProvider>
-					</Provider>
-				</LocalizationProvider>
-			</AppContext.Provider>
+			<MsalProvider instance={msalInstance}>
+				<AppContext.Provider value={val}>
+					<LocalizationProvider dateAdapter={AdapterDateFns}>
+						<Provider store={store}>
+							<StyledEngineProvider injectFirst>
+								<Component {...props} />
+							</StyledEngineProvider>
+						</Provider>
+					</LocalizationProvider>
+				</AppContext.Provider>
+			</MsalProvider>
 		);
 	}
 
