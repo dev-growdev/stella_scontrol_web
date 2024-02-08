@@ -1,9 +1,11 @@
+import { useMsal } from '@azure/msal-react';
 import FuseSplashScreen from '@fuse/core/FuseSplashScreen';
+import { graphConfig, loginRequest } from 'app/configs/authConfig';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { UserType } from 'app/store/user';
 import { logoutUser, setUser } from 'app/store/user/userSlice';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import jwtService from './services/jwtService';
@@ -24,10 +26,10 @@ function AuthProvider(props: AuthProviderProps) {
 	const [waitAuthCheck, setWaitAuthCheck] = useState(true);
 	const dispatch = useAppDispatch();
 	const val = useMemo(() => ({ isAuthenticated }), [isAuthenticated]);
+	const { instance, accounts } = useMsal()
 
 	useEffect(() => {
 		jwtService.on('onAutoLogin', () => {
-
 			/**
 			 * Sign in and retrieve user data with stored token
 			 */
@@ -86,6 +88,30 @@ function AuthProvider(props: AuthProviderProps) {
 			setIsAuthenticated(false);
 		}
 	}, [dispatch]);
+
+	useEffect(() => {
+		setTimeout(() => {
+			instance
+				.acquireTokenSilent({
+					...loginRequest,
+					account: accounts[0]
+				})
+				.then((getToken) => {
+					axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${getToken.accessToken}` } })
+						.then((responseFromToken) => {
+							console.log(responseFromToken)
+							// Aqui prossegue com o usuário autenticado
+
+							//só entra nessa lógica se o usuário já está conectado
+
+						}).catch((err) => {
+							console.log(err)
+							//aqui vai a lógica para desconectar e excluir o usuário
+						})
+
+				})
+		}, 2000)
+	}, [])
 
 	return waitAuthCheck ? <FuseSplashScreen /> : <AuthContext.Provider value={val}>{children}</AuthContext.Provider>;
 }
