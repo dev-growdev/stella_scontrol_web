@@ -46,7 +46,6 @@ function AuthProvider(props: AuthProviderProps) {
 						.then((getToken) => {
 							axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${getToken.accessToken}` } })
 								.then((responseFromToken) => {
-									console.log(responseFromToken)
 									success(user as UserType, '');
 								}).catch((err) => {
 									disableUser(user.idUserAd)

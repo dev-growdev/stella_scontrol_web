@@ -81,12 +81,10 @@ export default function FormRequest() {
 
     const handleFileChange = (event) => {
         const files = event.target.files;
-        console.log(files);
     };
 
     function handleAdd() {
         if (valueProducts) {
-            console.log('handle add', valueProducts)
             const newProduct = { produto: valueProducts.product, marca: valueProducts.brand };
             setTableData([...tableData, newProduct]);
             setValueProducts(null);
