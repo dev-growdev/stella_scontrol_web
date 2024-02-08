@@ -1,6 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import FuseSplashScreen from '@fuse/core/FuseSplashScreen';
 import { graphConfig, loginRequest } from 'app/configs/authConfig';
+import { disableUser } from 'app/configs/service/user.service';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { UserType } from 'app/store/user';
@@ -28,6 +29,7 @@ function AuthProvider(props: AuthProviderProps) {
 	const val = useMemo(() => ({ isAuthenticated }), [isAuthenticated]);
 	const { instance, accounts } = useMsal()
 
+
 	useEffect(() => {
 		jwtService.on('onAutoLogin', () => {
 			/**
@@ -36,19 +38,39 @@ function AuthProvider(props: AuthProviderProps) {
 			jwtService
 				.signInWithToken()
 				.then(user => {
-					success(user as UserType, '');
+					instance
+						.acquireTokenSilent({
+							...loginRequest,
+							account: accounts[0]
+						})
+						.then((getToken) => {
+							axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${getToken.accessToken}` } })
+								.then((responseFromToken) => {
+									console.log(responseFromToken)
+									success(user as UserType, '');
+								}).catch((err) => {
+									disableUser(user.idUserAd)
+									console.log(err)
+								})
+
+						})
 				})
 				.catch((error: AxiosError) => {
 					pass(error.message);
 				});
 		});
 
+		jwtService.on('onUserDisable', () => {
+			pass('Você não tem acesso.')
+			dispatch(logoutUser());
+		})
+
 		jwtService.on('onLogin', (user: UserType) => {
-			success(user, 'Signed in');
+			success(user, 'Você está logado.');
 		});
 
 		jwtService.on('onLogout', () => {
-			pass('Signed out');
+			pass('Você se desconectou');
 
 			dispatch(logoutUser());
 		});
@@ -89,31 +111,6 @@ function AuthProvider(props: AuthProviderProps) {
 		}
 	}, [dispatch]);
 
-	useEffect(() => {
-		setTimeout(() => {
-			instance
-				.acquireTokenSilent({
-					...loginRequest,
-					account: accounts[0]
-				})
-				.then((getToken) => {
-					axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${getToken.accessToken}` } })
-						.then((responseFromToken) => {
-							console.log(responseFromToken)
-							// Aqui prossegue com o usuário autenticado
-
-							//só entra nessa lógica se o usuário já está conectado
-
-							//lógica quebra ao desconectar manualmente
-
-						}).catch((err) => {
-							console.log(err)
-							//aqui vai a lógica para desconectar e excluir o usuário
-						})
-
-				})
-		}, 2000)
-	}, [])
 
 	return waitAuthCheck ? <FuseSplashScreen /> : <AuthContext.Provider value={val}>{children}</AuthContext.Provider>;
 }
