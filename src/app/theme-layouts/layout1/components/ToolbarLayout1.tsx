@@ -91,6 +91,9 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 
 					<div className="flex h-full items-center overflow-x-auto px-8">
 						<FuseSvgIcon sx={{ color: theme => theme.palette.common.white }}>heroicons-outline:bell</FuseSvgIcon>
+					</div>
+
+					<div className="flex h-full items-center overflow-x-auto px-8">
 						<UserMenu />
 					</div>
 
