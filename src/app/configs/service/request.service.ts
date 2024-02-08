@@ -2,7 +2,7 @@ import apiService from "./api.service"
 
 export interface RequestForm {
     description: string
-    requiredReceipt: boolean
+    sendReceipt: boolean
     totalRequestValue: number
     dueDate: Date
 }
