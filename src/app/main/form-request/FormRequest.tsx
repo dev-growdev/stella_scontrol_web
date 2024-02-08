@@ -62,9 +62,9 @@ export default function FormRequest() {
     const [tableData, setTableData] = useState([])
     const [description, setDescription] = useState("")
     const [totalValue, setTotalValue] = useState("")
+    const [typeAccount, setTypeAccount] = useState("")
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
-
 
     const currentDate = new Date();
     const minDate = new Date();
@@ -103,7 +103,6 @@ export default function FormRequest() {
         setValueProducts({ product: data.product, brand: data.brand })
     }
 
-
     async function handleSubmitRequest() {
         const newRequest = {
             description,
@@ -135,12 +134,15 @@ export default function FormRequest() {
         }
     }
 
+    const handleChangeTypeAccount = (event: SelectChangeEvent) => {
+        setTypeAccount(event.target.value as string);
+    };
 
 
     return (
         <Box className="flex flex-col w-full">
             <div className="p-32 mt-20">
-                <Button variant='text' startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}>VOLTAR</Button>
+                <Button className="mb-12" variant='text' startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}>VOLTAR</Button>
 
                 <Paper elevation={4} className="p-28">
                     <Typography className="text-20 md:text-28" component='h1' variant="h4" fontWeight={400}>Abrir nova solicitação</Typography>
@@ -157,7 +159,7 @@ export default function FormRequest() {
 
                     <div className="flex items-center gap-24 flex-col sm:flex-row">
                         <CreatableOptions selectedData={getDataFromCreatable} newData={testeCreatable} products={productsArray} />
-                        <Button className="w-full sm:w-144" onClick={handleAdd} sx={{ borderRadius: '7px' }} variant="contained" startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}>
+                        <Button className="w-full sm:w-144 pl-60 pr-64" onClick={handleAdd} sx={{ borderRadius: '7px' }} variant="contained" startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}>
                             ADICIONAR
                         </Button>
                     </div>
@@ -166,7 +168,14 @@ export default function FormRequest() {
                     <TextField onChange={(e) => setDescription(e.target.value)} multiline rows={4} label="Descrição da solicitação" />
 
                     <div className="flex flex-col sm:flex-row items-center gap-24">
-                        <TextField onChange={(e) => setTotalValue(e.target.value)} className="w-full" type="number" label="Valor total" InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }} />
+                        <TextField onChange={(e) => setTotalValue(e.target.value)}
+                            className="w-full"
+                            type="number"
+                            label="Valor total"
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                                sx: { height: '3.73em' }
+                            }} />
 
                         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
                             <DatePicker className="w-full" label="Vencimento" minDate={minDate} format="dd/MM/yyyy" onChange={(d) => setDueDate(d)} />
@@ -194,20 +203,35 @@ export default function FormRequest() {
                             </Select>
                         </FormControl>
 
-
-
                     </div>
                     {formaDePagamento[0] === "Pix" && <TextField label="Informe a chave pix" />}
-                    {formaDePagamento[0] === "Transferência bancária" && <div className="flex justify-around gap-24">
-                        <div className="flex flex-col sm:flex-row gap-7">
-                            <TextField label="Banco" />
-                            <TextField label="Numero da conta" />
-                            <TextField label="Dígito" />
-                            <TextField label="Agência" />
+                    {formaDePagamento[0] === "Transferência bancária" && <div className="flex gap-24 justify-center">
+                        <div className="flex flex-col w-full gap-24">
+                            <div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
+                                <TextField fullWidth label="Banco" />
+                                <TextField fullWidth label="Numero da conta" />
+                                <TextField fullWidth label="Agência" />
+                            </div>
+                            <div className="flex gap-24">
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Tipo de conta</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={typeAccount}
+                                        label="Age"
+                                        onChange={handleChangeTypeAccount}
+                                    >
+                                        <MenuItem value="Conta poupança">Conta poupança</MenuItem>
+                                        <MenuItem value="Conta corrente">Conta corrente</MenuItem>
+
+                                    </Select>
+                                </FormControl>
+                                <TextField fullWidth label="CPF ou CNPJ do Beneficiário" />
+                            </div>
                         </div>
                     </div>}
                     {formaDePagamento.some(option => option.includes("Cartão")) && <TextField label="selecionar ao portador" />}
-
 
                     <div className="flex items-center">
                         <div className="flex flex-col sm:flex-row items-center">
@@ -263,15 +287,6 @@ export default function FormRequest() {
                         </FormGroup>
                     </div>
                     <div className="flex justify-end gap-10 flex-col sm:flex-row">
-
-                        <Button sx={{ color: theme.palette.common.black }} variant="text" startIcon={
-                            <FuseSvgIcon sx={{
-                                color: theme.palette.common.black
-                            }}>
-                                heroicons-outline:printer
-                            </FuseSvgIcon>}>
-                            IMPRIMIR
-                        </Button>
                         <Button variant="outlined" sx={{ borderRadius: '7px' }}>CANCELAR</Button>
                         <Button onClick={handleSubmitRequest} sx={{ borderRadius: '7px' }} variant="contained">ENVIAR</Button>
                     </div>
