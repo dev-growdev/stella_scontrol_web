@@ -104,6 +104,8 @@ function AuthProvider(props: AuthProviderProps) {
 
 							//só entra nessa lógica se o usuário já está conectado
 
+							//lógica quebra ao desconectar manualmente
+
 						}).catch((err) => {
 							console.log(err)
 							//aqui vai a lógica para desconectar e excluir o usuário
