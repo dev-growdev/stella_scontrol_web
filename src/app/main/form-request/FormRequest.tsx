@@ -107,7 +107,7 @@ export default function FormRequest() {
     async function handleSubmitRequest() {
         const newRequest = {
             description,
-            requiredReceipt,
+            sendReceipt: requiredReceipt,
             totalRequestValue: +totalValue,
             dueDate
         }
