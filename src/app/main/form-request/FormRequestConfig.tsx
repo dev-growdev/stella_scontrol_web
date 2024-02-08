@@ -30,7 +30,7 @@ const formRequestPageConfig: FuseRouteConfigType = {
             }
         }
     },
-    auth: authRoles.onlyGuest,
+    auth: authRoles.admin,
     routes: [
         {
             path: 'solicitar-pagamento',
