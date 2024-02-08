@@ -19,7 +19,7 @@ class JwtService extends FuseUtils.EventEmitter {
 				new Promise(() => {
 					if (err?.response?.status === 401 && err.config) {
 						// if you ever get an unauthorized response, logout the user
-						this.emit('onAutoLogout', 'Invalid access_token');
+						this.emit('onAutoLogout', 'Você foi desconectado');
 						_setSession(null);
 					}
 					throw err;
@@ -114,14 +114,22 @@ class JwtService extends FuseUtils.EventEmitter {
 							name: string,
 							email: string,
 							idUserAd: string,
-							jobTitle: string
+							jobTitle: string,
+							enable: boolean
 						};
 						access_token: string
 					}
 				}>) => {
+
 					const userFromResponse = response.data.data.user
 					if (userFromResponse) {
+						if (!userFromResponse.enable) {
+							this.emit('onUserDisable')
+							reject(new Error('Você não tem acesso'))
+						}
+
 						const token = response.data.data.access_token
+
 						_setSession(token);
 						const user = {
 							uid: userFromResponse.uid,

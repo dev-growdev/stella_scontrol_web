@@ -19,7 +19,9 @@ function SignInPage() {
 	function handleMicrosoftAD() {
 		instance.loginPopup(loginRequest)
 			.then(async (loginResponse) => {
+
 				const me = await axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${loginResponse.accessToken}` } })
+
 				const user = {
 					idUserAd: me.data.id,
 					email: me.data.userPrincipalName,
@@ -37,7 +39,6 @@ function SignInPage() {
 				console.log(e)
 			})
 	}
-
 
 	return (
 		<div className="flex min-w-0 flex-auto flex-col items-center sm:flex-row sm:justify-center md:items-start md:justify-start">

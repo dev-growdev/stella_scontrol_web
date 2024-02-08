@@ -1,9 +1,12 @@
+import { useMsal } from '@azure/msal-react';
 import FuseSplashScreen from '@fuse/core/FuseSplashScreen';
+import { graphConfig, loginRequest } from 'app/configs/authConfig';
+import { disableUser } from 'app/configs/service/user.service';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { UserType } from 'app/store/user';
 import { logoutUser, setUser } from 'app/store/user/userSlice';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import jwtService from './services/jwtService';
@@ -24,29 +27,49 @@ function AuthProvider(props: AuthProviderProps) {
 	const [waitAuthCheck, setWaitAuthCheck] = useState(true);
 	const dispatch = useAppDispatch();
 	const val = useMemo(() => ({ isAuthenticated }), [isAuthenticated]);
+	const { instance, accounts } = useMsal()
+
 
 	useEffect(() => {
 		jwtService.on('onAutoLogin', () => {
-
 			/**
 			 * Sign in and retrieve user data with stored token
 			 */
 			jwtService
 				.signInWithToken()
 				.then(user => {
-					success(user as UserType, '');
+					instance
+						.acquireTokenSilent({
+							...loginRequest,
+							account: accounts[0]
+						})
+						.then((getToken) => {
+							axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${getToken.accessToken}` } })
+								.then((responseFromToken) => {
+									success(user as UserType, '');
+								}).catch((err) => {
+									disableUser(user.idUserAd)
+									console.log(err)
+								})
+
+						})
 				})
 				.catch((error: AxiosError) => {
 					pass(error.message);
 				});
 		});
 
+		jwtService.on('onUserDisable', () => {
+			pass('Você não tem acesso.')
+			dispatch(logoutUser());
+		})
+
 		jwtService.on('onLogin', (user: UserType) => {
-			success(user, 'Signed in');
+			success(user, 'Você está logado.');
 		});
 
 		jwtService.on('onLogout', () => {
-			pass('Signed out');
+			pass('Você se desconectou');
 
 			dispatch(logoutUser());
 		});
@@ -86,6 +109,7 @@ function AuthProvider(props: AuthProviderProps) {
 			setIsAuthenticated(false);
 		}
 	}, [dispatch]);
+
 
 	return waitAuthCheck ? <FuseSplashScreen /> : <AuthContext.Provider value={val}>{children}</AuthContext.Provider>;
 }
