@@ -13,13 +13,37 @@ i18next.addResourceBundle('ar', 'navigation', ar);
  */
 const navigationConfig: FuseNavigationType = [
 	{
-		id: 'example-component',
+		id: 'clipboard-list',
 		title: 'Solicitações',
 		translate: 'Solicitações',
 		type: 'item',
-		icon: 'heroicons-outline:star',
+		icon: 'heroicons-outline:clipboard-list',
 		url: 'example'
-	}
+	},
+	{
+		id: 'document-add',
+		title: 'Nova Solicitação',
+		translate: 'Nova Solicitação',//com espaçamento ele adiciona -navigation antes
+		type: 'item',
+		icon: 'heroicons-outline:document-add',
+		url: 'example'
+	},
+	{
+		id: 'clock',
+		title: 'Cadastros',
+		translate: 'Cadastros',
+		type: 'item',
+		icon: 'heroicons-outline:clock',
+		url: 'example'
+	},
+	{
+		id: 'cog',
+		title: 'Configurações',
+		translate: 'Configurações',
+		type: 'item',
+		icon: 'heroicons-outline:cog',
+		url: 'example'
+	},
 ];
 
 export default navigationConfig;
