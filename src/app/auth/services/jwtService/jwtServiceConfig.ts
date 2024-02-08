@@ -2,10 +2,8 @@
  * Configuration object containing the authentication service API endpoints
  */
 const jwtServiceConfig = {
-	signIn: 'api/auth/sign-in',
-	signUp: 'api/auth/sign-up',
-	accessToken: 'api/auth/access-token',
-	updateUser: 'api/auth/user/update'
+	accessToken: `${process.env.REACT_APP_API_URL}/auth`,
+	accessById: `${process.env.REACT_APP_API_URL}/login`
 };
 
 export default jwtServiceConfig;

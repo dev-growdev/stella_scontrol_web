@@ -1,5 +1,5 @@
-import { lazy } from 'react';
 import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
+import { lazy } from 'react';
 import { authRoles } from 'src/app/auth';
 
 const SignInPage = lazy(() => import('./SignInPage'));
@@ -32,7 +32,7 @@ const signInPagesConfig: FuseRouteConfigType = {
 	auth: authRoles.onlyGuest,
 	routes: [
 		{
-			path: 'sign-in',
+			path: 'login',
 			element: <SignInPage />
 		}
 	]

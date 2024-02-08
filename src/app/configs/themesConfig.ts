@@ -1,6 +1,6 @@
 import { fuseDark, skyBlue } from '@fuse/colors';
-import { blueGrey } from '@mui/material/colors';
 import { FuseThemesType } from '@fuse/core/FuseSettings/FuseSettings';
+import { blueGrey } from '@mui/material/colors';
 
 /**
  * The lightPaletteText object defines the text color palette for the light theme.

@@ -1,17 +1,17 @@
-import { Component, ReactNode } from 'react';
-import { matchRoutes } from 'react-router-dom';
-import FuseUtils from '@fuse/utils';
-import AppContext, { AppContextType } from 'app/AppContext';
-import withRouter from '@fuse/core/withRouter';
-import history from '@history';
-import { WithRouterProps } from '@fuse/core/withRouter/withRouter';
-import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
 import {
 	getSessionRedirectUrl,
 	resetSessionRedirectUrl,
 	setSessionRedirectUrl
 } from '@fuse/core/FuseAuthorization/sessionRedirectUrl';
 import FuseLoading from '@fuse/core/FuseLoading';
+import withRouter from '@fuse/core/withRouter';
+import { WithRouterProps } from '@fuse/core/withRouter/withRouter';
+import FuseUtils from '@fuse/utils';
+import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
+import history from '@history';
+import AppContext, { AppContextType } from 'app/AppContext';
+import { Component, ReactNode } from 'react';
+import { matchRoutes } from 'react-router-dom';
 
 type FuseAuthorizationProps = {
 	children: ReactNode;
@@ -28,10 +28,6 @@ function isUserGuest(role: string[] | string) {
 	return !role || (Array.isArray(role) && role.length === 0);
 }
 
-/**
- * FuseAuthorization is a higher-order component that wraps its child component which handles the authorization logic of the app.
- * It checks the provided Auth property from FuseRouteItemType (auth property) against the current logged-in user role.
- */
 class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 	constructor(props: FuseAuthorizationProps, context: AppContextType) {
 		super(props);
@@ -88,10 +84,6 @@ class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 			setSessionRedirectUrl(pathname);
 		}
 
-		/**
-		 * If user is member but don't have permission to view the route
-		 * redirected to main route '/'
-		 */
 		if (!userHasPermission && !isGuest && !ignoredPaths.includes(pathname)) {
 			setSessionRedirectUrl('/');
 		}
@@ -105,18 +97,9 @@ class FuseAuthorization extends Component<FuseAuthorizationProps, State> {
 		const { userRole, loginRedirectUrl } = this.props;
 		const redirectUrl = getSessionRedirectUrl() || loginRedirectUrl;
 
-		/*
-		User is guest
-		Redirect to Login Page
-		*/
 		if (!userRole || userRole.length === 0) {
-			setTimeout(() => history.push('/sign-in'), 0);
+			setTimeout(() => history.push('/login'), 0);
 		} else {
-			/*
-		  User is member
-		  User must be on unAuthorized page or just logged in
-		  Redirect to dashboard or loginRedirectUrl
-			*/
 			setTimeout(() => history.push(redirectUrl), 0);
 			resetSessionRedirectUrl();
 		}
