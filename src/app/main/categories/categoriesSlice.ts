@@ -12,7 +12,7 @@ export interface Category {
 	action: string;
 }
 
-interface CategoriesType {
+export interface CategoriesType {
 	categories: Category[];
 	loading: boolean;
 }
@@ -22,7 +22,7 @@ interface createCategory {
 	enable: boolean;
 }
 
-export const createCategory = createAsyncThunk('categories/create', async (data: createCategory) => {
+export const createCategory = createAsyncThunk('categories/createCategory', async (data: createCategory) => {
 	try {
 		const response = await axios.post(`${process.env.REACT_APP_API_URL}/categories`, data);
 
@@ -34,7 +34,6 @@ export const createCategory = createAsyncThunk('categories/create', async (data:
 			action: ''
 		};
 	} catch (error) {
-		console.error(error);
 		return initialState.categories[0];
 	}
 });
@@ -45,7 +44,7 @@ export const getCategories = createAsyncThunk('categories/getCategories', async 
 
 		return response.data.data;
 	} catch (error) {
-		return initialState;
+		return { categories: [], loading: false, error: 'Algo deu errado, tente novamente' };
 	}
 });
 
@@ -55,10 +54,24 @@ export const updateCategory = createAsyncThunk('categories/updateCategory', asyn
 			name: data.name,
 			enable: data.enable
 		};
+		console.log(data, 'DATA');
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/categories/${data.uid}`, body);
 		return response.data.data;
 	} catch (error) {
 		//analisar refatoração
+		return initialState;
+	}
+});
+
+export const disableCategory = createAsyncThunk('categories/disableCategory', async (data: Category) => {
+	try {
+		const body = {
+			name: data.name,
+			enable: data.enable
+		};
+		const response = await axios.put(`${process.env.REACT_APP_API_URL}/categories/${data.uid}/disable`, body);
+		return response.data.data;
+	} catch (error) {
 		return initialState;
 	}
 });
@@ -78,7 +91,9 @@ const categoriesSlice = createSlice({
 				state.loading = true;
 			})
 			.addCase(createCategory.fulfilled, (state, action) => {
-				state.categories.push(action.payload);
+				if (action.payload !== undefined) {
+					state.categories.push(action.payload);
+				}
 				state.loading = false;
 			})
 			.addCase(getCategories.pending, state => {
@@ -93,12 +108,18 @@ const categoriesSlice = createSlice({
 			})
 			.addCase(updateCategory.fulfilled, (state, action) => {
 				state.loading = false;
-				// Encontrar o índice do item a ser atualizado no array de categorias
 				const index = state.categories.findIndex(cat => cat.uid === action.payload.uid);
-				// Atualizar o item no array
 				if (index !== -1) {
 					state.categories[index] = action.payload;
 				}
+			})
+			.addCase(disableCategory.pending, state => {
+				state.loading === true;
+			})
+			.addCase(disableCategory.fulfilled, (state, action) => {
+				const indexUpdated = state.categories.findIndex(item => action.payload.uid === item.uid);
+
+				state.categories[indexUpdated] = action.payload;
 			});
 	}
 });

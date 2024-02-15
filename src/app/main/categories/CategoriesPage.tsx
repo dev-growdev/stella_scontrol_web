@@ -1,10 +1,18 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Box, Button, FormControlLabel, FormGroup, Paper, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DataTable from '../../components/DataTable';
-import { Category, createCategory, getCategories, selectCategories, updateCategory } from './categoriesSlice';
+import {
+	Category,
+	createCategory,
+	disableCategory,
+	getCategories,
+	selectCategories,
+	updateCategory
+} from './categoriesSlice';
 
 export default function CategoriesPage() {
 	const [editMode, setEditMode] = useState(false);
@@ -22,6 +30,19 @@ export default function CategoriesPage() {
 		setEditMode(true);
 	}
 
+	function handleGetStatus(item) {
+		const itemToggleEnable = {
+			uid: item.uid,
+			name: item.name,
+			enable: !item.enable,
+			createdAt: new Date(),
+			action: ''
+		};
+		console.log(itemToggleEnable);
+		dispatch(disableCategory(itemToggleEnable));
+	}
+
+	//refatorar
 	function handleEditPropertiesItem(e) {
 		const { name, value, checked } = e.target;
 		if (name === 'name') {
@@ -40,8 +61,23 @@ export default function CategoriesPage() {
 	}
 
 	function submitEdit() {
-		dispatch(updateCategory(editItem));
-		setEditMode(false);
+		dispatch(updateCategory(editItem)).then(res => {
+			console.log(res);
+			if (res.payload && Array.isArray(res.payload.categories)) {
+				dispatch(
+					showMessage({
+						message: `Esse nome de categoria já existe.`,
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'error'
+					})
+				);
+			} else {
+				setEditMode(false);
+			}
+		});
 	}
 
 	function submitNewCategory() {
@@ -49,7 +85,20 @@ export default function CategoriesPage() {
 			name: newItem,
 			enable: true
 		};
-		dispatch(createCategory(item));
+		dispatch(createCategory(item)).then(res => {
+			if (res.payload === undefined) {
+				dispatch(
+					showMessage({
+						message: `Categoria já existente.`,
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'error'
+					})
+				);
+			}
+		});
 		setNewItem('');
 	}
 
@@ -94,30 +143,15 @@ export default function CategoriesPage() {
 								}
 							/>
 
-							{editMode ? (
-								<FormGroup>
-									<FormControlLabel
-										control={
-											<Switch
-												name="enable"
-												checked={editItem.enable ? true : false}
-												onChange={e => handleEditPropertiesItem(e)}
-											/>
-										}
-										label="Ativar"
-									/>
-								</FormGroup>
-							) : (
-								<Button
-									onClick={submitNewCategory}
-									className="w-full sm:w-144 pl-60 pr-64"
-									sx={{ borderRadius: '7px' }}
-									variant="contained"
-									startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
-								>
-									ADICIONAR
-								</Button>
-							)}
+							<Button
+								onClick={submitNewCategory}
+								className="w-full sm:w-144 pl-60 pr-64"
+								sx={{ borderRadius: '7px' }}
+								variant="contained"
+								startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
+							>
+								ADICIONAR
+							</Button>
 						</div>
 						{editMode && (
 							<div>
@@ -130,7 +164,7 @@ export default function CategoriesPage() {
 									EDITAR
 								</Button>
 								<Button
-									className="w-full sm:w-144 pl-60 pr-64"
+									className="w-full sm:w-144 pl-60 pr-64 ml-10"
 									sx={{ borderRadius: '7px' }}
 									variant="outlined"
 									onClick={handleCancelEdit}
@@ -143,8 +177,9 @@ export default function CategoriesPage() {
 							<DataTable
 								editMode={editMode}
 								setEditMode={setEditMode}
-								categoriesData={categoriesRedux.categories}
+								categoriesData={categoriesRedux}
 								selectItem={handleGetEditItem}
+								handleStatus={handleGetStatus}
 							/>
 						</div>
 					</Paper>
