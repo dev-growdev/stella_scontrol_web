@@ -130,7 +130,7 @@ export default function CategoriesPage() {
 					>
 						<Typography color="GrayText">Adicione novas categorias.</Typography>
 
-						<div className="flex items-center gap-24">
+						<div className="flex flex-col sm:flex-row items-center gap-24">
 							<TextField
 								name="name"
 								fullWidth
@@ -154,7 +154,7 @@ export default function CategoriesPage() {
 							</Button>
 						</div>
 						{editMode && (
-							<div>
+							<div className="flex">
 								<Button
 									className="w-full sm:w-144 pl-60 pr-64"
 									sx={{ borderRadius: '7px' }}

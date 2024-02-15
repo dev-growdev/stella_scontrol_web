@@ -107,7 +107,7 @@ export default function EnhancedTable({
 		<Box sx={{ width: '100%' }}>
 			<Paper sx={{ width: '100%', mb: 2 }}>
 				<Toolbar>
-					<div className="flex flex-row w-full items-center gap-24">
+					<div className="flex flex-col sm:flex-row w-full items-center gap-24">
 						<Typography
 							variant="h6"
 							component="div"
