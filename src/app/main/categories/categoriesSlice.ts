@@ -54,7 +54,6 @@ export const updateCategory = createAsyncThunk('categories/updateCategory', asyn
 			name: data.name,
 			enable: data.enable
 		};
-		console.log(data, 'DATA');
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/categories/${data.uid}`, body);
 		return response.data.data;
 	} catch (error) {

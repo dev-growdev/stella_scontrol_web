@@ -38,7 +38,7 @@ export default function CategoriesPage() {
 			createdAt: new Date(),
 			action: ''
 		};
-		console.log(itemToggleEnable);
+
 		dispatch(disableCategory(itemToggleEnable));
 	}
 
@@ -62,7 +62,6 @@ export default function CategoriesPage() {
 
 	function submitEdit() {
 		dispatch(updateCategory(editItem)).then(res => {
-			console.log(res);
 			if (res.payload && Array.isArray(res.payload.categories)) {
 				dispatch(
 					showMessage({
