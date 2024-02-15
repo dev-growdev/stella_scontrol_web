@@ -6,12 +6,15 @@ import {
 	FormControl,
 	FormControlLabel,
 	FormGroup,
-	Input,
 	InputLabel,
 	MenuItem,
 	OutlinedInput,
 	Paper,
 	Select,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableRow,
 	TextField,
 	Typography,
 	useTheme
@@ -25,11 +28,25 @@ import { createRequest } from 'app/configs/service/request.service';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { ptBR } from 'date-fns/locale';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import '../../../styles/muiCustomComponents.css';
 import CreatableOptions, { ProductOptionType } from '../../components/CreatableOptions';
 import CustomizedTables from '../../components/CustomizedTables';
+
+import { styled } from '@mui/material/styles';
+
+const VisuallyHiddenInput = styled('input')({
+	clip: 'rect(0 0 0 0)',
+	clipPath: 'inset(50%)',
+	height: 1,
+	overflow: 'hidden',
+	position: 'absolute',
+	bottom: 0,
+	left: 0,
+	whiteSpace: 'nowrap',
+	width: 1
+});
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -76,15 +93,31 @@ export default function FormRequest() {
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);
 
+	const [uploadedFiles, setUploadedFiles] = useState([]);
+
+	useEffect(() => {
+		console.log(uploadedFiles);
+	}, [uploadedFiles]);
+
+	const handleFileChange = event => {
+		const files = event.target.files;
+		let newUploadedFiles = [];
+		// Loop através dos arquivos selecionados e adiciona-os ao estado
+		for (let i = 0; i < files.length; i++) {
+			newUploadedFiles.push(files[i]);
+		}
+		setUploadedFiles(prevUploadedFiles => [...prevUploadedFiles, ...newUploadedFiles]);
+	};
+
+	const handleFileRemove = indexToRemove => {
+		setUploadedFiles(prevUploadedFiles => prevUploadedFiles.filter((file, index) => index !== indexToRemove));
+	};
+
 	const handleChangeSelect = (event: SelectChangeEvent<typeof formaDePagamento>) => {
 		const {
 			target: { value }
 		} = event;
 		setFormaDePagamento(typeof value === 'string' ? value.split(',') : value);
-	};
-
-	const handleFileChange = event => {
-		const files = event.target.files;
 	};
 
 	function handleAdd() {
@@ -314,75 +347,110 @@ export default function FormRequest() {
 						<TextField label="selecionar ao portador" />
 					)}
 
-					<div className="flex items-center">
-						<div className="flex flex-col sm:flex-row items-center">
+					<div className="flex flex-row items-center">
+						<Typography
+							className="mr-10"
+							color="GrayText"
+						>
+							Necessita comprovante
+						</Typography>
+						<FormGroup className="flex flex-row flex-nowrap">
+							<FormControlLabel
+								control={
+									<Checkbox
+										onClick={() => setRequiredReceipt(true)}
+										checked={requiredReceipt ? true : false}
+									/>
+								}
+								label="Sim"
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox
+										onClick={() => setRequiredReceipt(false)}
+										checked={requiredReceipt === false ? true : false}
+									/>
+								}
+								label="Não"
+							/>
+						</FormGroup>
+					</div>
+
+					<div className="flex flex-row items-center">
+						<Typography
+							className="mr-10"
+							color="GrayText"
+						>
+							Anexar documentos
+						</Typography>
+						<div>
+							<Button
+								component="label"
+								role={undefined}
+								variant="outlined"
+								sx={{
+									borderRadius: '7px',
+									border: `2px solid ${theme.palette.primary.main}`,
+									minHeight: '33px',
+									maxHeight: '33px',
+									height: '33px',
+									padding: '0 0 0 10px',
+									color: theme.palette.primary.main
+								}}
+								tabIndex={-1}
+								endIcon={
+									<FuseSvgIcon
+										sx={{
+											border: `2px solid ${theme.palette.primary.main}`,
+											borderRadius: '0 7px 7px 0',
+											color: theme.palette.common.white,
+											backgroundColor: theme.palette.primary.main,
+											margin: '0',
+											height: '30px'
+										}}
+									>
+										heroicons-outline:upload
+									</FuseSvgIcon>
+								}
+							>
+								ANEXAR DOCUMENTO
+								<VisuallyHiddenInput
+									multiple
+									type="file"
+									onChange={handleFileChange}
+								/>
+							</Button>
+						</div>
+					</div>
+					{uploadedFiles.length > 0 && (
+						<div>
 							<Typography
 								className="mr-10"
 								color="GrayText"
 							>
-								Possui comprovante
+								Documentos anexados:
 							</Typography>
-							<FormGroup className="flex flex-row flex-nowrap">
-								<FormControlLabel
-									control={
-										<Checkbox
-											onClick={() => setRequiredReceipt(true)}
-											checked={requiredReceipt ? true : false}
-										/>
-									}
-									label="Sim"
-								/>
-								<FormControlLabel
-									control={
-										<Checkbox
-											onClick={() => setRequiredReceipt(false)}
-											checked={requiredReceipt === false ? true : false}
-										/>
-									}
-									label="Não"
-								/>
-							</FormGroup>
-							{requiredReceipt && (
-								<div>
-									<Input
-										id="file-upload"
-										type="file"
-										style={{ display: 'none' }}
-										onChange={handleFileChange}
-									/>
-									<label htmlFor="file-upload">
-										<div
-											style={{
-												border: `2px solid ${theme.palette.primary.main}`,
-												borderRadius: '7px',
-												height: '30px'
-											}}
-											className="flex flex-row items-center"
-										>
-											<Button
-												variant="text"
-												component="span"
-											>
-												ANEXAR DOCUMENTO
-											</Button>
-											<FuseSvgIcon
-												sx={{
-													border: `2px solid ${theme.palette.primary.main}`,
-													borderRadius: '0 7px 7px 0',
-													color: theme.palette.common.white,
-													backgroundColor: theme.palette.primary.main,
-													margin: '0',
-													height: '30px'
-												}}
-											>
-												heroicons-outline:upload
-											</FuseSvgIcon>
-										</div>
-									</label>
-								</div>
-							)}
+							s
+							<TableContainer component={Paper}>
+								<TableBody className="flex flex-col">
+									{uploadedFiles.map((file, index) => (
+										<TableRow key={index}>
+											<TableCell>{file.name}</TableCell>
+											<TableCell>
+												<FuseSvgIcon
+													onClick={() => handleFileRemove(index)}
+													aria-label="delete"
+													sx={{ cursor: 'pointer', color: 'GrayText' }}
+												>
+													heroicons-outline:trash
+												</FuseSvgIcon>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</TableContainer>
 						</div>
-					</div>
+					)}
 
 					<div className="flex items-center">
 						<Typography
