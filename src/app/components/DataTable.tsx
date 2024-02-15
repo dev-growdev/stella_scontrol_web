@@ -83,7 +83,7 @@ export default function EnhancedTable({
 		setSelectedItemId(itemId === selectedItemId ? null : itemId);
 	};
 
-	const filteredRows = categoriesData.categories.filter(row => {
+	const filteredRows: Category[] = categoriesData.categories.filter(row => {
 		const matchesSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
 		const matchesStatus =
 			filterByStatus === 'all' ||
