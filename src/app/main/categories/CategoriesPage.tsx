@@ -40,7 +40,6 @@ export default function CategoriesPage() {
 	}
 
 	function submitEdit() {
-		console.log('VAI EDITAR', editItem);
 		dispatch(updateCategory(editItem));
 		setEditMode(false);
 	}
@@ -105,7 +104,7 @@ export default function CategoriesPage() {
 												onChange={e => handleEditPropertiesItem(e)}
 											/>
 										}
-										label={editItem.enable ? 'Desativar' : 'Ativar'}
+										label="Ativar"
 									/>
 								</FormGroup>
 							) : (
@@ -142,6 +141,8 @@ export default function CategoriesPage() {
 						)}
 						<div className="flex items-center gap-24 flex-col sm:flex-row">
 							<DataTable
+								editMode={editMode}
+								setEditMode={setEditMode}
 								categoriesData={categoriesRedux.categories}
 								selectItem={handleGetEditItem}
 							/>

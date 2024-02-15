@@ -1,5 +1,5 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { TextField } from '@mui/material';
+import { Chip, Stack, TableHead, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -16,13 +16,27 @@ import { Category } from '../main/categories/categoriesSlice';
 interface EnhancedTableProps {
 	selectItem?: (item: Category) => void;
 	categoriesData?: Category[];
+	editMode: boolean;
+	setEditMode?: (arg: boolean) => void;
 }
 
-export default function EnhancedTable({ selectItem, categoriesData }: EnhancedTableProps) {
+export default function EnhancedTable({ setEditMode, selectItem, categoriesData, editMode }: EnhancedTableProps) {
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
 	const [searchValue, setSearchValue] = React.useState('');
 	const [selectedItemId, setSelectedItemId] = React.useState<string | null>(null);
+
+	React.useEffect(() => {
+		if (editMode === false) {
+			setSelectedItemId(null);
+		}
+	}, [editMode]);
+
+	React.useEffect(() => {
+		if (selectedItemId === null) {
+			setEditMode(false);
+		}
+	}, [selectedItemId]);
 
 	React.useEffect(() => {
 		if (selectedItemId !== null) {
@@ -52,7 +66,7 @@ export default function EnhancedTable({ selectItem, categoriesData }: EnhancedTa
 		? categoriesData.filter(row => row.name.toLowerCase().includes(searchValue.toLowerCase()))
 		: categoriesData;
 
-	const sortedRows = filteredRows.slice().reverse(); // Reversing the array to display the most recent items first
+	const sortedRows = filteredRows.slice().reverse();
 
 	return (
 		<Box sx={{ width: '100%' }}>
@@ -73,6 +87,12 @@ export default function EnhancedTable({ selectItem, categoriesData }: EnhancedTa
 				</Toolbar>
 				<TableContainer>
 					<Table>
+						<TableHead>
+							<TableCell>Nome</TableCell>
+							<TableCell>Data do cadastro</TableCell>
+							<TableCell>Status</TableCell>
+							<TableCell>Ações</TableCell>
+						</TableHead>
 						<TableBody>
 							{sortedRows
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -118,7 +138,15 @@ export default function EnhancedTable({ selectItem, categoriesData }: EnhancedTa
 														: 'inherit'
 											}}
 										>
-											{row.enable.toString()}
+											<Stack
+												direction="row"
+												spacing={1}
+											>
+												<Chip
+													color={row.enable ? 'primary' : 'error'}
+													label={row.enable ? 'Ativo' : 'Inativo'}
+												/>
+											</Stack>
 										</TableCell>
 										<TableCell
 											sx={{
