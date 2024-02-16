@@ -7,7 +7,6 @@ type AppRootStateType = RootStateType<categorySliceType>;
 export interface Category {
 	uid: string;
 	name: string;
-	createdAt: Date;
 	enable: boolean;
 	action: string;
 }
@@ -29,7 +28,6 @@ export const createCategory = createAsyncThunk('categories/createCategory', asyn
 		return {
 			uid: response.data.data.uid,
 			name: response.data.data.name,
-			createdAt: response.data.data.createdAt,
 			enable: response.data.data.enable,
 			action: ''
 		};
@@ -57,7 +55,6 @@ export const updateCategory = createAsyncThunk('categories/updateCategory', asyn
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/categories/${data.uid}`, body);
 		return response.data.data;
 	} catch (error) {
-		//analisar refatoração
 		return initialState;
 	}
 });

@@ -154,9 +154,8 @@ export default function EnhancedTable({
 				</Toolbar>
 				<TableContainer>
 					<Table>
-						<TableHead>
+						<TableHead className="flex justify-between">
 							<TableCell>Nome</TableCell>
-							<TableCell>Data do cadastro</TableCell>
 							<TableCell>Status</TableCell>
 							<TableCell>Ações</TableCell>
 						</TableHead>
@@ -169,36 +168,39 @@ export default function EnhancedTable({
 								sortedRows
 									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 									.map((row, index) => (
-										<TableRow key={row.uid}>
+										<TableRow
+											className="flex justify-between"
+											key={row.uid}
+										>
 											<TableCell
 												component="th"
 												scope="row"
 											>
 												{row.name}
 											</TableCell>
-											<TableCell>{`${new Date(row.createdAt).getDate()}/${
-												new Date(row.createdAt).getMonth() + 1
-											}/${new Date(row.createdAt).getFullYear()}`}</TableCell>
-											<TableCell>
+
+											<TableCell className="min-w-160 flex justify-end">
 												<Stack
 													direction="row"
 													spacing={1}
 												>
 													<Chip
+														sx={{ minWidth: '100px' }}
 														color={row.enable ? 'primary' : 'error'}
 														label={row.enable ? 'Ativo' : 'Inativo'}
 													/>
 												</Stack>
 											</TableCell>
 											<TableCell
+												className="min-w-224 flex justify-end"
 												sx={{
 													color: theme => theme.palette.secondary.light
 												}}
 											>
-												<div className="flex">
+												<div className="flex w-full justify-between">
 													<div
 														onClick={() => handleRowClick(row.uid)}
-														className="w-32 mr-10"
+														className="w-32 mr-20 "
 													>
 														<FuseSvgIcon
 															sx={{
