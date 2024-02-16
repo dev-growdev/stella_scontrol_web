@@ -24,17 +24,16 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { Theme } from '@mui/material/styles';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { createRequest } from 'app/configs/service/request.service';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
 import '../../../styles/muiCustomComponents.css';
 import CreatableOptions, { ProductOptionType } from '../../components/CreatableOptions';
 import CustomizedTables from '../../components/CustomizedTables';
+import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 const itemHeight = 48;
 const itemPaddingTop = 8;
@@ -57,101 +56,139 @@ function getStyles(name: string, personName: string[], theme: Theme) {
 }
 
 export default function PaymentRequestFormGeneral() {
+	const dispatch = useAppDispatch();
 	const user = useSelector(selectUser);
 	const theme = useTheme();
-	const [formaDePagamento, setFormaDePagamento] = useState<string[]>([]);
-	const [dueDate, setDueDate] = useState<Date | null>(null);
-	const [valueProducts, setValueProducts] = useState<{ product: string; brand: string } | null>(null);
-	const [requiredReceipt, setRequiredReceipt] = useState<boolean>(false);
-	const [isRatiable, setIsRatiable] = useState<boolean>(false);
-	const [tableData, setTableData] = useState([]);
-	const [description, setDescription] = useState('');
-	const [totalValue, setTotalValue] = useState('');
-	const [typeAccount, setTypeAccount] = useState('');
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
+	const [formData, setFormData] = useState({
+		paymentMethod: [],
+		dueDate: null,
+		valueProducts: null,
+		requiredReceipt: false,
+		isRatiable: false,
+		tableData: [],
+		description: '',
+		totalValue: '',
+		typeAccount: '',
+		uploadedFiles: []
+	});
 
 	const currentDate = new Date();
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);
 
 	const handleFileChange = event => {
-		const files = event.target.files;
-		let newUploadedFiles = [];
-		// Loop através dos arquivos selecionados e adiciona-os ao estado
-		for (let i = 0; i < files.length; i++) {
-			newUploadedFiles.push(files[i]);
-		}
-		setUploadedFiles(prevUploadedFiles => [...prevUploadedFiles, ...newUploadedFiles]);
+		const { files } = event.target;
+		const filesArray = Array.from(files || []);
+
+		const newUploadedFiles = filesArray.map(file => file);
+
+		setFormData(prevState => ({
+			...prevState,
+			uploadedFiles: [...prevState.uploadedFiles, ...newUploadedFiles]
+		}));
 	};
 
-	const handleFileRemove = indexToRemove => {
-		setUploadedFiles(prevUploadedFiles => prevUploadedFiles.filter((file, index) => index !== indexToRemove));
+	const handleFileRemove = (indexToRemove: number) => {
+		setFormData(prevState => ({
+			...prevState,
+			uploadedFiles: prevState.uploadedFiles.filter((file, index) => index !== indexToRemove)
+		}));
 	};
 
-	const handleChangeSelect = (event: SelectChangeEvent<typeof formaDePagamento>) => {
+	const handleChangeSelect = (event: SelectChangeEvent<typeof formData.paymentMethod>) => {
 		const {
 			target: { value }
 		} = event;
-		setFormaDePagamento(typeof value === 'string' ? value.split(',') : value);
+		setFormData(prevState => ({
+			...prevState,
+			paymentMethod: typeof value === 'string' ? value.split(',') : value
+		}));
 	};
 
-	function handleAdd() {
-		if (valueProducts) {
-			const newProduct = { produto: valueProducts.product, marca: valueProducts.brand };
-			setTableData([...tableData, newProduct]);
-			setValueProducts(null);
+	function handleAddProducts() {
+		if (formData.valueProducts) {
+			const newProduct = { produto: formData.valueProducts.product, marca: formData.valueProducts.brand };
+			setFormData(prevState => ({
+				...prevState,
+				tableData: [...prevState.tableData, newProduct],
+				valueProducts: null
+			}));
 		}
 	}
 
-	function testeCreatable(data: ProductOptionType) {
+	function handleCreatableProducts(data: ProductOptionType) {
 		const newProduct = { produto: data.product, marca: data.brand };
-		setTableData([...tableData, newProduct]);
-		setValueProducts(null);
+		setFormData(prevState => ({
+			...prevState,
+			tableData: [...prevState.tableData, newProduct],
+			valueProducts: null
+		}));
 	}
+
 	function getDataFromCreatable(data: ProductOptionType) {
-		setValueProducts({ product: data.product, brand: data.brand });
-	}
-
-	async function handleSubmitRequest() {
-		const newRequest = {
-			description,
-			sendReceipt: requiredReceipt,
-			totalRequestValue: +totalValue,
-			dueDate
-		};
-		const res = await createRequest(newRequest);
-
-		if (res.code === 201) {
-			dispatch(
-				showMessage({
-					message: 'Solicitação cadastrada',
-					anchorOrigin: {
-						vertical: 'top',
-						horizontal: 'center'
-					},
-					variant: 'success'
-				})
-			);
-			navigate('/solicitações');
-		} else {
-			dispatch(
-				showMessage({
-					message: `${res.message}`,
-					anchorOrigin: {
-						vertical: 'top',
-						horizontal: 'center'
-					},
-					variant: 'error'
-				})
-			);
-		}
+		setFormData(prevState => ({
+			...prevState,
+			valueProducts: { product: data.product, brand: data.brand }
+		}));
 	}
 
 	const handleChangeTypeAccount = (event: SelectChangeEvent) => {
-		setTypeAccount(event.target.value as string);
+		setFormData(prevState => ({
+			...prevState,
+			typeAccount: event.target.value
+		}));
 	};
+
+	async function handleSubmitRequest() {
+		const newRequest = {
+			description: formData.description,
+			sendReceipt: formData.requiredReceipt,
+			totalRequestValue: +formData.totalValue,
+			dueDate: formData.dueDate
+		};
+
+		dispatch(createRequestPaymentGeneral(newRequest)).then(res => {
+			if (res.error) {
+				dispatch(
+					showMessage({
+						message: `${res.error.message}`,
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'error'
+					})
+				);
+			} else {
+				clearFormState();
+				dispatch(
+					showMessage({
+						message: `Solicitação enviada com sucesso.`,
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'success'
+					})
+				);
+			}
+		});
+	}
+
+	function clearFormState() {
+		setFormData({
+			paymentMethod: [],
+			dueDate: null,
+			valueProducts: null,
+			requiredReceipt: false,
+			isRatiable: false,
+			tableData: [],
+			description: '',
+			totalValue: '',
+			typeAccount: '',
+			uploadedFiles: []
+		});
+	}
 
 	return (
 		<Box className="flex flex-col w-full">
@@ -208,12 +245,12 @@ export default function PaymentRequestFormGeneral() {
 					<div className="flex items-center gap-24 flex-col sm:flex-row">
 						<CreatableOptions
 							selectedData={getDataFromCreatable}
-							newData={testeCreatable}
+							newData={handleCreatableProducts}
 							products={[]}
 						/>
 						<Button
 							className="w-full sm:w-256"
-							onClick={handleAdd}
+							onClick={handleAddProducts}
 							sx={{ borderRadius: '7px' }}
 							variant="contained"
 							startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
@@ -223,20 +260,22 @@ export default function PaymentRequestFormGeneral() {
 					</div>
 					<CustomizedTables
 						tableHead={['PRODUTO', 'MARCA']}
-						tableData={tableData}
+						tableData={formData.tableData}
 					/>
 
 					<TextField
-						onChange={e => setDescription(e.target.value)}
+						onChange={e => setFormData(prevState => ({ ...prevState, description: e.target.value }))}
 						multiline
+						value={formData.description}
 						rows={4}
 						label="Descrição da solicitação"
 					/>
 
 					<div className="flex flex-col sm:flex-row items-center gap-24">
 						<TextField
-							onChange={e => setTotalValue(e.target.value)}
-							className="w-full"
+							onChange={e => setFormData(prevState => ({ ...prevState, totalValue: e.target.value }))}
+							className="w-ful"
+							value={formData.totalValue}
 							type="number"
 							label="Valor total"
 							InputProps={{
@@ -252,9 +291,10 @@ export default function PaymentRequestFormGeneral() {
 							<DatePicker
 								className="w-full"
 								label="Vencimento"
+								value={formData.dueDate}
 								minDate={minDate}
 								format="dd/MM/yyyy"
-								onChange={d => setDueDate(d)}
+								onChange={d => setFormData(prevState => ({ ...prevState, dueDate: d }))}
 							/>
 						</LocalizationProvider>
 
@@ -263,7 +303,7 @@ export default function PaymentRequestFormGeneral() {
 							<Select
 								labelId="demo-multiple-name-label"
 								id="demo-multiple-name"
-								value={formaDePagamento}
+								value={formData.paymentMethod}
 								onChange={handleChangeSelect}
 								input={<OutlinedInput label="Forma de pagamento" />}
 								MenuProps={MenuProps}
@@ -272,7 +312,7 @@ export default function PaymentRequestFormGeneral() {
 									<MenuItem
 										key={name}
 										value={name}
-										style={getStyles(name, formaDePagamento, theme)}
+										style={getStyles(name, formData.paymentMethod, theme)} //testar o que acontece se remover
 									>
 										{name}
 									</MenuItem>
@@ -280,8 +320,8 @@ export default function PaymentRequestFormGeneral() {
 							</Select>
 						</FormControl>
 					</div>
-					{formaDePagamento[0] === 'Pix' && <TextField label="Informe a chave pix" />}
-					{formaDePagamento[0] === 'Transferência bancária' && (
+					{formData.paymentMethod[0] === 'Pix' && <TextField label="Informe a chave pix" />}
+					{formData.paymentMethod[0] === 'Transferência bancária' && (
 						<div className="flex gap-24 justify-center">
 							<div className="flex flex-col w-full gap-24">
 								<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
@@ -304,7 +344,7 @@ export default function PaymentRequestFormGeneral() {
 										<Select
 											labelId="demo-simple-select-label"
 											id="demo-simple-select"
-											value={typeAccount}
+											value={formData.typeAccount}
 											label="Age"
 											onChange={handleChangeTypeAccount}
 										>
@@ -320,7 +360,7 @@ export default function PaymentRequestFormGeneral() {
 							</div>
 						</div>
 					)}
-					{formaDePagamento.some(option => option.includes('Cartão')) && (
+					{formData.paymentMethod.some(option => option.includes('Cartão')) && (
 						<TextField label="selecionar ao portador" />
 					)}
 
@@ -335,8 +375,10 @@ export default function PaymentRequestFormGeneral() {
 							<FormControlLabel
 								control={
 									<Checkbox
-										onClick={() => setRequiredReceipt(true)}
-										checked={requiredReceipt ? true : false}
+										onClick={() =>
+											setFormData(prevState => ({ ...prevState, requiredReceipt: true }))
+										}
+										checked={formData.requiredReceipt}
 									/>
 								}
 								label="Sim"
@@ -344,8 +386,10 @@ export default function PaymentRequestFormGeneral() {
 							<FormControlLabel
 								control={
 									<Checkbox
-										onClick={() => setRequiredReceipt(false)}
-										checked={requiredReceipt === false ? true : false}
+										onClick={() =>
+											setFormData(prevState => ({ ...prevState, requiredReceipt: false }))
+										}
+										checked={!formData.requiredReceipt}
 									/>
 								}
 								label="Não"
@@ -363,28 +407,21 @@ export default function PaymentRequestFormGeneral() {
 						<div>
 							<Button
 								component="label"
-								role={undefined}
+								role="button"
 								variant="outlined"
 								sx={{
-									borderRadius: '7px',
-									border: `2px solid ${theme.palette.primary.main}`,
-									minHeight: '33px',
-									maxHeight: '33px',
-									height: '33px',
-									padding: '0 0 0 10px',
+									borderColor: theme.palette.primary.main,
 									color: theme.palette.primary.main
 								}}
+								className="border-solid border-2 rounded-4 min-h-[33px] max-h-[33px] pr-0 pl-7"
 								tabIndex={-1}
 								endIcon={
 									<FuseSvgIcon
 										sx={{
-											border: `2px solid ${theme.palette.primary.main}`,
-											borderRadius: '0 7px 7px 0',
-											color: theme.palette.common.white,
-											backgroundColor: theme.palette.primary.main,
-											margin: '0',
-											height: '30px'
+											borderColor: theme.palette.primary.main,
+											backgroundColor: theme.palette.primary.main
 										}}
+										className="border-solid border-2 rounded-r-4 text-gray-50 m-0 h-[33px]"
 									>
 										heroicons-outline:upload
 									</FuseSvgIcon>
@@ -400,7 +437,7 @@ export default function PaymentRequestFormGeneral() {
 							</Button>
 						</div>
 					</div>
-					{uploadedFiles.length > 0 && (
+					{formData.uploadedFiles.length > 0 && (
 						<>
 							<Typography
 								className="mr-10"
@@ -411,14 +448,14 @@ export default function PaymentRequestFormGeneral() {
 							s
 							<TableContainer component={Paper}>
 								<TableBody className="flex flex-col">
-									{uploadedFiles.map((file, index) => (
+									{formData.uploadedFiles.map((file, index) => (
 										<TableRow key={index}>
 											<TableCell>{file.name}</TableCell>
 											<TableCell>
 												<FuseSvgIcon
 													onClick={() => handleFileRemove(index)}
 													aria-label="delete"
-													sx={{ cursor: 'pointer', color: 'GrayText' }}
+													className="cursor-pointer text-gray-300"
 												>
 													heroicons-outline:trash
 												</FuseSvgIcon>
@@ -441,8 +478,8 @@ export default function PaymentRequestFormGeneral() {
 							<FormControlLabel
 								control={
 									<Checkbox
-										onClick={() => setIsRatiable(true)}
-										checked={isRatiable ? true : false}
+										onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: true }))}
+										checked={formData.isRatiable}
 									/>
 								}
 								label="Sim"
@@ -450,8 +487,8 @@ export default function PaymentRequestFormGeneral() {
 							<FormControlLabel
 								control={
 									<Checkbox
-										onClick={() => setIsRatiable(false)}
-										checked={isRatiable === false ? true : false}
+										onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: false }))}
+										checked={!formData.isRatiable}
 									/>
 								}
 								label="Não"
@@ -461,13 +498,13 @@ export default function PaymentRequestFormGeneral() {
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"
-							sx={{ borderRadius: '7px' }}
+							className="rounded-4"
 						>
 							CANCELAR
 						</Button>
 						<Button
+							className="rounded-4"
 							onClick={handleSubmitRequest}
-							sx={{ borderRadius: '7px' }}
 							variant="contained"
 						>
 							ENVIAR
