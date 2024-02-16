@@ -173,6 +173,7 @@ export default function EnhancedTable({
 											key={row.uid}
 										>
 											<TableCell
+												className="min-w-160"
 												component="th"
 												scope="row"
 											>
