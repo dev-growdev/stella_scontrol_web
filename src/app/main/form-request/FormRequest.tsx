@@ -27,39 +27,27 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { createRequest } from 'app/configs/service/request.service';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
+import { selectUser } from 'app/store/user/userSlice';
 import { ptBR } from 'date-fns/locale';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import '../../../styles/muiCustomComponents.css';
 import CreatableOptions, { ProductOptionType } from '../../components/CreatableOptions';
 import CustomizedTables from '../../components/CustomizedTables';
 
-import { styled } from '@mui/material/styles';
-
-const VisuallyHiddenInput = styled('input')({
-	clip: 'rect(0 0 0 0)',
-	clipPath: 'inset(50%)',
-	height: 1,
-	overflow: 'hidden',
-	position: 'absolute',
-	bottom: 0,
-	left: 0,
-	whiteSpace: 'nowrap',
-	width: 1
-});
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
+const itemHeight = 48;
+const itemPaddingTop = 8;
 const MenuProps = {
 	PaperProps: {
 		style: {
-			maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+			maxHeight: itemHeight * 4.5 + itemPaddingTop,
 			width: 250
 		}
 	}
 };
 
-const names = ['Boleto', 'Cartão de crédito', 'Cartão corporativo', 'Pix', 'Transferência bancária'];
+const paymentMethods = ['Boleto', 'Cartão de crédito', 'Cartão corporativo', 'Pix', 'Transferência bancária'];
 
 function getStyles(name: string, personName: string[], theme: Theme) {
 	return {
@@ -68,36 +56,25 @@ function getStyles(name: string, personName: string[], theme: Theme) {
 	};
 }
 
-const productsArray = [
-	{ product: 'café', brand: 'melita' },
-	{ product: 'cafézes', brand: 'tres corações' },
-	{ product: 'cane azul', brand: 'sei lá' }
-];
-
-export default function FormRequest() {
+export default function PaymentRequestFormGeneral() {
+	const user = useSelector(selectUser);
 	const theme = useTheme();
 	const [formaDePagamento, setFormaDePagamento] = useState<string[]>([]);
 	const [dueDate, setDueDate] = useState<Date | null>(null);
 	const [valueProducts, setValueProducts] = useState<{ product: string; brand: string } | null>(null);
-	const [inputValueProducts, setInputValueProducts] = useState('');
 	const [requiredReceipt, setRequiredReceipt] = useState<boolean>(false);
 	const [isRatiable, setIsRatiable] = useState<boolean>(false);
 	const [tableData, setTableData] = useState([]);
 	const [description, setDescription] = useState('');
 	const [totalValue, setTotalValue] = useState('');
 	const [typeAccount, setTypeAccount] = useState('');
+	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
 	const currentDate = new Date();
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);
-
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-
-	useEffect(() => {
-		console.log(uploadedFiles);
-	}, [uploadedFiles]);
 
 	const handleFileChange = event => {
 		const files = event.target.files;
@@ -210,19 +187,19 @@ export default function FormRequest() {
 							fullWidth
 							disabled
 							label="Usuário solicitante"
-							value="Misael Soares"
+							value={user.data.displayName}
 						/>
 						<TextField
 							fullWidth
 							disabled
 							label="Email"
-							value="misa@gmail.com"
+							value={user.data.email}
 						/>
 						<TextField
 							fullWidth
 							disabled
 							label="Centro de custo"
-							value="Dev"
+							value={user.role}
 						/>
 					</div>
 
@@ -232,7 +209,7 @@ export default function FormRequest() {
 						<CreatableOptions
 							selectedData={getDataFromCreatable}
 							newData={testeCreatable}
-							products={productsArray}
+							products={[]}
 						/>
 						<Button
 							className="w-full sm:w-256"
@@ -291,7 +268,7 @@ export default function FormRequest() {
 								input={<OutlinedInput label="Forma de pagamento" />}
 								MenuProps={MenuProps}
 							>
-								{names.map(name => (
+								{paymentMethods.map(name => (
 									<MenuItem
 										key={name}
 										value={name}
@@ -414,16 +391,17 @@ export default function FormRequest() {
 								}
 							>
 								ANEXAR DOCUMENTO
-								<VisuallyHiddenInput
+								<input
 									multiple
 									type="file"
 									onChange={handleFileChange}
+									className="absolute hidden"
 								/>
 							</Button>
 						</div>
 					</div>
 					{uploadedFiles.length > 0 && (
-						<div>
+						<>
 							<Typography
 								className="mr-10"
 								color="GrayText"
@@ -449,7 +427,7 @@ export default function FormRequest() {
 									))}
 								</TableBody>
 							</TableContainer>
-						</div>
+						</>
 					)}
 
 					<div className="flex items-center">
