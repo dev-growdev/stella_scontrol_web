@@ -5,7 +5,6 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useAppDispatch } from 'app/store';
-import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ptBR } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -114,32 +113,7 @@ export default function PaymentRequestFormGeneral() {
 			dueDate: formData.dueDate
 		};
 
-		dispatch(createRequestPaymentGeneral(newRequest)).then(res => {
-			if (res.error) {
-				dispatch(
-					showMessage({
-						message: `${res.error.message}`,
-						anchorOrigin: {
-							vertical: 'top',
-							horizontal: 'center'
-						},
-						variant: 'error'
-					})
-				);
-			} else {
-				clearFormState();
-				dispatch(
-					showMessage({
-						message: `Solicitação enviada com sucesso.`,
-						anchorOrigin: {
-							vertical: 'top',
-							horizontal: 'center'
-						},
-						variant: 'success'
-					})
-				);
-			}
-		});
+		dispatch(createRequestPaymentGeneral(newRequest));
 	}
 
 	function clearFormState() {
