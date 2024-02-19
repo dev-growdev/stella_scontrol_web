@@ -89,6 +89,8 @@ export default function CreateProductsPage() {
 						})
 					);
 				}
+
+				clearStates();
 			})
 			.catch(error => {
 				console.error('Error:', error);
