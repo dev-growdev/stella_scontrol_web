@@ -46,7 +46,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 			const findItem = categoriesData.categories.find(item => item.uid === selectedItemId);
 			selectItem(findItem || null);
 		}
-	}, [selectedItemId, categoriesData.categories]);
+	}, [selectedItemId]);
 
 	const handleChangePage = (event: unknown, newPage: number) => {
 		setPage(newPage);
@@ -91,6 +91,10 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		}
 		setAnchorStatusMenu(null);
 	};
+
+	function handleDisableCategory(category: Category) {
+		handleStatus(category);
+	}
 
 	return (
 		<Box sx={{ width: '100%' }}>
@@ -206,7 +210,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 																<Switch
 																	name="enable"
 																	checked={row.enable}
-																	onChange={() => handleStatus(row)}
+																	onChange={() => handleDisableCategory(row)}
 																/>
 															}
 															label={row.enable ? 'Inativar' : 'Ativar'}
