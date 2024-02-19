@@ -1,7 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
-import { showMessage } from 'app/store/fuse/messageSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DataTable from '../../components/DataTable';
@@ -26,19 +25,23 @@ export default function CategoriesPage() {
 	}, []);
 
 	function handleGetEditCategory(selectedData: Category) {
-		setEditCategory(selectedData);
-		setEditMode(true);
+		if (selectedData) {
+			setEditCategory(selectedData);
+			setEditMode(true);
+		} else {
+			setEditMode(false);
+		}
 	}
 
-	function handleGetStatus(item: Category) {
+	async function handleGetStatus(item: Category) {
 		const itemToggleEnable = {
 			uid: item.uid,
 			name: item.name,
 			enable: !item.enable,
 			action: ''
 		};
-
-		dispatch(disableCategory(itemToggleEnable));
+		await dispatch(disableCategory(itemToggleEnable));
+		clearStates();
 	}
 
 	function handleEditPropertiesCategory(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -52,93 +55,32 @@ export default function CategoriesPage() {
 				}));
 			}
 		}
-
-		if (type === 'checkbox') {
-			const target = e.target as HTMLInputElement;
-			if (name === 'enable') {
-				setEditCategory(prevItem => ({
-					...prevItem,
-					enable: target.checked
-				}));
-			}
-		}
 	}
 
-	function submitEditCategory() {
-		dispatch(updateCategory(editCategory)).then(res => {
-			if (res.payload && Array.isArray(res.payload.categories)) {
-				dispatch(
-					showMessage({
-						message: `Esse nome de categoria já existe.`,
-						anchorOrigin: {
-							vertical: 'top',
-							horizontal: 'center'
-						},
-						variant: 'error'
-					})
-				);
-			} else {
-				dispatch(
-					showMessage({
-						message: `Categoria atualizada com sucesso.`,
-						anchorOrigin: {
-							vertical: 'top',
-							horizontal: 'center'
-						},
-						variant: 'success'
-					})
-				);
-				setEditMode(false);
-			}
-		});
+	async function submitEditCategory() {
+		await dispatch(updateCategory(editCategory));
+		clearStates();
 	}
 
-	function submitNewCategory() {
+	async function submitNewCategory() {
 		const item = {
 			name: newItem,
 			enable: true
 		};
-		if (newItem === '') {
-			return dispatch(
-				showMessage({
-					message: `Digite um nome para ser adicionado.`,
-					anchorOrigin: {
-						vertical: 'top',
-						horizontal: 'center'
-					},
-					variant: 'warning'
-				})
-			);
-		}
-		dispatch(createCategory(item)).then(res => {
-			if (res.payload === undefined) {
-				dispatch(
-					showMessage({
-						message: `Categoria já existente.`,
-						anchorOrigin: {
-							vertical: 'top',
-							horizontal: 'center'
-						},
-						variant: 'error'
-					})
-				);
-			} else {
-				dispatch(
-					showMessage({
-						message: `Categoria cadastrada com sucesso.`,
-						anchorOrigin: {
-							vertical: 'top',
-							horizontal: 'center'
-						},
-						variant: 'success'
-					})
-				);
-			}
-		});
-		setNewItem('');
+
+		await dispatch(createCategory(item));
+
+		clearStates();
 	}
 
 	function handleCancelEditCategory() {
+		clearStates();
+	}
+
+	function clearStates() {
+		console.log('limpou todos os estados');
+		setNewItem('');
+		setEditCategory(null);
 		setEditMode(false);
 	}
 

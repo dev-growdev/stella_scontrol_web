@@ -1,4 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { RootStateType } from 'app/store/types';
 import axios from 'axios';
 
@@ -21,20 +23,56 @@ interface createCategory {
 	enable: boolean;
 }
 
-export const createCategory = createAsyncThunk('categories/createCategory', async (data: createCategory) => {
-	try {
-		const response = await axios.post<{ data: Category }>(`${process.env.REACT_APP_API_URL}/categories`, data);
+export const createCategory = createAppAsyncThunk(
+	'categories/createCategory',
+	async (data: createCategory, { dispatch }) => {
+		try {
+			if (data.name === '') {
+				dispatch(
+					showMessage({
+						message: `Digite um nome para ser adicionado.`,
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'warning'
+					})
+				);
+			}
+			const response = await axios.post<{ data: Category }>(`${process.env.REACT_APP_API_URL}/categories`, data);
 
-		return {
-			uid: response.data.data.uid,
-			name: response.data.data.name,
-			enable: response.data.data.enable,
-			action: ''
-		};
-	} catch (error) {
-		throw error;
+			dispatch(
+				showMessage({
+					message: `Categoria cadastrada com sucesso.`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'success'
+				})
+			);
+
+			return {
+				uid: response.data.data.uid,
+				name: response.data.data.name,
+				enable: response.data.data.enable,
+				action: ''
+			};
+		} catch (error) {
+			dispatch(
+				showMessage({
+					message: `${error.response.data.message}`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+			throw error;
+		}
 	}
-});
+);
 
 export const getCategories = createAsyncThunk('categories/getCategories', async () => {
 	try {
@@ -46,7 +84,7 @@ export const getCategories = createAsyncThunk('categories/getCategories', async 
 	}
 });
 
-export const updateCategory = createAsyncThunk('categories/updateCategory', async (data: Category) => {
+export const updateCategory = createAppAsyncThunk('categories/updateCategory', async (data: Category, { dispatch }) => {
 	try {
 		const body = {
 			name: data.name,
@@ -56,8 +94,30 @@ export const updateCategory = createAsyncThunk('categories/updateCategory', asyn
 			`${process.env.REACT_APP_API_URL}/categories/${data.uid}`,
 			body
 		);
+
+		dispatch(
+			showMessage({
+				message: `Categoria atualizada com sucesso.`,
+				anchorOrigin: {
+					vertical: 'top',
+					horizontal: 'center'
+				},
+				variant: 'success'
+			})
+		);
+
 		return response.data.data;
 	} catch (error) {
+		dispatch(
+			showMessage({
+				message: `${error.response.data.message}`,
+				anchorOrigin: {
+					vertical: 'top',
+					horizontal: 'center'
+				},
+				variant: 'error'
+			})
+		);
 		throw error;
 	}
 });
@@ -96,6 +156,9 @@ const categoriesSlice = createSlice({
 				state.loading = false;
 				state.categories.push(action.payload);
 			})
+			.addCase(createCategory.rejected, state => {
+				state.loading = false;
+			})
 			.addCase(getCategories.pending, state => {
 				state.loading = true;
 			})
@@ -112,6 +175,9 @@ const categoriesSlice = createSlice({
 				if (index !== -1) {
 					state.categories[index] = action.payload;
 				}
+			})
+			.addCase(updateCategory.rejected, state => {
+				state.loading = false;
 			})
 			.addCase(disableCategory.pending, state => {
 				state.loading = true;

@@ -45,6 +45,8 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		if (selectedItemId !== null && categoriesData.categories) {
 			const findItem = categoriesData.categories.find(item => item.uid === selectedItemId);
 			selectItem(findItem || null);
+		} else {
+			selectItem(null);
 		}
 	}, [selectedItemId, categoriesData.categories]);
 
@@ -61,9 +63,13 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		setSearchValue(e.target.value);
 	};
 
-	const handleRowClick = (itemId: string) => {
+	const handleRowEdit = (itemId: string) => {
 		setSelectedItemId(itemId === selectedItemId ? null : itemId);
 	};
+
+	useEffect(() => {
+		console.log(selectedItemId, 'seletected item id');
+	}, [selectedItemId]);
 
 	const filteredCategories: Category[] =
 		categoriesData.categories && categoriesData.categories.length > 0
@@ -193,7 +199,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 											>
 												<div className="flex w-full justify-between">
 													<div
-														onClick={() => handleRowClick(row.uid)}
+														onClick={() => handleRowEdit(row.uid)}
 														className="w-32 mr-20 "
 													>
 														<FuseSvgIcon
