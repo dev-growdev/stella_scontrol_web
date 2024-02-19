@@ -8,7 +8,7 @@ export interface Category {
 	uid: string;
 	name: string;
 	enable: boolean;
-	action: string;
+	action?: string;
 }
 
 export interface CategoriesType {
@@ -23,7 +23,7 @@ interface createCategory {
 
 export const createCategory = createAsyncThunk('categories/createCategory', async (data: createCategory) => {
 	try {
-		const response = await axios.post(`${process.env.REACT_APP_API_URL}/categories`, data);
+		const response = await axios.post<{ data: Category }>(`${process.env.REACT_APP_API_URL}/categories`, data);
 
 		return {
 			uid: response.data.data.uid,
@@ -32,17 +32,17 @@ export const createCategory = createAsyncThunk('categories/createCategory', asyn
 			action: ''
 		};
 	} catch (error) {
-		return initialState.categories[0];
+		throw error;
 	}
 });
 
 export const getCategories = createAsyncThunk('categories/getCategories', async () => {
 	try {
-		const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories`);
+		const response = await axios.get<{ data: Category[] }>(`${process.env.REACT_APP_API_URL}/categories`);
 
 		return response.data.data;
 	} catch (error) {
-		return { categories: [], loading: false, error: 'Algo deu errado, tente novamente' };
+		throw error;
 	}
 });
 
@@ -52,10 +52,13 @@ export const updateCategory = createAsyncThunk('categories/updateCategory', asyn
 			name: data.name,
 			enable: data.enable
 		};
-		const response = await axios.put(`${process.env.REACT_APP_API_URL}/categories/${data.uid}`, body);
+		const response = await axios.put<{ data: Category }>(
+			`${process.env.REACT_APP_API_URL}/categories/${data.uid}`,
+			body
+		);
 		return response.data.data;
 	} catch (error) {
-		return initialState;
+		throw error;
 	}
 });
 
@@ -65,10 +68,13 @@ export const disableCategory = createAsyncThunk('categories/disableCategory', as
 			name: data.name,
 			enable: data.enable
 		};
-		const response = await axios.put(`${process.env.REACT_APP_API_URL}/categories/${data.uid}/disable`, body);
+		const response = await axios.put<{ data: Category }>(
+			`${process.env.REACT_APP_API_URL}/categories/${data.uid}/disable`,
+			body
+		);
 		return response.data.data;
 	} catch (error) {
-		return initialState;
+		throw error;
 	}
 });
 
@@ -87,10 +93,8 @@ const categoriesSlice = createSlice({
 				state.loading = true;
 			})
 			.addCase(createCategory.fulfilled, (state, action) => {
-				if (action.payload !== undefined) {
-					state.categories.push(action.payload);
-				}
 				state.loading = false;
+				state.categories.push(action.payload);
 			})
 			.addCase(getCategories.pending, state => {
 				state.loading = true;
@@ -104,18 +108,20 @@ const categoriesSlice = createSlice({
 			})
 			.addCase(updateCategory.fulfilled, (state, action) => {
 				state.loading = false;
-				const index = state.categories.findIndex(cat => cat.uid === action.payload.uid);
+				const index = state.categories.findIndex(category => category.uid === action.payload.uid);
 				if (index !== -1) {
 					state.categories[index] = action.payload;
 				}
 			})
 			.addCase(disableCategory.pending, state => {
-				state.loading === true;
+				state.loading = true;
 			})
 			.addCase(disableCategory.fulfilled, (state, action) => {
+				state.loading = false;
 				const indexUpdated = state.categories.findIndex(item => action.payload.uid === item.uid);
-
-				state.categories[indexUpdated] = action.payload;
+				if (indexUpdated !== -1) {
+					state.categories[indexUpdated] = action.payload;
+				}
 			});
 	}
 });
