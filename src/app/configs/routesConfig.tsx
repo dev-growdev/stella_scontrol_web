@@ -8,8 +8,11 @@ import authenticationConfig from '../main/authentication/authenticationConfig';
 import ExampleConfig from '../main/example/ExampleConfig';
 import FormRequest from '../main/form-request/FormRequest';
 import requestPageConfig from '../main/form-request/RequestConfig';
+import CreateProductsPage from '../main/products/CreateProductsPage';
+import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
+import ProductsPage from '../main/products/ProductsPage';
 
-const routeConfigs: FuseRouteConfigsType = [ExampleConfig, requestPageConfig, ...authenticationConfig];
+const routeConfigs: FuseRouteConfigsType = [ExampleConfig, requestPageConfig, CreateProductsPageConfig, ...authenticationConfig];
 
 /**
  * The routes of the application.
@@ -36,6 +39,14 @@ const routes: FuseRoutesType = [
 	{
 		path: 'solicitar-pagamento',
 		element: <FormRequest />
+	},
+	{
+		path: 'cadastrar-produto',
+		element: <CreateProductsPage />
+	},
+	{
+		path: 'produtos',
+		element: <ProductsPage />
 	}
 ];
 
