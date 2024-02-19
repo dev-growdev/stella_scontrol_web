@@ -22,60 +22,42 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { CategoriesType, Category } from '../main/categories/categoriesSlice';
 
-interface EnhancedTableProps {
-	selectItem?: (item: Category) => void;
+interface DataTableProps {
+	selectItem: (item: Category | null) => void;
 	categoriesData: CategoriesType | { categories: []; loading: false };
-	editMode: boolean;
-	setEditMode?: (arg: boolean) => void;
 	handleStatus?: (item: Category) => void;
 }
 
-export default function EnhancedTable({
-	setEditMode,
-	selectItem,
-	categoriesData,
-	editMode,
-	handleStatus
-}: EnhancedTableProps) {
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
-	const [searchValue, setSearchValue] = React.useState('');
-	const [selectedItemId, setSelectedItemId] = React.useState<string | null>(null);
-	const [filterByStatus, setFilterByStatus] = React.useState<'all' | 'active' | 'inactive'>('all');
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+export default function DataTable({ selectItem, categoriesData, handleStatus }: DataTableProps) {
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const [searchValue, setSearchValue] = useState('');
+	const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+	const [filterByStatus, setFilterByStatus] = useState<'all' | 'active' | 'inactive'>('all');
+	const [anchorStatusMenu, setAnchorStatusMenu] = useState<null | HTMLElement>(null);
 
-	React.useEffect(() => {
-		if (editMode === false) {
-			setSelectedItemId(null);
-		}
-	}, [editMode]);
+	const openMenuStatus = Boolean(anchorStatusMenu);
 
-	React.useEffect(() => {
-		if (selectedItemId === null) {
-			setEditMode(false);
-		}
-	}, [selectedItemId]);
-
-	React.useEffect(() => {
-		if (selectedItemId !== null) {
+	useEffect(() => {
+		if (selectedItemId !== null && categoriesData.categories) {
 			const findItem = categoriesData.categories.find(item => item.uid === selectedItemId);
-			selectItem(findItem);
+			selectItem(findItem || null);
 		}
-	}, [selectedItemId]);
+	}, [selectedItemId, categoriesData.categories]);
 
 	const handleChangePage = (event: unknown, newPage: number) => {
 		setPage(newPage);
 	};
 
-	const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
 		setRowsPerPage(parseInt(event.target.value, 10));
 		setPage(0);
 	};
 
-	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchValue(e.target.value);
 	};
 
@@ -83,24 +65,31 @@ export default function EnhancedTable({
 		setSelectedItemId(itemId === selectedItemId ? null : itemId);
 	};
 
-	const filteredRows: Category[] = categoriesData.categories.filter(row => {
-		const matchesSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
-		const matchesStatus =
-			filterByStatus === 'all' ||
-			(filterByStatus === 'active' && row.enable) ||
-			(filterByStatus === 'inactive' && !row.enable);
-		return matchesSearch && matchesStatus;
-	});
+	const filteredCategories: Category[] =
+		categoriesData.categories && categoriesData.categories.length > 0
+			? categoriesData.categories.filter((row: Category) => {
+					const matchesSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
+					const matchesStatus =
+						filterByStatus === 'all' ||
+						(filterByStatus === 'active' && row.enable) ||
+						(filterByStatus === 'inactive' && !row.enable);
+					return matchesSearch && matchesStatus;
+			  })
+			: [];
 
-	const sortedRows = filteredRows.slice().reverse();
+	const sortedCategories = filteredCategories.slice().reverse();
 
-	const open = Boolean(anchorEl);
-	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
+	const handleOpenStatusMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorStatusMenu(event.currentTarget);
 	};
-	const handleClose = (value?: 'all' | 'active' | 'inactive') => {
-		value && setFilterByStatus(value);
-		setAnchorEl(null);
+
+	const handleCloseStatusMenu = (value?: 'all' | 'active' | 'inactive') => {
+		if (typeof value === 'string') {
+			setFilterByStatus(value);
+		} else {
+			setFilterByStatus(filterByStatus);
+		}
+		setAnchorStatusMenu(null);
 	};
 
 	return (
@@ -122,13 +111,12 @@ export default function EnhancedTable({
 						/>
 						<div>
 							<Button
-								onClick={handleClick}
 								id="basic-button"
-								aria-controls={open ? 'basic-menu' : undefined}
+								aria-controls={openMenuStatus ? 'basic-menu' : undefined}
 								aria-haspopup="true"
-								aria-expanded={open ? 'true' : undefined}
+								aria-expanded={openMenuStatus ? 'true' : undefined}
+								onClick={handleOpenStatusMenu}
 								className="w-full sm:w-144 pl-60 pr-64"
-								sx={{ borderRadius: '7px' }}
 								variant="contained"
 								startIcon={<FuseSvgIcon>heroicons-outline:filter</FuseSvgIcon>}
 							>
@@ -136,18 +124,19 @@ export default function EnhancedTable({
 								{filterByStatus === 'active' && 'ATIVOS'}
 								{filterByStatus === 'inactive' && 'INATIVOS'}
 							</Button>
+
 							<Menu
 								id="basic-menu"
-								anchorEl={anchorEl}
-								open={open}
-								onClose={handleClose}
+								anchorEl={anchorStatusMenu}
+								open={openMenuStatus}
+								onClose={handleCloseStatusMenu}
 								MenuListProps={{
 									'aria-labelledby': 'basic-button'
 								}}
 							>
-								<MenuItem onClick={() => handleClose('all')}>Todos</MenuItem>
-								<MenuItem onClick={() => handleClose('active')}>Ativos</MenuItem>
-								<MenuItem onClick={() => handleClose('inactive')}>Inativos</MenuItem>
+								<MenuItem onClick={() => handleCloseStatusMenu('all')}>Todos</MenuItem>
+								<MenuItem onClick={() => handleCloseStatusMenu('active')}>Ativos</MenuItem>
+								<MenuItem onClick={() => handleCloseStatusMenu('inactive')}>Inativos</MenuItem>
 							</Menu>
 						</div>
 					</div>
@@ -165,9 +154,9 @@ export default function EnhancedTable({
 									<CircularProgress color="primary" />
 								</Box>
 							) : (
-								sortedRows
+								sortedCategories
 									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-									.map((row, index) => (
+									.map(row => (
 										<TableRow
 											className="flex justify-between"
 											key={row.uid}
@@ -186,7 +175,7 @@ export default function EnhancedTable({
 													spacing={1}
 												>
 													<Chip
-														sx={{ minWidth: '100px' }}
+														className="min-w-64"
 														color={row.enable ? 'primary' : 'error'}
 														label={row.enable ? 'Ativo' : 'Inativo'}
 													/>
@@ -216,8 +205,8 @@ export default function EnhancedTable({
 															control={
 																<Switch
 																	name="enable"
-																	checked={row.enable ? true : false}
-																	onChange={e => handleStatus(row)}
+																	checked={row.enable}
+																	onChange={() => handleStatus(row)}
 																/>
 															}
 															label={row.enable ? 'Inativar' : 'Ativar'}
@@ -234,7 +223,7 @@ export default function EnhancedTable({
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 25]}
 					component="div"
-					count={sortedRows.length}
+					count={sortedCategories.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}
