@@ -56,7 +56,7 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 	};
 
 	return (
-		<React.Fragment>
+		<>
 			<Autocomplete
 				value={value}
 				onChange={(event, newValue) => {
@@ -176,6 +176,6 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 					</DialogActions>
 				</form>
 			</Dialog>
-		</React.Fragment>
+		</>
 	);
 }
