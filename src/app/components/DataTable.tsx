@@ -92,7 +92,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		setAnchorStatusMenu(null);
 	};
 
-	function handleDisableCategory(category: Category) {
+	function handleToggleStatusCategory(category: Category) {
 		handleStatus(category);
 	}
 
@@ -210,7 +210,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 																<Switch
 																	name="enable"
 																	checked={row.enable}
-																	onChange={() => handleDisableCategory(row)}
+																	onChange={() => handleToggleStatusCategory(row)}
 																/>
 															}
 															label={row.enable ? 'Inativar' : 'Ativar'}
