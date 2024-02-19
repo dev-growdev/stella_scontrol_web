@@ -1,64 +1,29 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import {
-	Box,
-	Button,
-	Checkbox,
-	FormControl,
-	FormControlLabel,
-	FormGroup,
-	InputLabel,
-	MenuItem,
-	OutlinedInput,
-	Paper,
-	Select,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableRow,
-	TextField,
-	Typography,
-	useTheme
-} from '@mui/material';
+import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { Theme } from '@mui/material/styles';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ptBR } from 'date-fns/locale';
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import '../../../styles/muiCustomComponents.css';
+import AccountType from '../../components/AccountType';
 import CreatableOptions, { ProductOptionType } from '../../components/CreatableOptions';
 import CustomizedTables from '../../components/CustomizedTables';
+import IsRatiable from '../../components/IsRatiable';
+import PaymentMethod from '../../components/PaymentMethod';
+import RequestUser from '../../components/RequestUser';
+import RequiredReceipt from '../../components/RequiredReceipt';
+import UploadFiles from '../../components/UploadFiles';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
-
-const itemHeight = 48;
-const itemPaddingTop = 8;
-const MenuProps = {
-	PaperProps: {
-		style: {
-			maxHeight: itemHeight * 4.5 + itemPaddingTop,
-			width: 250
-		}
-	}
-};
-
-const paymentMethods = ['Boleto', 'Cartão de crédito', 'Cartão corporativo', 'Pix', 'Transferência bancária'];
-
-function getStyles(name: string, personName: string[], theme: Theme) {
-	return {
-		fontWeight:
-			personName.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightMedium
-	};
-}
 
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
 	const user = useSelector(selectUser);
-	const theme = useTheme();
 	const [formData, setFormData] = useState({
 		paymentMethod: [],
 		dueDate: null,
@@ -76,7 +41,7 @@ export default function PaymentRequestFormGeneral() {
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);
 
-	const handleFileChange = event => {
+	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const { files } = event.target;
 		const filesArray = Array.from(files || []);
 
@@ -95,14 +60,16 @@ export default function PaymentRequestFormGeneral() {
 		}));
 	};
 
-	const handleChangeSelect = (event: SelectChangeEvent<typeof formData.paymentMethod>) => {
-		const {
-			target: { value }
-		} = event;
-		setFormData(prevState => ({
-			...prevState,
-			paymentMethod: typeof value === 'string' ? value.split(',') : value
-		}));
+	const handleChangeSelectPaymentMethod = (event: SelectChangeEvent<typeof formData.paymentMethod>) => {
+		const { target } = event || {};
+		const { value } = target || {};
+
+		if (value !== undefined) {
+			setFormData(prevState => ({
+				...prevState,
+				paymentMethod: typeof value === 'string' ? value.split(',') : value
+			}));
+		}
 	};
 
 	function handleAddProducts() {
@@ -190,6 +157,10 @@ export default function PaymentRequestFormGeneral() {
 		});
 	}
 
+	useEffect(() => {
+		console.log(formData);
+	}, [formData]);
+
 	return (
 		<Box className="flex flex-col w-full">
 			<div className="p-32 mt-20">
@@ -219,26 +190,7 @@ export default function PaymentRequestFormGeneral() {
 					elevation={4}
 					className="mt-24 p-36 flex flex-col gap-24"
 				>
-					<div className="flex flex-col gap-24 sm:flex-row">
-						<TextField
-							fullWidth
-							disabled
-							label="Usuário solicitante"
-							value={user.data.displayName}
-						/>
-						<TextField
-							fullWidth
-							disabled
-							label="Email"
-							value={user.data.email}
-						/>
-						<TextField
-							fullWidth
-							disabled
-							label="Centro de custo"
-							value={user.role}
-						/>
-					</div>
+					<RequestUser user={user} />
 
 					<Typography color="GrayText">Adicione os produtos para solicitação de pagamento</Typography>
 
@@ -274,7 +226,7 @@ export default function PaymentRequestFormGeneral() {
 					<div className="flex flex-col sm:flex-row items-center gap-24">
 						<TextField
 							onChange={e => setFormData(prevState => ({ ...prevState, totalValue: e.target.value }))}
-							className="w-ful"
+							className="w-full"
 							value={formData.totalValue}
 							type="number"
 							label="Valor total"
@@ -298,207 +250,39 @@ export default function PaymentRequestFormGeneral() {
 							/>
 						</LocalizationProvider>
 
-						<FormControl className="w-full">
-							<InputLabel id="demo-multiple-name-label">Forma de pagamento</InputLabel>
-							<Select
-								labelId="demo-multiple-name-label"
-								id="demo-multiple-name"
-								value={formData.paymentMethod}
-								onChange={handleChangeSelect}
-								input={<OutlinedInput label="Forma de pagamento" />}
-								MenuProps={MenuProps}
-							>
-								{paymentMethods.map(name => (
-									<MenuItem
-										key={name}
-										value={name}
-										style={getStyles(name, formData.paymentMethod, theme)} //testar o que acontece se remover
-									>
-										{name}
-									</MenuItem>
-								))}
-							</Select>
-						</FormControl>
-					</div>
-					{formData.paymentMethod[0] === 'Pix' && <TextField label="Informe a chave pix" />}
-					{formData.paymentMethod[0] === 'Transferência bancária' && (
-						<div className="flex gap-24 justify-center">
-							<div className="flex flex-col w-full gap-24">
-								<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
-									<TextField
-										fullWidth
-										label="Banco"
-									/>
-									<TextField
-										fullWidth
-										label="Numero da conta"
-									/>
-									<TextField
-										fullWidth
-										label="Agência"
-									/>
-								</div>
-								<div className="flex gap-24">
-									<FormControl fullWidth>
-										<InputLabel id="demo-simple-select-label">Tipo de conta</InputLabel>
-										<Select
-											labelId="demo-simple-select-label"
-											id="demo-simple-select"
-											value={formData.typeAccount}
-											label="Age"
-											onChange={handleChangeTypeAccount}
-										>
-											<MenuItem value="Conta poupança">Conta poupança</MenuItem>
-											<MenuItem value="Conta corrente">Conta corrente</MenuItem>
-										</Select>
-									</FormControl>
-									<TextField
-										fullWidth
-										label="CPF ou CNPJ do Beneficiário"
-									/>
-								</div>
-							</div>
-						</div>
-					)}
-					{formData.paymentMethod.some(option => option.includes('Cartão')) && (
-						<TextField label="selecionar ao portador" />
-					)}
-
-					<div className="flex flex-row items-center">
-						<Typography
-							className="mr-10"
-							color="GrayText"
-						>
-							Necessita comprovante
-						</Typography>
-						<FormGroup className="flex flex-row flex-nowrap">
-							<FormControlLabel
-								control={
-									<Checkbox
-										onClick={() =>
-											setFormData(prevState => ({ ...prevState, requiredReceipt: true }))
-										}
-										checked={formData.requiredReceipt}
-									/>
-								}
-								label="Sim"
-							/>
-							<FormControlLabel
-								control={
-									<Checkbox
-										onClick={() =>
-											setFormData(prevState => ({ ...prevState, requiredReceipt: false }))
-										}
-										checked={!formData.requiredReceipt}
-									/>
-								}
-								label="Não"
-							/>
-						</FormGroup>
+						<PaymentMethod
+							formData={formData}
+							handleChangeSelect={handleChangeSelectPaymentMethod}
+							handleChangeTypeAccount={handleChangeTypeAccount}
+						/>
 					</div>
 
-					<div className="flex flex-row items-center">
-						<Typography
-							className="mr-10"
-							color="GrayText"
-						>
-							Anexar documentos
-						</Typography>
-						<div>
-							<Button
-								component="label"
-								role="button"
-								variant="outlined"
-								sx={{
-									borderColor: theme.palette.primary.main,
-									color: theme.palette.primary.main
-								}}
-								className="border-solid border-2 rounded-4 min-h-[33px] max-h-[33px] pr-0 pl-7"
-								tabIndex={-1}
-								endIcon={
-									<FuseSvgIcon
-										sx={{
-											borderColor: theme.palette.primary.main,
-											backgroundColor: theme.palette.primary.main
-										}}
-										className="border-solid border-2 rounded-r-4 text-gray-50 m-0 h-[33px]"
-									>
-										heroicons-outline:upload
-									</FuseSvgIcon>
-								}
-							>
-								ANEXAR DOCUMENTO
-								<input
-									multiple
-									type="file"
-									onChange={handleFileChange}
-									className="absolute hidden"
-								/>
-							</Button>
-						</div>
-					</div>
-					{formData.uploadedFiles.length > 0 && (
-						<>
-							<Typography
-								className="mr-10"
-								color="GrayText"
-							>
-								Documentos anexados:
-							</Typography>
-							s
-							<TableContainer component={Paper}>
-								<TableBody className="flex flex-col">
-									{formData.uploadedFiles.map((file, index) => (
-										<TableRow key={index}>
-											<TableCell>{file.name}</TableCell>
-											<TableCell>
-												<FuseSvgIcon
-													onClick={() => handleFileRemove(index)}
-													aria-label="delete"
-													className="cursor-pointer text-gray-300"
-												>
-													heroicons-outline:trash
-												</FuseSvgIcon>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</TableContainer>
-						</>
-					)}
+					<AccountType
+						formData={formData}
+						handleChangeTypeAccount={handleChangeTypeAccount}
+					/>
 
-					<div className="flex items-center">
-						<Typography
-							className="mr-10"
-							color="GrayText"
-						>
-							Rateio
-						</Typography>
-						<FormGroup className="flex flex-row">
-							<FormControlLabel
-								control={
-									<Checkbox
-										onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: true }))}
-										checked={formData.isRatiable}
-									/>
-								}
-								label="Sim"
-							/>
-							<FormControlLabel
-								control={
-									<Checkbox
-										onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: false }))}
-										checked={!formData.isRatiable}
-									/>
-								}
-								label="Não"
-							/>
-						</FormGroup>
-					</div>
+					<RequiredReceipt
+						formData={formData}
+						setFormData={setFormData}
+					/>
+
+					<UploadFiles
+						formData={formData}
+						handleFileChange={handleFileChange}
+						handleFileRemove={handleFileRemove}
+					/>
+
+					<IsRatiable
+						formData={formData}
+						setFormData={setFormData}
+					/>
+
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"
 							className="rounded-4"
+							onClick={clearFormState}
 						>
 							CANCELAR
 						</Button>
