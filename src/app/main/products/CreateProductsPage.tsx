@@ -44,6 +44,14 @@ export default function CreateProductsPage() {
 		fetchCategories();
 	}, [dispatch]);
 
+	const clearStates = () => {
+		setCode('');
+		setName('');
+		setCategory('');
+		setMeasurement('');
+		setQuantity('');
+	};
+
 	const handleSubmit = async () => {
 		const productData = {
 			categoryId: category,
@@ -67,6 +75,8 @@ export default function CreateProductsPage() {
 					variant: 'success'
 				})
 			);
+
+			clearStates();
 		} catch (error) {
 			console.error(error);
 		}
@@ -123,6 +133,7 @@ export default function CreateProductsPage() {
 								<TextField
 									fullWidth
 									required
+									value={code}
 									onChange={e => setCode(e.target.value)}
 									label="Código"
 								/>
@@ -135,6 +146,7 @@ export default function CreateProductsPage() {
 								<TextField
 									fullWidth
 									required
+									value={name}
 									onChange={e => setName(e.target.value)}
 									label="Nome"
 								/>
@@ -170,11 +182,13 @@ export default function CreateProductsPage() {
 
 							<TextField
 								fullWidth
+								value={measurement}
 								onChange={e => setMeasurement(e.target.value)}
 								label="Unidade de medida"
 							/>
 							<TextField
 								fullWidth
+								value={quantity}
 								onChange={e => setQuantity(e.target.value)}
 								label="Quantidade por embalagem"
 							/>
@@ -185,6 +199,7 @@ export default function CreateProductsPage() {
 						<Button
 							variant="outlined"
 							sx={{ borderRadius: '7px' }}
+							onClick={clearStates}
 						>
 							CANCELAR
 						</Button>
