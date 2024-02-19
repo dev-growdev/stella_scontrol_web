@@ -62,24 +62,37 @@ export default function CreateProductsPage() {
 			quantity: parseInt(quantity)
 		};
 
-		try {
-			await dispatch(createProduct(productData));
+		dispatch(createProduct(productData))
+			.then(res => {
+				if (res.payload.data && res.payload.data.code == 201) {
+					dispatch(
+						showMessage({
+							message: 'Produto cadastrado com sucesso',
+							anchorOrigin: {
+								vertical: 'top',
+								horizontal: 'center'
+							},
+							variant: 'success'
+						})
+					);
+				}
 
-			dispatch(
-				showMessage({
-					message: `Produto cadastrado com sucesso.`,
-					anchorOrigin: {
-						vertical: 'top',
-						horizontal: 'center'
-					},
-					variant: 'success'
-				})
-			);
-
-			clearStates();
-		} catch (error) {
-			console.error(error);
-		}
+				if (res.payload.response && res.payload.response.status == 400) {
+					dispatch(
+						showMessage({
+							message: res.payload.response.data.message,
+							anchorOrigin: {
+								vertical: 'top',
+								horizontal: 'center'
+							},
+							variant: 'error'
+						})
+					);
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
 	};
 
 	const MenuProps = {
@@ -207,6 +220,7 @@ export default function CreateProductsPage() {
 							sx={{ borderRadius: '7px' }}
 							variant="contained"
 							onClick={handleSubmit}
+							disabled={!category || !name || !code}
 						>
 							ENVIAR
 						</Button>

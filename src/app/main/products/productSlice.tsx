@@ -33,15 +33,7 @@ export const createProduct = createAsyncThunk('products/createProduct', async (d
 	try {
 		const response = await axios.post(`${process.env.REACT_APP_API_URL}/products`, data);
 
-		return {
-			uid: response.data.data.uid,
-			code: response.data.data.code,
-			name: response.data.data.name,
-			category: response.data.data.category,
-			measurement: response.data.data.measurement,
-			quantity: response.data.data.quantity,
-			enable: response.data.data.enable
-		};
+		return response;
 	} catch (error) {
 		return error;
 	}
