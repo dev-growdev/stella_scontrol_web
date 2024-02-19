@@ -11,8 +11,15 @@ import requestPageConfig from '../main/form-request/RequestConfig';
 import CreateProductsPage from '../main/products/CreateProductsPage';
 import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
 import ProductsPage from '../main/products/ProductsPage';
+import ProductsPageConfig from '../main/products/ProductsPageConfig';
 
-const routeConfigs: FuseRouteConfigsType = [ExampleConfig, requestPageConfig, CreateProductsPageConfig, ...authenticationConfig];
+const routeConfigs: FuseRouteConfigsType = [
+	ExampleConfig,
+	requestPageConfig,
+	CreateProductsPageConfig,
+	ProductsPageConfig,
+	...authenticationConfig
+];
 
 /**
  * The routes of the application.

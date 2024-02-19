@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { showMessage } from 'app/store/fuse/messageSlice';
 import { RootStateType } from 'app/store/types';
 import axios from 'axios';
 
@@ -21,7 +20,7 @@ export interface ProductsType {
 }
 
 export interface CreateProduct {
-    categoryId: string;
+	categoryId: string;
 	code: string;
 	name: string;
 	enable: boolean;
@@ -43,7 +42,7 @@ export const getProducts = createAsyncThunk('products/getProducts', async () => 
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
 
-		return response.data.data
+		return response.data.data;
 	} catch (error) {
 		return error;
 	}
@@ -53,7 +52,7 @@ export const updateProduct = createAsyncThunk('categories/updateProduct', async 
 	try {
 		const body = {
 			categoryId: data.categoryId,
-			code: data.code, 
+			code: data.code,
 			name: data.name,
 			enable: data.enable,
 			measurement: data.measurement,
@@ -72,7 +71,7 @@ export const disableProduct = createAsyncThunk('categories/disableProduct', asyn
 	try {
 		const body = {
 			categoryId: data.categoryId,
-			code: data.code, 
+			code: data.code,
 			name: data.name,
 			enable: data.enable,
 			measurement: data.measurement,
@@ -106,11 +105,20 @@ const productsSlice = createSlice({
 					state.products.push(action.payload);
 				}
 				state.loading = false;
+			})
+			.addCase(getProducts.pending, state => {
+				state.loading = true;
+			})
+			.addCase(getProducts.fulfilled, (state, action) => {
+				state.loading = false;
+				state.products = action.payload;
 			});
 	}
 });
 
 export default productsSlice.reducer;
 export const selectCategories = (state: AppRootStateType) => state.products;
+
+export const selectProducts = (state: AppRootStateType) => state.products;
 
 export type productSliceType = typeof productsSlice;
