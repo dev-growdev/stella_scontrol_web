@@ -46,7 +46,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 			const findItem = categoriesData.categories.find(item => item.uid === selectedItemId);
 			selectItem(findItem || null);
 		}
-	}, [selectedItemId]);
+	}, [selectedItemId, categoriesData.categories]);
 
 	const handleChangePage = (event: unknown, newPage: number) => {
 		setPage(newPage);
