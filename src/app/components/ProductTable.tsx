@@ -23,7 +23,7 @@ import TablePagination from '@mui/material/TablePagination';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Product, ProductsType } from '../main/products/productSlice';
+import { Product, ProductsType } from '../main/products/productsSlice';
 
 interface ProductTableProps {
 	selectItem?: (item: Product | null) => void;

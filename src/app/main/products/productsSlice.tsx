@@ -42,13 +42,13 @@ export const getProducts = createAsyncThunk('products/getProducts', async () => 
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
 
-		return response.data.data;
+		return response.data;
 	} catch (error) {
 		return error;
 	}
 });
 
-export const updateProduct = createAsyncThunk('categories/updateProduct', async (data: Product) => {
+export const updateProduct = createAsyncThunk('products/updateProduct', async (data: Product) => {
 	try {
 		const body = {
 			categoryId: data.categoryId,
@@ -61,13 +61,13 @@ export const updateProduct = createAsyncThunk('categories/updateProduct', async 
 
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/products/${data.uid}`, body);
 
-		return response.data.data;
+		return response.data;
 	} catch (error) {
 		return error;
 	}
 });
 
-export const disableProduct = createAsyncThunk('categories/disableProduct', async (data: Product) => {
+export const disableProduct = createAsyncThunk('products/disableProduct', async (data: Product) => {
 	try {
 		const body = {
 			categoryId: data.categoryId,
@@ -80,7 +80,7 @@ export const disableProduct = createAsyncThunk('categories/disableProduct', asyn
 
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/products/${data.uid}/disable`, body);
 
-		return response.data.data;
+		return response.data;
 	} catch (error) {
 		return error;
 	}
@@ -117,7 +117,6 @@ const productsSlice = createSlice({
 });
 
 export default productsSlice.reducer;
-export const selectCategories = (state: AppRootStateType) => state.products;
 
 export const selectProducts = (state: AppRootStateType) => state.products;
 

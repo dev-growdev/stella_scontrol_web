@@ -15,7 +15,7 @@ import {
 import '../../../styles/muiCustomComponents.css';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from 'app/store';
-import { createProduct } from './productSlice';
+import { createProduct } from './productsSlice';
 import axios from 'axios';
 import { showMessage } from 'app/store/fuse/messageSlice';
 
