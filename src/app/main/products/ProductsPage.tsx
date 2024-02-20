@@ -1,35 +1,35 @@
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Product, disableProduct, getProducts, selectProducts } from './productsSlice';
+import { useNavigate } from 'react-router';
 import ProductTable from '../../components/ProductTable';
+import { Product, disableProduct, getProducts, selectProducts } from './productsSlice';
 
 export default function ProductsPage() {
 	const dispatch = useAppDispatch();
 	const productsRedux = useSelector(selectProducts);
-  
-	useEffect(() => {
-	  dispatch(getProducts());
-	}, [dispatch]);
-  
-	useEffect(() => {
-	  console.log(productsRedux);
-	}, [productsRedux]);
+	const navigate = useNavigate();
 
-	function handleGetStatus(item: Product) {
+	useEffect(() => {
+		dispatch(getProducts());
+	}, [dispatch]);
+
+	function handleEditProduct(product: Product) {
+		return navigate(`/cadastrar-produto/${product.uid}`);
+	}
+
+	async function handleGetStatus(item: Product) {
 		const itemToggleEnable = {
 			uid: item.uid,
-			categoryId: item.categoryId,
+			category: item.category.uid,
 			code: item.code,
 			name: item.name,
 			enable: !item.enable,
 			measurement: item.measurement,
 			quantity: item.quantity,
-
 			action: ''
 		};
-
 		dispatch(disableProduct(itemToggleEnable));
 	}
 
@@ -54,25 +54,12 @@ export default function ProductsPage() {
 					elevation={4}
 					className="mt-24 p-36 flex flex-col gap-24"
 				>
-					<div className="flex flex-col sm:flex-row items-center gap-24">
-						<TextField
-							name="name"
-							fullWidth
-							label="Digite para editar esse produto"
-						/>
-
-						<Button
-							className="w-full sm:w-144 pl-60 pr-64"
-							variant="contained"
-						>
-							EDITAR
-						</Button>
-					</div>
 					<div className="flex items-center gap-24 flex-col sm:flex-row">
-						{/* <ProductTable
+						<ProductTable
 							productsData={productsRedux}
 							handleStatus={handleGetStatus}
-						/> */}
+							selectItem={handleEditProduct}
+						/>
 					</div>
 				</Paper>
 			</div>

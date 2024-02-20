@@ -1,17 +1,30 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { RootStateType } from 'app/store/types';
 import axios from 'axios';
+import { Category } from '../categories/categoriesSlice';
 
 type AppRootStateType = RootStateType<productSliceType>;
 
+export interface FormProductType {
+	uid?: string;
+	code: string;
+	name: string;
+	enable?: boolean;
+	category: Category | string;
+	quantity: string | number;
+	measurement: string;
+}
+
 export interface Product {
-	uid: string;
-	categoryId: string;
+	uid?: string;
 	code: string;
 	name: string;
 	enable: boolean;
-	measurement: string;
-	quantity: number;
+	measurement?: string;
+	quantity?: number;
+	category?: Category;
 }
 
 export interface ProductsType {
@@ -28,49 +41,98 @@ export interface CreateProduct {
 	quantity?: number;
 }
 
-export const createProduct = createAsyncThunk('products/createProduct', async (data: CreateProduct) => {
-	try {
-		const response = await axios.post(`${process.env.REACT_APP_API_URL}/products`, data);
+export const createProduct = createAppAsyncThunk(
+	'products/createProduct',
+	async (data: CreateProduct, { dispatch }) => {
+		try {
+			const response = await axios.post(`${process.env.REACT_APP_API_URL}/products`, data);
 
-		return response;
-	} catch (error) {
-		return error;
+			dispatch(
+				showMessage({
+					message: 'Produto cadastrado com sucesso',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'success'
+				})
+			);
+
+			return response.data.data;
+		} catch (error) {
+			dispatch(
+				showMessage({
+					message: error.response.data.message,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+
+			return error;
+		}
 	}
-});
+);
 
 export const getProducts = createAsyncThunk('products/getProducts', async () => {
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
 
-		return response.data;
+		return response.data.data;
 	} catch (error) {
 		return error;
 	}
 });
 
-export const updateProduct = createAsyncThunk('products/updateProduct', async (data: Product) => {
-	try {
-		const body = {
-			categoryId: data.categoryId,
-			code: data.code,
-			name: data.name,
-			enable: data.enable,
-			measurement: data.measurement,
-			quantity: data.quantity
-		};
+export const updateProduct = createAppAsyncThunk(
+	'products/updateProduct',
+	async (data: FormProductType, { dispatch }) => {
+		try {
+			const body = {
+				categoryId: data.category,
+				code: data.code,
+				name: data.name,
+				enable: data.enable,
+				measurement: data.measurement,
+				quantity: data.quantity
+			};
 
-		const response = await axios.put(`${process.env.REACT_APP_API_URL}/products/${data.uid}`, body);
+			const response = await axios.put(`${process.env.REACT_APP_API_URL}/products/${data.uid}`, body);
 
-		return response.data;
-	} catch (error) {
-		return error;
+			dispatch(
+				showMessage({
+					message: 'Produto editado com sucesso.',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'success'
+				})
+			);
+
+			return response.data;
+		} catch (error) {
+			dispatch(
+				showMessage({
+					message: error.response.data.message,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+			return error;
+		}
 	}
-});
+);
 
-export const disableProduct = createAsyncThunk('products/disableProduct', async (data: Product) => {
+export const disableProduct = createAsyncThunk('products/disableProduct', async (data: FormProductType) => {
 	try {
 		const body = {
-			categoryId: data.categoryId,
+			categoryId: data.category,
 			code: data.code,
 			name: data.name,
 			enable: data.enable,
@@ -79,9 +141,10 @@ export const disableProduct = createAsyncThunk('products/disableProduct', async 
 		};
 
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/products/${data.uid}/disable`, body);
-
-		return response.data;
+		console.log(response, '------ RESPONSE');
+		return response.data.data;
 	} catch (error) {
+		console.log('TA CAINDO NO CATCH', error);
 		return error;
 	}
 });
@@ -112,6 +175,16 @@ const productsSlice = createSlice({
 			.addCase(getProducts.fulfilled, (state, action) => {
 				state.loading = false;
 				state.products = action.payload;
+			})
+			.addCase(disableProduct.pending, state => {
+				state.loading = true;
+			})
+			.addCase(disableProduct.fulfilled, (state, action) => {
+				state.loading = false;
+				const indexUpdated = state.products.findIndex(item => action.payload.uid === item.uid);
+				if (indexUpdated !== -1) {
+					state.products[indexUpdated] = action.payload;
+				}
 			});
 	}
 });

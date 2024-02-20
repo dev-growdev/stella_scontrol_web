@@ -1,17 +1,19 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
-import { showMessage } from 'app/store/fuse/messageSlice';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../../../styles/muiCustomComponents.css';
 import { getCategories, selectCategories } from '../categories/categoriesSlice';
-import { createProduct } from './productsSlice';
+import { FormProductType, createProduct, selectProducts, updateProduct } from './productsSlice';
 
 export default function CreateProductsPage() {
 	const dispatch = useAppDispatch();
 	const categories = useSelector(selectCategories);
-	const [formDataProduct, setFormDataProduct] = useState({
+	const products = useSelector(selectProducts);
+	const [editMode, setEditMode] = useState(false);
+	const [formDataProduct, setFormDataProduct] = useState<FormProductType>({
 		code: '',
 		name: '',
 		category: '',
@@ -19,9 +21,27 @@ export default function CreateProductsPage() {
 		measurement: ''
 	});
 
+	const navigate = useNavigate();
+
+	const { productUid } = useParams();
+
 	useEffect(() => {
-		console.log(formDataProduct);
-	}, [formDataProduct]);
+		if (productUid) {
+			setEditMode(true);
+			const findProduct = products.products.find(product => product.uid === productUid);
+			if (findProduct) {
+				setFormDataProduct({
+					uid: findProduct.uid,
+					code: findProduct.code,
+					name: findProduct.name,
+					enable: findProduct.enable,
+					category: findProduct.category.name,
+					quantity: `${findProduct.quantity}`,
+					measurement: findProduct.measurement
+				});
+			}
+		}
+	}, [productUid]);
 
 	useEffect(() => {
 		dispatch(getCategories());
@@ -29,15 +49,19 @@ export default function CreateProductsPage() {
 
 	const clearStates = () => {
 		setFormDataProduct({
+			uid: '',
 			code: '',
 			name: '',
 			category: '',
 			quantity: '',
 			measurement: ''
 		});
+		if (editMode) {
+			navigate(-1);
+		}
 	};
 
-	const handleSubmit = async () => {
+	const handleSubmitCreate = async () => {
 		const categoryId = categories.categories.find(category => category.name === formDataProduct.category);
 		const productData = {
 			categoryId: categoryId.uid ?? '',
@@ -48,40 +72,27 @@ export default function CreateProductsPage() {
 			quantity: +formDataProduct.quantity
 		};
 
-		dispatch(createProduct(productData))
-			.then(res => {
-				if (res.payload.data && res.payload.data.code == 201) {
-					dispatch(
-						showMessage({
-							message: 'Produto cadastrado com sucesso',
-							anchorOrigin: {
-								vertical: 'top',
-								horizontal: 'center'
-							},
-							variant: 'success'
-						})
-					);
-				}
-
-				if (res.payload.response && res.payload.response.status == 400) {
-					dispatch(
-						showMessage({
-							message: res.payload.response.data.message,
-							anchorOrigin: {
-								vertical: 'top',
-								horizontal: 'center'
-							},
-							variant: 'error'
-						})
-					);
-				}
-
-				clearStates();
-			})
-			.catch(error => {
-				console.error('Error:', error);
-			});
+		dispatch(createProduct(productData));
+		clearStates();
 	};
+
+	function handleSubmitEdit() {
+		const categoryId = categories.categories.find(category => category.name === formDataProduct.category);
+		if (formDataProduct.uid === '' || !formDataProduct.uid) {
+			return alert('deu xabu');
+		}
+		const updateProductForm = {
+			uid: formDataProduct.uid,
+			category: categoryId.uid ?? '',
+			code: formDataProduct.code,
+			name: formDataProduct.name,
+			enable: formDataProduct.enable,
+			measurement: formDataProduct.measurement,
+			quantity: +formDataProduct.quantity
+		};
+
+		dispatch(updateProduct(updateProductForm));
+	}
 
 	const handlePropertiesChange = (field, value) => {
 		setFormDataProduct({
@@ -187,15 +198,13 @@ export default function CreateProductsPage() {
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"
-							sx={{ borderRadius: '7px' }}
 							onClick={clearStates}
 						>
 							CANCELAR
 						</Button>
 						<Button
-							sx={{ borderRadius: '7px' }}
 							variant="contained"
-							onClick={handleSubmit}
+							onClick={editMode ? handleSubmitEdit : handleSubmitCreate}
 							disabled={!formDataProduct.category || !formDataProduct.name || !formDataProduct.code}
 						>
 							ENVIAR
