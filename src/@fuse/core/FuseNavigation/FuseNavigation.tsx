@@ -1,20 +1,20 @@
 import Divider from '@mui/material/Divider';
-import { memo } from 'react';
 import GlobalStyles from '@mui/material/GlobalStyles';
+import { memo } from 'react';
+import { registerComponent } from './FuseNavItem';
 import FuseNavHorizontalLayout1 from './horizontal/FuseNavHorizontalLayout1';
-import FuseNavVerticalLayout1 from './vertical/FuseNavVerticalLayout1';
-import FuseNavVerticalLayout2 from './vertical/FuseNavVerticalLayout2';
 import FuseNavHorizontalCollapse from './horizontal/types/FuseNavHorizontalCollapse';
 import FuseNavHorizontalGroup from './horizontal/types/FuseNavHorizontalGroup';
 import FuseNavHorizontalItem from './horizontal/types/FuseNavHorizontalItem';
 import FuseNavHorizontalLink from './horizontal/types/FuseNavHorizontalLink';
+import { FuseNavItemType } from './types/FuseNavItemType';
+import { FuseNavigationType } from './types/FuseNavigationType';
+import FuseNavVerticalLayout1 from './vertical/FuseNavVerticalLayout1';
+import FuseNavVerticalLayout2 from './vertical/FuseNavVerticalLayout2';
 import FuseNavVerticalCollapse from './vertical/types/FuseNavVerticalCollapse';
 import FuseNavVerticalGroup from './vertical/types/FuseNavVerticalGroup';
 import FuseNavVerticalItem from './vertical/types/FuseNavVerticalItem';
 import FuseNavVerticalLink from './vertical/types/FuseNavVerticalLink';
-import { registerComponent } from './FuseNavItem';
-import { FuseNavigationType } from './types/FuseNavigationType';
-import { FuseNavItemType } from './types/FuseNavItemType';
 
 const inputGlobalStyles = (
 	<GlobalStyles

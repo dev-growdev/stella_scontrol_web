@@ -5,7 +5,7 @@ import settingsConfig from 'app/configs/settingsConfig';
 import { Navigate } from 'react-router-dom';
 import Error404Page from '../main/404/Error404Page';
 import authenticationConfig from '../main/authentication/authenticationConfig';
-import ExampleConfig from '../main/example/ExampleConfig';
+import categoriesPageConfig from '../main/categories/CategoriesPageConfig';
 import PaymentRequestFormGeneral from '../main/form-request/FormRequest';
 import paymentRequestFormGeneralPageConfig from '../main/form-request/FormRequestConfig';
 import requestPageConfig from '../main/form-request/RequestConfig';
@@ -15,11 +15,11 @@ import ProductsPage from '../main/products/ProductsPage';
 import ProductsPageConfig from '../main/products/ProductsPageConfig';
 
 const routeConfigs: FuseRouteConfigsType = [
-	ExampleConfig,
 	paymentRequestFormGeneralPageConfig,
 	requestPageConfig,
 	CreateProductsPageConfig,
 	ProductsPageConfig,
+	categoriesPageConfig,
 	...authenticationConfig
 ];
 
@@ -30,7 +30,7 @@ const routes: FuseRoutesType = [
 	...FuseUtils.generateRoutesFromConfigs(routeConfigs, settingsConfig.defaultAuth),
 	{
 		path: '/',
-		element: <Navigate to="/example" />,
+		element: <Navigate to="/solicitar-pagamento-geral" />,
 		auth: settingsConfig.defaultAuth
 	},
 	{
