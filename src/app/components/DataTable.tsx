@@ -67,10 +67,6 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		setSelectedItemId(itemId === selectedItemId ? null : itemId);
 	};
 
-	useEffect(() => {
-		console.log(selectedItemId, 'seletected item id');
-	}, [selectedItemId]);
-
 	const filteredCategories: Category[] =
 		categoriesData.categories && categoriesData.categories.length > 0
 			? categoriesData.categories.filter((row: Category) => {
@@ -198,18 +194,13 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 												}}
 											>
 												<div className="flex w-full justify-between">
-													<div
+													<FuseSvgIcon
+														className="w-32 mr-20 cursor-pointer"
 														onClick={() => handleRowEdit(row.uid)}
-														className="w-32 mr-20 "
 													>
-														<FuseSvgIcon
-															sx={{
-																cursor: 'pointer'
-															}}
-														>
-															heroicons-outline:pencil
-														</FuseSvgIcon>
-													</div>
+														heroicons-outline:pencil
+													</FuseSvgIcon>
+
 													<FormGroup>
 														<FormControlLabel
 															control={
