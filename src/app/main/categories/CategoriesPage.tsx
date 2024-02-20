@@ -78,7 +78,6 @@ export default function CategoriesPage() {
 	}
 
 	function clearStates() {
-		console.log('limpou todos os estados');
 		setNewItem('');
 		setEditCategory(null);
 		setEditMode(false);
