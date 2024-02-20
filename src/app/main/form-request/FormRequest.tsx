@@ -7,7 +7,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useAppDispatch } from 'app/store';
 import { selectUser } from 'app/store/user/userSlice';
 import { ptBR } from 'date-fns/locale';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import '../../../styles/muiCustomComponents.css';
 import AccountType from '../../components/AccountType';
@@ -20,10 +20,24 @@ import RequiredReceipt from '../../components/RequiredReceipt';
 import UploadFiles from '../../components/UploadFiles';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
+export interface FormDataProps {
+	paymentMethod: string[];
+	dueDate: Date | null;
+	valueProducts: { product: string; brand: string } | null;
+	requiredReceipt: boolean;
+	isRatiable: boolean;
+	tableData: { produto: string; marca: string }[];
+	description: string;
+	totalValue: string;
+	typeAccount: string;
+	uploadedFiles: File[];
+}
+
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
 	const user = useSelector(selectUser);
-	const [formData, setFormData] = useState({
+
+	const [formData, setFormData] = useState<FormDataProps>({
 		paymentMethod: [],
 		dueDate: null,
 		valueProducts: null,
@@ -130,10 +144,6 @@ export default function PaymentRequestFormGeneral() {
 			uploadedFiles: []
 		});
 	}
-
-	useEffect(() => {
-		console.log(formData);
-	}, [formData]);
 
 	return (
 		<Box className="flex flex-col w-full">

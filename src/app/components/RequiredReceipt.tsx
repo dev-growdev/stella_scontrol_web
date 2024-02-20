@@ -1,8 +1,10 @@
 import { Checkbox, FormControlLabel, FormGroup, Typography } from '@mui/material';
+import { Dispatch, SetStateAction } from 'react';
+import { FormDataProps } from '../main/form-request/FormRequest';
 
 interface RequiredReceiptProps {
-	formData: any;
-	setFormData: (arg: any) => void;
+	formData: FormDataProps;
+	setFormData: Dispatch<SetStateAction<FormDataProps>>;
 }
 
 export default function RequiredReceipt({ formData, setFormData }: RequiredReceiptProps) {

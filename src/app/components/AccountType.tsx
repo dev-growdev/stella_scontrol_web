@@ -2,11 +2,12 @@ import { TextField } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { FormDataProps } from '../main/form-request/FormRequest';
 
 interface AccountTypeProps {
-	formData: any;
-	handleChangeTypeAccount: (arg: any) => void;
+	formData: FormDataProps;
+	handleChangeTypeAccount: (arg: SelectChangeEvent) => void;
 }
 
 export default function AccountType({ formData, handleChangeTypeAccount }: AccountTypeProps) {

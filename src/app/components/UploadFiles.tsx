@@ -1,9 +1,10 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Button, Paper, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
+import { FormDataProps } from '../main/form-request/FormRequest';
 
 interface UploadFilesProps {
 	handleFileChange: (arg) => void;
-	formData: any;
+	formData: FormDataProps;
 	handleFileRemove: (index: number) => void;
 }
 
