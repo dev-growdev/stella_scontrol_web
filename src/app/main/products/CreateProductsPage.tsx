@@ -1,65 +1,51 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import {
-	Box,
-	Button,
-	Grid,
-	Paper,
-	TextField,
-	Typography,
-	MenuItem,
-	Select,
-	OutlinedInput,
-	InputLabel,
-	FormControl
-} from '@mui/material';
-import '../../../styles/muiCustomComponents.css';
-import { useEffect, useState } from 'react';
+import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
-import { createProduct } from './productsSlice';
-import axios from 'axios';
 import { showMessage } from 'app/store/fuse/messageSlice';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import '../../../styles/muiCustomComponents.css';
+import { getCategories, selectCategories } from '../categories/categoriesSlice';
+import { createProduct } from './productsSlice';
 
 export default function CreateProductsPage() {
-	const [code, setCode] = useState<string>('');
-	const [name, setName] = useState<string>('');
-	const [category, setCategory] = useState<string>('');
-	const [measurement, setMeasurement] = useState<string>('');
-	const [quantity, setQuantity] = useState<string>('');
-	const [categories, setCategories] = useState<string[]>([]);
 	const dispatch = useAppDispatch();
+	const categories = useSelector(selectCategories);
+	const [formDataProduct, setFormDataProduct] = useState({
+		code: '',
+		name: '',
+		category: '',
+		quantity: '',
+		measurement: ''
+	});
 
 	useEffect(() => {
-		const fetchCategories = async () => {
-			try {
-				const categoriesData = await axios.get(`${process.env.REACT_APP_API_URL}/categories`);
+		console.log(formDataProduct);
+	}, [formDataProduct]);
 
-				const filteredCategories = categoriesData.data.data.filter(category => category.enable === true);
-
-				setCategories(filteredCategories);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchCategories();
-	}, [dispatch]);
+	useEffect(() => {
+		dispatch(getCategories());
+	}, []);
 
 	const clearStates = () => {
-		setCode('');
-		setName('');
-		setCategory('');
-		setMeasurement('');
-		setQuantity('');
+		setFormDataProduct({
+			code: '',
+			name: '',
+			category: '',
+			quantity: '',
+			measurement: ''
+		});
 	};
 
 	const handleSubmit = async () => {
+		const categoryId = categories.categories.find(category => category.name === formDataProduct.category);
 		const productData = {
-			categoryId: category,
-			code,
-			name,
+			categoryId: categoryId.uid ?? '',
+			code: formDataProduct.code,
+			name: formDataProduct.name,
 			enable: true,
-			measurement,
-			quantity: parseInt(quantity)
+			measurement: formDataProduct.measurement,
+			quantity: +formDataProduct.quantity
 		};
 
 		dispatch(createProduct(productData))
@@ -97,13 +83,11 @@ export default function CreateProductsPage() {
 			});
 	};
 
-	const MenuProps = {
-		PaperProps: {
-			style: {
-				maxHeight: 200,
-				width: 250
-			}
-		}
+	const handlePropertiesChange = (field, value) => {
+		setFormDataProduct({
+			...formDataProduct,
+			[field]: value
+		});
 	};
 
 	return (
@@ -148,8 +132,8 @@ export default function CreateProductsPage() {
 								<TextField
 									fullWidth
 									required
-									value={code}
-									onChange={e => setCode(e.target.value)}
+									value={formDataProduct.code}
+									onChange={e => handlePropertiesChange('code', e.target.value)}
 									label="Código"
 								/>
 							</Grid>
@@ -161,8 +145,8 @@ export default function CreateProductsPage() {
 								<TextField
 									fullWidth
 									required
-									value={name}
-									onChange={e => setName(e.target.value)}
+									value={formDataProduct.name}
+									onChange={e => handlePropertiesChange('name', e.target.value)}
 									label="Nome"
 								/>
 							</Grid>
@@ -171,40 +155,30 @@ export default function CreateProductsPage() {
 
 					<div className="flex flex-col w-full gap-24">
 						<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
-							<FormControl className="w-full">
-								<InputLabel id="demo-multiple-name-label">Categoria</InputLabel>
-								<Select
-									labelId="demo-multiple-name-label"
-									id="demo-multiple-name"
-									fullWidth
-									required
-									input={<OutlinedInput label="Categoria" />}
-									value={category}
-									onChange={e => setCategory(e.target.value)}
-									MenuProps={MenuProps}
-								>
-									{Array.isArray(categories) &&
-										categories.map(category => (
-											<MenuItem
-												key={category.uid}
-												value={category.uid}
-											>
-												{category.name}
-											</MenuItem>
-										))}
-								</Select>
-							</FormControl>
+							<Autocomplete
+								id="combo-box-demo"
+								className="w-full"
+								options={categories.categories.map(category => category.name)}
+								onChange={(e, value) => handlePropertiesChange('category', value)}
+								value={formDataProduct.category}
+								renderInput={params => (
+									<TextField
+										{...params}
+										label="Categoria"
+									/>
+								)}
+							/>
 
 							<TextField
 								fullWidth
-								value={measurement}
-								onChange={e => setMeasurement(e.target.value)}
+								value={formDataProduct.measurement}
+								onChange={e => handlePropertiesChange('measurement', e.target.value)}
 								label="Unidade de medida"
 							/>
 							<TextField
 								fullWidth
-								value={quantity}
-								onChange={e => setQuantity(e.target.value)}
+								value={formDataProduct.quantity}
+								onChange={e => handlePropertiesChange('quantity', e.target.value)}
 								label="Quantidade por embalagem"
 							/>
 						</div>
@@ -222,7 +196,7 @@ export default function CreateProductsPage() {
 							sx={{ borderRadius: '7px' }}
 							variant="contained"
 							onClick={handleSubmit}
-							disabled={!category || !name || !code}
+							disabled={!formDataProduct.category || !formDataProduct.name || !formDataProduct.code}
 						>
 							ENVIAR
 						</Button>
