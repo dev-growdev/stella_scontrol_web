@@ -1,8 +1,9 @@
 import { combineReducers, ReducersMapObject } from '@reduxjs/toolkit';
-import user from './user/userSlice';
-import i18n from './i18nSlice';
+import requestPaymentGeneralSlice from '../main/form-request/FormRequestSlice';
 import fuse from './fuse';
 import productsSlice from '../main/products/productsSlice'
+import i18n from './i18nSlice';
+import user from './user/userSlice';
 
 /**
  * Creates a reducer function that combines the provided reducers with the async reducers.
@@ -11,6 +12,7 @@ const createReducer = (asyncReducers: ReducersMapObject) =>
 	combineReducers({
 		fuse,
 		user,
+		requestPaymentGeneralSlice,
 		i18n,
 		productsSlice,
 		...asyncReducers

@@ -6,7 +6,8 @@ import { Navigate } from 'react-router-dom';
 import Error404Page from '../main/404/Error404Page';
 import authenticationConfig from '../main/authentication/authenticationConfig';
 import ExampleConfig from '../main/example/ExampleConfig';
-import FormRequest from '../main/form-request/FormRequest';
+import PaymentRequestFormGeneral from '../main/form-request/FormRequest';
+import paymentRequestFormGeneralPageConfig from '../main/form-request/FormRequestConfig';
 import requestPageConfig from '../main/form-request/RequestConfig';
 import CreateProductsPage from '../main/products/CreateProductsPage';
 import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
@@ -15,6 +16,7 @@ import ProductsPageConfig from '../main/products/ProductsPageConfig';
 
 const routeConfigs: FuseRouteConfigsType = [
 	ExampleConfig,
+	paymentRequestFormGeneralPageConfig,
 	requestPageConfig,
 	CreateProductsPageConfig,
 	ProductsPageConfig,
@@ -45,7 +47,7 @@ const routes: FuseRoutesType = [
 	},
 	{
 		path: 'solicitar-pagamento',
-		element: <FormRequest />
+		element: <PaymentRequestFormGeneral />
 	},
 	{
 		path: 'cadastrar-produto',
