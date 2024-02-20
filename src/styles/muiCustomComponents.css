@@ -38,3 +38,13 @@
 .muiltr-154j6x2-MuiInputBase-input-MuiOutlinedInput-input {
 	padding: 0;
 }
+
+.muiltr-9hzkmq-MuiButtonBase-root-MuiButton-root {
+	background-color: #00abc8;
+	color: white;
+}
+
+.muiltr-9hzkmq-MuiButtonBase-root-MuiButton-root:hover {
+	background-color: #02798d;
+	color: white;
+}
