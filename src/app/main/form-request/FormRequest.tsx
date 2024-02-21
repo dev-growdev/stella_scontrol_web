@@ -18,11 +18,13 @@ import PaymentMethod from '../../components/PaymentMethod';
 import RequestUser from '../../components/RequestUser';
 import RequiredReceipt from '../../components/RequiredReceipt';
 import UploadFiles from '../../components/UploadFiles';
+import { getProducts, selectProducts } from '../products/productsSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
 	const user = useSelector(selectUser);
+	const products = useSelector(selectProducts);
 	const [formData, setFormData] = useState({
 		paymentMethod: [],
 		dueDate: null,
@@ -39,6 +41,21 @@ export default function PaymentRequestFormGeneral() {
 	const currentDate = new Date();
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);
+
+	useEffect(() => {
+		dispatch(getProducts()); //analisar colcoar isso em AuthContext
+	}, []);
+
+	const produtosProvisorios = products.products.map(product => {
+		return {
+			product: product.name,
+			brand: product.category.name
+		};
+	});
+
+	useEffect(() => {
+		console.log(produtosProvisorios, 'produtosProvisorios');
+	}, [produtosProvisorios]);
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const { files } = event.target;
@@ -131,10 +148,6 @@ export default function PaymentRequestFormGeneral() {
 		});
 	}
 
-	useEffect(() => {
-		console.log(formData);
-	}, [formData]);
-
 	return (
 		<Box className="flex flex-col w-full">
 			<div className="p-32 mt-20">
@@ -154,7 +167,8 @@ export default function PaymentRequestFormGeneral() {
 						className="text-20 md:text-28"
 						component="h1"
 						variant="h4"
-						fontWeight={400}
+						fontWeight={500}
+						sx={{ color: theme => theme.palette.secondary.main }}
 					>
 						Abrir nova solicitação
 					</Typography>
@@ -172,7 +186,7 @@ export default function PaymentRequestFormGeneral() {
 						<CreatableOptions
 							selectedData={getDataFromCreatable}
 							newData={handleCreatableProducts}
-							products={[]}
+							products={produtosProvisorios}
 						/>
 						<Button
 							className="w-full sm:w-256"
