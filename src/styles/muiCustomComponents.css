@@ -1,16 +1,18 @@
 /* contained */
 .muiltr-370b5p-MuiButtonBase-root-MuiButton-root {
 	color: white;
+	border-radius: 7px;
 	background-color: #00abc8;
 }
+
 .muiltr-370b5p-MuiButtonBase-root-MuiButton-root:hover {
-	color: white;
 	background-color: #02798d;
 }
 
 /* outlined */
 .muiltr-bjdztq-MuiButtonBase-root-MuiButton-root {
 	border-color: #00abc8;
+	border-radius: 7px;
 	color: #00abc8;
 }
 

@@ -15,7 +15,6 @@ import {
 	TextField
 } from '@mui/material';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
@@ -25,9 +24,9 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { Product, ProductsType } from '../main/products/productsSlice';
 
 interface ProductTableProps {
-	selectItem?: (item: Product | null) => void;
-	productsData?: ProductsType | { products: []; loading: false };
-	handleStatus?: (item: Product) => void;
+	selectItem: (item: Product | null) => void;
+	productsData: ProductsType | { products: []; loading: false };
+	handleStatus: (item: Product) => void;
 }
 
 export default function ProductTable({ selectItem, productsData, handleStatus }: ProductTableProps) {
@@ -39,6 +38,10 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 	const [anchorStatusMenu, setAnchorStatusMenu] = useState<null | HTMLElement>(null);
 
 	const openMenuStatus = Boolean(anchorStatusMenu);
+
+	useEffect(() => {
+		console.log('CONSOLE DE DENTRO DO PRODUCT TABLE', productsData);
+	}, [productsData]);
 
 	useEffect(() => {
 		if (selectedItemId !== null && productsData.products) {
@@ -72,6 +75,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 						filterByStatus === 'all' ||
 						(filterByStatus === 'active' && row.enable) ||
 						(filterByStatus === 'inactive' && !row.enable);
+
 					return matchesSearch && matchesStatus;
 			  })
 			: [];
@@ -93,171 +97,138 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 
 	return (
 		<Box sx={{ width: '100%' }}>
-			<Paper sx={{ width: '100%', mb: 2 }}>
-				<Toolbar>
-					<div className="flex flex-col sm:flex-row w-full items-center gap-24">
-						<TextField
-							onChange={handleSearch}
-							value={searchValue}
-							label="Pesquisar"
-							fullWidth
-						/>
-						<div>
-							<Button
-								id="basic-button"
-								aria-controls={openMenuStatus ? 'basic-menu' : undefined}
-								aria-haspopup="true"
-								aria-expanded={openMenuStatus ? 'true' : undefined}
-								onClick={handleOpenStatusMenu}
-								className="w-full sm:w-144 pl-60 pr-64"
-								variant="contained"
-								startIcon={<FuseSvgIcon>heroicons-outline:filter</FuseSvgIcon>}
-							>
-								{filterByStatus === 'all' && 'FILTRAR'}
-								{filterByStatus === 'active' && 'ATIVOS'}
-								{filterByStatus === 'inactive' && 'INATIVOS'}
-							</Button>
+			<Toolbar>
+				<div className="flex flex-col sm:flex-row w-full items-center gap-24">
+					<Typography
+						variant="h6"
+						component="div"
+					>
+						Produtos cadastrados
+					</Typography>
+					<TextField
+						onChange={handleSearch}
+						value={searchValue}
+						label="Pesquise por categorias"
+						fullWidth
+					/>
+					<div>
+						<Button
+							id="basic-button"
+							aria-controls={openMenuStatus ? 'basic-menu' : undefined}
+							aria-haspopup="true"
+							aria-expanded={openMenuStatus ? 'true' : undefined}
+							onClick={handleOpenStatusMenu}
+							className="w-full sm:w-144 pl-60 pr-64"
+							variant="contained"
+							startIcon={<FuseSvgIcon>heroicons-outline:filter</FuseSvgIcon>}
+						>
+							{filterByStatus === 'all' && 'FILTRAR'}
+							{filterByStatus === 'active' && 'ATIVOS'}
+							{filterByStatus === 'inactive' && 'INATIVOS'}
+						</Button>
 
-							<Menu
-								id="basic-menu"
-								anchorEl={anchorStatusMenu}
-								open={openMenuStatus}
-								onClose={handleCloseStatusMenu}
-								MenuListProps={{
-									'aria-labelledby': 'basic-button'
-								}}
-							>
-								<MenuItem onClick={() => handleCloseStatusMenu('all')}>Todos</MenuItem>
-								<MenuItem onClick={() => handleCloseStatusMenu('active')}>Ativos</MenuItem>
-								<MenuItem onClick={() => handleCloseStatusMenu('inactive')}>Inativos</MenuItem>
-							</Menu>
-						</div>
+						<Menu
+							id="basic-menu"
+							anchorEl={anchorStatusMenu}
+							open={openMenuStatus}
+							onClose={handleCloseStatusMenu}
+							MenuListProps={{
+								'aria-labelledby': 'basic-button'
+							}}
+						>
+							<MenuItem onClick={() => handleCloseStatusMenu('all')}>Todos</MenuItem>
+							<MenuItem onClick={() => handleCloseStatusMenu('active')}>Ativos</MenuItem>
+							<MenuItem onClick={() => handleCloseStatusMenu('inactive')}>Inativos</MenuItem>
+						</Menu>
 					</div>
-				</Toolbar>
-				<TableContainer>
-					<Table>
-						<TableHead className="flex justify-between">
-							<TableCell>Código</TableCell>
-							<TableCell>Nome</TableCell>
-							<TableCell>Categoria</TableCell>
-							<TableCell>Unidade de Medida</TableCell>
-							<TableCell>Qtde por Embalagem</TableCell>
-							<TableCell>Status</TableCell>
-							<TableCell>Ações</TableCell>
-						</TableHead>
-						<TableBody>
-							{productsData.loading ? (
-								<Box className="flex justify-center items-center">
-									<CircularProgress color="primary" />
-								</Box>
-							) : (
-								sortedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-									<TableRow
-										className="flex"
-										key={row.uid}
+				</div>
+			</Toolbar>
+			<TableContainer>
+				<Table>
+					<TableHead className="flex justify-between">
+						<TableCell>Nome</TableCell>
+						<TableCell>Categoria</TableCell>
+						<TableCell>Status</TableCell>
+						<TableCell>Ações</TableCell>
+					</TableHead>
+					<TableBody>
+						{productsData.loading ? (
+							<Box className="flex justify-center items-center">
+								<CircularProgress color="primary" />
+							</Box>
+						) : (
+							sortedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+								<TableRow
+									className="flex justify-between"
+									key={row.uid}
+								>
+									<TableCell
+										className="min-w-200"
+										component="th"
+										scope="row"
 									>
-										<TableCell
-											className="min-w-160"
-											component="th"
-											scope="row"
-										>
-											{row.code}
-										</TableCell>
+										{row.name}
+									</TableCell>
 
-										<TableCell
-											className="min-w-160"
-											component="th"
-											scope="row"
+									<TableCell className="min-w-200 flex justify-center">
+										{row.category.name ?? 'deu xabu'}
+									</TableCell>
+									<TableCell className="min-w-200 flex justify-end">
+										<Stack
+											direction="row"
+											spacing={1}
 										>
-											{row.name}
-										</TableCell>
-
-										<TableCell
-											className="min-w-160"
-											component="th"
-											scope="row"
-										>
-											{row.category.name}
-										</TableCell>
-
-										<TableCell
-											className="min-w-160"
-											component="th"
-											scope="row"
-										>
-											{row.measurement}
-										</TableCell>
-
-										<TableCell
-											className="min-w-160"
-											component="th"
-											scope="row"
-										>
-											{row.quantity}
-										</TableCell>
-
-										<TableCell className="min-w-160 flex justify-end">
-											<Stack
-												direction="row"
-												spacing={1}
+											<Chip
+												className="min-w-64"
+												color={row.enable ? 'primary' : 'error'}
+												label={row.enable ? 'Ativo' : 'Inativo'}
+											/>
+										</Stack>
+									</TableCell>
+									<TableCell
+										className="min-w-224 flex justify-end"
+										sx={{
+											color: theme => theme.palette.secondary.light
+										}}
+									>
+										<div className="flex w-full justify-between">
+											<FuseSvgIcon
+												onClick={() => handleRowClick(row.uid)}
+												className="w-32 mr-20 cursor-pointer"
 											>
-												<Chip
-													className="min-w-64"
-													color={row.enable ? 'primary' : 'error'}
-													label={row.enable ? 'Ativo' : 'Inativo'}
+												heroicons-outline:pencil
+											</FuseSvgIcon>
+
+											<FormGroup>
+												<FormControlLabel
+													control={
+														<Switch
+															name="enable"
+															checked={row.enable}
+															onChange={() => handleStatus(row)}
+														/>
+													}
+													label={row.enable ? 'Inativar' : 'Ativar'}
 												/>
-											</Stack>
-										</TableCell>
-										<TableCell
-											className="min-w-224 flex justify-end"
-											sx={{
-												color: theme => theme.palette.secondary.light
-											}}
-										>
-											<div className="flex w-full justify-between">
-												<div
-													onClick={() => handleRowClick(row.uid)}
-													className="w-32 mr-20 "
-												>
-													<FuseSvgIcon
-														sx={{
-															cursor: 'pointer'
-														}}
-													>
-														heroicons-outline:pencil
-													</FuseSvgIcon>
-												</div>
-												<FormGroup>
-													<FormControlLabel
-														control={
-															<Switch
-																name="enable"
-																checked={row.enable}
-																onChange={() => handleStatus(row)}
-															/>
-														}
-														label={row.enable ? 'Inativar' : 'Ativar'}
-													/>
-												</FormGroup>
-											</div>
-										</TableCell>
-									</TableRow>
-								))
-							)}
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[5, 10, 25]}
-					component="div"
-					count={sortedProducts.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-					labelRowsPerPage="Produtos por página:"
-				/>
-			</Paper>
+											</FormGroup>
+										</div>
+									</TableCell>
+								</TableRow>
+							))
+						)}
+					</TableBody>
+				</Table>
+			</TableContainer>
+			<TablePagination
+				rowsPerPageOptions={[5, 10, 25]}
+				component="div"
+				count={sortedProducts.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
+				labelRowsPerPage="Categorias por página:"
+			/>
 		</Box>
 	);
 }

@@ -1,113 +1,116 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import {
-	Box,
-	Button,
-	Grid,
-	Paper,
-	TextField,
-	Typography,
-	MenuItem,
-	Select,
-	OutlinedInput,
-	InputLabel,
-	FormControl
-} from '@mui/material';
-import '../../../styles/muiCustomComponents.css';
-import { useEffect, useState } from 'react';
+import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
-import { createProduct } from './productsSlice';
-import axios from 'axios';
 import { showMessage } from 'app/store/fuse/messageSlice';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import '../../../styles/muiCustomComponents.css';
+import { getCategories, selectCategories } from '../categories/categoriesSlice';
+import { FormProductType, createProduct, selectProducts, updateProduct } from './productsSlice';
 
 export default function CreateProductsPage() {
-	const [code, setCode] = useState<string>('');
-	const [name, setName] = useState<string>('');
-	const [category, setCategory] = useState<string>('');
-	const [measurement, setMeasurement] = useState<string>('');
-	const [quantity, setQuantity] = useState<string>('');
-	const [categories, setCategories] = useState<{uid: string, name: string, enable: boolean}[]>([]);
 	const dispatch = useAppDispatch();
+	const categories = useSelector(selectCategories);
+	const products = useSelector(selectProducts);
+	const [editMode, setEditMode] = useState(false);
+	const [formDataProduct, setFormDataProduct] = useState<FormProductType>({
+		code: '',
+		name: '',
+		category: '',
+		quantity: '',
+		measurement: ''
+	});
+
+	const navigate = useNavigate();
+
+	const { productUid } = useParams();
 
 	useEffect(() => {
-		console.log(categories);
-	}, [categories]);
-
-	useEffect(() => {
-		const fetchCategories = async () => {
-			try {
-				const categoriesData = await axios.get(`${process.env.REACT_APP_API_URL}/categories`);
-
-				const filteredCategories = categoriesData.data.data.filter(category => category.enable === true);
-
-				setCategories(filteredCategories);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchCategories();
-	}, [dispatch]);
-
-	const clearStates = () => {
-		setCode('');
-		setName('');
-		setCategory('');
-		setMeasurement('');
-		setQuantity('');
-	};
-
-	const handleSubmit = async () => {
-		const productData = {
-			categoryId: category,
-			code,
-			name,
-			enable: true,
-			measurement,
-			quantity: parseInt(quantity)
-		};
-
-		dispatch(createProduct(productData))
-			.then(res => {
-				if (res.payload.data && res.payload.data.code == 201) {
-					dispatch(
-						showMessage({
-							message: 'Produto cadastrado com sucesso',
-							anchorOrigin: {
-								vertical: 'top',
-								horizontal: 'center'
-							},
-							variant: 'success'
-						})
-					);
-				}
-
-				if (res.payload.response && res.payload.response.status == 400) {
-					dispatch(
-						showMessage({
-							message: res.payload.response.data.message,
-							anchorOrigin: {
-								vertical: 'top',
-								horizontal: 'center'
-							},
-							variant: 'error'
-						})
-					);
-				}
-
-				clearStates();
-			})
-			.catch(error => {
-				console.error('Error:', error);
-			});
-	};
-
-	const MenuProps = {
-		PaperProps: {
-			style: {
-				maxHeight: 200,
-				width: 250
+		if (productUid) {
+			setEditMode(true);
+			const findProduct = products.products.find(product => product.uid === productUid);
+			if (findProduct) {
+				setFormDataProduct({
+					uid: findProduct.uid,
+					code: findProduct.code,
+					name: findProduct.name,
+					enable: findProduct.enable,
+					category: findProduct.category.name,
+					quantity: `${findProduct.quantity}`,
+					measurement: findProduct.measurement
+				});
 			}
 		}
+	}, [productUid]);
+
+	useEffect(() => {
+		dispatch(getCategories());
+	}, []);
+
+	const clearStates = () => {
+		setFormDataProduct({
+			uid: '',
+			code: '',
+			name: '',
+			category: '',
+			quantity: '',
+			measurement: ''
+		});
+		if (editMode) {
+			navigate(-1);
+		}
+	};
+
+	const handleSubmitCreate = async () => {
+		const categoryId = categories.categories.find(category => category.name === formDataProduct.category);
+		const productData = {
+			categoryId: categoryId.uid ?? '',
+			code: formDataProduct.code,
+			name: formDataProduct.name,
+			enable: true,
+			measurement: formDataProduct.measurement,
+			quantity: +formDataProduct.quantity
+		};
+
+		dispatch(createProduct(productData));
+		clearStates();
+	};
+
+	function handleSubmitEdit() {
+		const categoryId = categories.categories.find(category => category.name === formDataProduct.category);
+		if (formDataProduct.uid === '' || !formDataProduct.uid) {
+			dispatch(
+				showMessage({
+					message: 'Selecione um produto válido para ser editado.',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'warning'
+				})
+			);
+			clearStates();
+		}
+		const updateProductForm = {
+			uid: formDataProduct.uid,
+			category: categoryId.uid ?? '',
+			code: formDataProduct.code,
+			name: formDataProduct.name,
+			enable: formDataProduct.enable,
+			measurement: formDataProduct.measurement,
+			quantity: +formDataProduct.quantity
+		};
+
+		dispatch(updateProduct(updateProductForm));
+		clearStates();
+	}
+
+	const handlePropertiesChange = (field, value) => {
+		setFormDataProduct({
+			...formDataProduct,
+			[field]: value
+		});
 	};
 
 	return (
@@ -131,7 +134,7 @@ export default function CreateProductsPage() {
 						variant="h4"
 						fontWeight={400}
 					>
-						Cadastrar Produto
+						{editMode ? 'Editar produto' : 'Cadastrar Produto'}
 					</Typography>
 				</Paper>
 
@@ -152,8 +155,8 @@ export default function CreateProductsPage() {
 								<TextField
 									fullWidth
 									required
-									value={code}
-									onChange={e => setCode(e.target.value)}
+									value={formDataProduct.code}
+									onChange={e => handlePropertiesChange('code', e.target.value)}
 									label="Código"
 								/>
 							</Grid>
@@ -165,8 +168,8 @@ export default function CreateProductsPage() {
 								<TextField
 									fullWidth
 									required
-									value={name}
-									onChange={e => setName(e.target.value)}
+									value={formDataProduct.name}
+									onChange={e => handlePropertiesChange('name', e.target.value)}
 									label="Nome"
 								/>
 							</Grid>
@@ -175,40 +178,30 @@ export default function CreateProductsPage() {
 
 					<div className="flex flex-col w-full gap-24">
 						<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
-							<FormControl className="w-full">
-								<InputLabel id="demo-multiple-name-label">Categoria</InputLabel>
-								<Select
-									labelId="demo-multiple-name-label"
-									id="demo-multiple-name"
-									fullWidth
-									required
-									input={<OutlinedInput label="Categoria" />}
-									value={category}
-									onChange={e => setCategory(e.target.value)}
-									MenuProps={MenuProps}
-								>
-									{Array.isArray(categories) &&
-										categories.map(category => (
-											<MenuItem
-												key={category.uid}
-												value={category.uid}
-											>
-												{category.name}
-											</MenuItem>
-										))}
-								</Select>
-							</FormControl>
+							<Autocomplete
+								id="combo-box-demo"
+								className="w-full"
+								options={categories.categories.map(category => category.name)}
+								onChange={(e, value) => handlePropertiesChange('category', value)}
+								value={formDataProduct.category}
+								renderInput={params => (
+									<TextField
+										{...params}
+										label="Categoria"
+									/>
+								)}
+							/>
 
 							<TextField
 								fullWidth
-								value={measurement}
-								onChange={e => setMeasurement(e.target.value)}
+								value={formDataProduct.measurement}
+								onChange={e => handlePropertiesChange('measurement', e.target.value)}
 								label="Unidade de medida"
 							/>
 							<TextField
 								fullWidth
-								value={quantity}
-								onChange={e => setQuantity(e.target.value)}
+								value={formDataProduct.quantity}
+								onChange={e => handlePropertiesChange('quantity', e.target.value)}
 								label="Quantidade por embalagem"
 							/>
 						</div>
@@ -217,16 +210,14 @@ export default function CreateProductsPage() {
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"
-							sx={{ borderRadius: '7px' }}
 							onClick={clearStates}
 						>
 							CANCELAR
 						</Button>
 						<Button
-							sx={{ borderRadius: '7px' }}
 							variant="contained"
-							onClick={handleSubmit}
-							disabled={!category || !name || !code}
+							onClick={editMode ? handleSubmitEdit : handleSubmitCreate}
+							disabled={!formDataProduct.category || !formDataProduct.name || !formDataProduct.code}
 						>
 							ENVIAR
 						</Button>

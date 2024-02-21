@@ -1,21 +1,37 @@
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { useEffect } from 'react';
-import { getProducts, selectProducts } from './productsSlice';
 import ProductTable from '../../components/ProductTable';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { Product, disableProduct, getProducts, selectProducts } from './productsSlice';
 
 export default function ProductsPage() {
 	const dispatch = useAppDispatch();
 	const productsRedux = useSelector(selectProducts);
+	const navigate = useNavigate();
 
 	useEffect(() => {
-	  dispatch(getProducts());
+		dispatch(getProducts());
 	}, []);
-  
-	useEffect(() => {
-	  console.log(productsRedux);
-	}, [productsRedux]);
+
+	function handleEditProduct(product: Product) {
+		return navigate(`/cadastrar-produto/${product.uid}`);
+	}
+
+	async function handleGetStatus(item: Product) {
+		const itemToggleEnable = {
+			uid: item.uid,
+			category: item.category.uid,
+			code: item.code,
+			name: item.name,
+			enable: !item.enable,
+			measurement: item.measurement,
+			quantity: item.quantity,
+			action: ''
+		};
+		dispatch(disableProduct(itemToggleEnable));
+	}
 
 	return (
 		<Box>
@@ -41,6 +57,8 @@ export default function ProductsPage() {
 					<div className="flex items-center gap-24 flex-col sm:flex-row">
 						<ProductTable
 							productsData={productsRedux}
+							handleStatus={handleGetStatus}
+							selectItem={handleEditProduct}
 						/>
 					</div>
 				</Paper>
