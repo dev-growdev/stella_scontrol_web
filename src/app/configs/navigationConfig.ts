@@ -24,7 +24,7 @@ const navigationConfig: FuseNavigationType = [
 		title: 'Nova Solicitação',
 		type: 'item',
 		icon: 'heroicons-outline:document-add',
-		url: 'example'
+		url: 'solicitar-pagamento'
 	},
 	{
 		id: 'clock',
@@ -40,6 +40,22 @@ const navigationConfig: FuseNavigationType = [
 		icon: 'heroicons-outline:cog',
 		url: 'example'
 	},
+	{
+		id: 'cube',
+		title: 'Produtos',
+		type: 'collapse',
+		icon: 'heroicons-outline:cube',
+		url: 'produtos',
+		children: [
+			{
+				id: 'tag',
+				title: 'Categorias',
+				type: 'item',
+				icon: 'heroicons-outline:tag',
+				url: 'categorias'
+			}
+		]
+	}
 ];
 
 export default navigationConfig;

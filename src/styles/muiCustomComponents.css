@@ -31,9 +31,13 @@
 	border-color: #02798d;
 }
 
-.muiltr-n5tsn5-MuiList-root .fuse-list-item:hover {
+/* .muiltr-n5tsn5-MuiList-root .fuse-list-item:hover {
 	background-color: #00b2d01a;
 }
+
+.fuse-list-item.active {
+	background-color: #00b2d01a !important;
+} */
 
 .muiltr-154j6x2-MuiInputBase-input-MuiOutlinedInput-input {
 	padding: 0;
@@ -48,3 +52,7 @@
 	background-color: #02798d;
 	color: white;
 }
+
+/* .active {
+	color: pink !important;
+} */

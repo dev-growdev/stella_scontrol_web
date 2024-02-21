@@ -1,18 +1,24 @@
 import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
-import '../../../../styles/navCustom.css';
+//import '../../../../styles/navCustom.css';
 import FuseNavItem from '../FuseNavItem';
 import { FuseNavigationProps } from '../FuseNavigation';
 import { FuseNavItemType } from '../types/FuseNavItemType';
 
 const StyledList = styled(List)(({ theme }) => ({
 	'& .fuse-list-item': {
+		color: '#636363 !important',
 		'&:hover': {
-			backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0,0,0,.04)'
+			backgroundColor: '#dff1f6',
+			color: '#636363'
 		},
 		'&:focus:not(.active)': {
 			backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0,0,0,.05)'
+		},
+		'&.active': {
+			backgroundColor: '#dff1f6 !important',
+			color: '#636363'
 		}
 	},
 	'& .fuse-list-item-text': {
@@ -21,13 +27,13 @@ const StyledList = styled(List)(({ theme }) => ({
 	'& .fuse-list-item-text-primary': {
 		lineHeight: '20px'
 	},
-	'&.active-square-list': {
+	'& .active-square-list': {
 		'& .fuse-list-item, & .active.fuse-list-item': {
 			width: '100%',
 			borderRadius: '0'
 		}
 	},
-	'&.dense': {
+	'& .dense': {
 		'& .fuse-list-item': {
 			paddingTop: 0,
 			paddingBottom: 0,
