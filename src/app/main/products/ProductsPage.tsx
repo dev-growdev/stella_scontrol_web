@@ -38,20 +38,6 @@ export default function ProductsPage() {
 			<div className="p-32 mt-20">
 				<Paper
 					elevation={4}
-					className="p-28"
-				>
-					<Typography
-						className="text-20 md:text-28"
-						component="h1"
-						variant="h4"
-						fontWeight={400}
-					>
-						Produtos
-					</Typography>
-				</Paper>
-
-				<Paper
-					elevation={4}
 					className="mt-24 p-36 flex flex-col gap-24"
 				>
 					<div className="flex items-center gap-24 flex-col sm:flex-row">
