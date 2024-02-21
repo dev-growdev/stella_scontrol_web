@@ -12,24 +12,29 @@ interface CreatableProps {
 	newData: (data: ProductOptionType) => void;
 	selectedData: (data: ProductOptionType) => void;
 	products: ProductOptionType[];
+	cleanInput: boolean;
 }
 
 export interface ProductOptionType {
 	inputValue?: string;
-	product?: string;
-	brand?: string;
+	name?: string;
+	category?: string;
 }
 
 const filter = createFilterOptions<ProductOptionType>();
 
-export default function CreatableOptions({ newData, selectedData, products }: CreatableProps) {
+export default function CreatableOptions({ newData, selectedData, products, cleanInput }: CreatableProps) {
 	const [value, setValue] = React.useState<ProductOptionType | null>(null);
 	const [open, toggleOpen] = React.useState(false);
 	const [controlCharacter, setControlCharacter] = React.useState('');
 	const [dialogValue, setDialogValue] = React.useState({
-		product: '',
-		brand: ''
+		name: '',
+		category: ''
 	});
+
+	React.useEffect(() => {
+		setValue(null);
+	}, [cleanInput]);
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setControlCharacter(event.target.value);
@@ -37,15 +42,15 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 
 	const handleClose = () => {
 		setDialogValue({
-			product: '',
-			brand: ''
+			name: '',
+			category: ''
 		});
 		toggleOpen(false);
 	};
 
 	React.useEffect(() => {
 		if (value) {
-			selectedData({ product: value.product, brand: value.brand });
+			selectedData({ name: value.name, category: value.category });
 		}
 	}, [value]);
 
@@ -63,16 +68,16 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 					if (typeof newValue === 'string') {
 						toggleOpen(true);
 						setDialogValue({
-							product: newValue,
-							brand: ''
+							name: newValue,
+							category: ''
 						});
 
 						selectedData(dialogValue);
 					} else if (newValue && newValue.inputValue) {
 						toggleOpen(true);
 						setDialogValue({
-							product: newValue.inputValue,
-							brand: ''
+							name: newValue.inputValue,
+							category: ''
 						});
 						selectedData(dialogValue);
 					} else {
@@ -85,7 +90,7 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 					if (params.inputValue !== '') {
 						filtered.push({
 							inputValue: params.inputValue,
-							product: `Add "${params.inputValue}"`
+							name: `Add "${params.inputValue}"`
 						});
 					}
 
@@ -100,14 +105,14 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 					if (option.inputValue) {
 						return option.inputValue;
 					}
-					return option.product;
+					return option.name;
 				}}
 				selectOnFocus
 				clearOnBlur
 				handleHomeEndKeys
 				renderOption={(props, option) => (
 					<li {...props}>
-						{option.product} {option.brand ? `| ${option.brand}` : ''}
+						{option.name} {option.category ? `| ${option.category}` : ''}
 					</li>
 				)}
 				fullWidth
@@ -134,11 +139,11 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 							autoFocus
 							margin="dense"
 							id="name"
-							value={dialogValue.product}
+							value={dialogValue.name}
 							onChange={event =>
 								setDialogValue({
 									...dialogValue,
-									product: event.target.value
+									name: event.target.value
 								})
 							}
 							label="Produto"
@@ -148,14 +153,14 @@ export default function CreatableOptions({ newData, selectedData, products }: Cr
 						<TextField
 							margin="dense"
 							id="name"
-							value={dialogValue.brand}
+							value={dialogValue.category}
 							onChange={event =>
 								setDialogValue({
 									...dialogValue,
-									brand: event.target.value
+									category: event.target.value
 								})
 							}
-							label="Marca"
+							label="Categoria"
 							type="text"
 							variant="standard"
 						/>

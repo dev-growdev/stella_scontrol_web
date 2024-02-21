@@ -24,7 +24,7 @@ import { createRequestPaymentGeneral } from './FormRequestSlice';
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
 	const user = useSelector(selectUser);
-	const products = useSelector(selectProducts);
+	const productsRedux = useSelector(selectProducts);
 	const [formData, setFormData] = useState({
 		paymentMethod: [],
 		dueDate: null,
@@ -37,7 +37,8 @@ export default function PaymentRequestFormGeneral() {
 		typeAccount: '',
 		uploadedFiles: []
 	});
-
+	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+	const [cleanInputCreatable, setCleanInputCreatable] = useState(false);
 	const currentDate = new Date();
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);
@@ -46,16 +47,18 @@ export default function PaymentRequestFormGeneral() {
 		dispatch(getProducts()); //analisar colcoar isso em AuthContext
 	}, []);
 
-	const produtosProvisorios = products.products.map(product => {
-		return {
-			product: product.name,
-			brand: product.category.name
-		};
-	});
-
 	useEffect(() => {
-		console.log(produtosProvisorios, 'produtosProvisorios');
-	}, [produtosProvisorios]);
+		if (productsRedux.products.length > 0) {
+			const refProducts = productsRedux.products
+				.map(product => {
+					if (product.enable) {
+						return { name: product.name, category: product.category.name };
+					}
+				})
+				.filter(product => product);
+			setProductsToOptionsSelect(refProducts);
+		}
+	}, [productsRedux]);
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const { files } = event.target;
@@ -90,17 +93,20 @@ export default function PaymentRequestFormGeneral() {
 
 	function handleAddProducts() {
 		if (formData.valueProducts) {
-			const newProduct = { produto: formData.valueProducts.product, marca: formData.valueProducts.brand };
+			const newProduct = { produto: formData.valueProducts.product, categoria: formData.valueProducts.category };
 			setFormData(prevState => ({
 				...prevState,
 				tableData: [...prevState.tableData, newProduct],
 				valueProducts: null
 			}));
+
+			setCleanInputCreatable(!cleanInputCreatable);
 		}
 	}
 
 	function handleCreatableProducts(data: ProductOptionType) {
-		const newProduct = { produto: data.product, marca: data.brand };
+		const newProduct = { produto: data.name, categoria: data.category };
+
 		setFormData(prevState => ({
 			...prevState,
 			tableData: [...prevState.tableData, newProduct],
@@ -111,7 +117,7 @@ export default function PaymentRequestFormGeneral() {
 	function getDataFromCreatable(data: ProductOptionType) {
 		setFormData(prevState => ({
 			...prevState,
-			valueProducts: { product: data.product, brand: data.brand }
+			valueProducts: { product: data.name, category: data.category }
 		}));
 	}
 
@@ -186,7 +192,8 @@ export default function PaymentRequestFormGeneral() {
 						<CreatableOptions
 							selectedData={getDataFromCreatable}
 							newData={handleCreatableProducts}
-							products={produtosProvisorios}
+							products={productsToOptionsSelect}
+							cleanInput={cleanInputCreatable}
 						/>
 						<Button
 							className="w-full sm:w-256"
@@ -199,7 +206,7 @@ export default function PaymentRequestFormGeneral() {
 						</Button>
 					</div>
 					<CustomizedTables
-						tableHead={['PRODUTO', 'MARCA']}
+						tableHead={['PRODUTO', 'CATEGORIA']}
 						tableData={formData.tableData}
 					/>
 
