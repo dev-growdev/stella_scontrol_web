@@ -29,9 +29,25 @@ const navigationConfig: FuseNavigationType = [
 	{
 		id: 'clock',
 		title: 'Cadastros',
-		type: 'item',
+		type: 'collapse',
 		icon: 'heroicons-outline:clock',
-		url: 'example'
+		// url: 'example',
+		children: [
+			{
+				id: 'cube2',
+				title: 'Produtos',
+				type: 'collapse',
+				icon: 'heroicons-outline:cube',
+				url: 'cadastrar-produto'
+			},
+			{
+				id: 'tag2',
+				title: 'Categorias',
+				type: 'item',
+				icon: 'heroicons-outline:tag',
+				url: 'categorias'
+			}
+		]
 	},
 	{
 		id: 'cog',
