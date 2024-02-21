@@ -25,8 +25,12 @@ export default function CreateProductsPage() {
 	const [category, setCategory] = useState<string>('');
 	const [measurement, setMeasurement] = useState<string>('');
 	const [quantity, setQuantity] = useState<string>('');
-	const [categories, setCategories] = useState<string[]>([]);
+	const [categories, setCategories] = useState<{uid: string, name: string, enable: boolean}[]>([]);
 	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		console.log(categories);
+	}, [categories]);
 
 	useEffect(() => {
 		const fetchCategories = async () => {

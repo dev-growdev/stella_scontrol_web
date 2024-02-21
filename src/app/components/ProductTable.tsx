@@ -21,7 +21,6 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Product, ProductsType } from '../main/products/productsSlice';
 
@@ -42,7 +41,6 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 	const openMenuStatus = Boolean(anchorStatusMenu);
 
 	useEffect(() => {
-		console.log(productsData, 'aaa')
 		if (selectedItemId !== null && productsData.products) {
 			const findItem = productsData.products.find(item => item.uid === selectedItemId);
 			selectItem(findItem || null);
@@ -98,16 +96,10 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 			<Paper sx={{ width: '100%', mb: 2 }}>
 				<Toolbar>
 					<div className="flex flex-col sm:flex-row w-full items-center gap-24">
-						<Typography
-							variant="h6"
-							component="div"
-						>
-							Categorias cadastradas
-						</Typography>
 						<TextField
 							onChange={handleSearch}
 							value={searchValue}
-							label="Pesquise por categorias"
+							label="Pesquisar"
 							fullWidth
 						/>
 						<div>
@@ -145,7 +137,11 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 				<TableContainer>
 					<Table>
 						<TableHead className="flex justify-between">
+							<TableCell>Código</TableCell>
 							<TableCell>Nome</TableCell>
+							<TableCell>Categoria</TableCell>
+							<TableCell>Unidade de Medida</TableCell>
+							<TableCell>Qtde por Embalagem</TableCell>
 							<TableCell>Status</TableCell>
 							<TableCell>Ações</TableCell>
 						</TableHead>
@@ -155,68 +151,98 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									<CircularProgress color="primary" />
 								</Box>
 							) : (
-								sortedProducts
-									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-									.map(row => (
-										<TableRow
-											className="flex justify-between"
-											key={row.uid}
+								sortedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+									<TableRow
+										className="flex"
+										key={row.uid}
+									>
+										<TableCell
+											className="min-w-160"
+											component="th"
+											scope="row"
 										>
-											<TableCell
-												className="min-w-160"
-												component="th"
-												scope="row"
-											>
-												{row.name}
-											</TableCell>
+											{row.code}
+										</TableCell>
 
-											<TableCell className="min-w-160 flex justify-end">
-												<Stack
-													direction="row"
-													spacing={1}
-												>
-													<Chip
-														className="min-w-64"
-														color={row.enable ? 'primary' : 'error'}
-														label={row.enable ? 'Ativo' : 'Inativo'}
-													/>
-												</Stack>
-											</TableCell>
-											<TableCell
-												className="min-w-224 flex justify-end"
-												sx={{
-													color: theme => theme.palette.secondary.light
-												}}
+										<TableCell
+											className="min-w-160"
+											component="th"
+											scope="row"
+										>
+											{row.name}
+										</TableCell>
+
+										<TableCell
+											className="min-w-160"
+											component="th"
+											scope="row"
+										>
+											{row.category.name}
+										</TableCell>
+
+										<TableCell
+											className="min-w-160"
+											component="th"
+											scope="row"
+										>
+											{row.measurement}
+										</TableCell>
+
+										<TableCell
+											className="min-w-160"
+											component="th"
+											scope="row"
+										>
+											{row.quantity}
+										</TableCell>
+
+										<TableCell className="min-w-160 flex justify-end">
+											<Stack
+												direction="row"
+												spacing={1}
 											>
-												<div className="flex w-full justify-between">
-													<div
-														onClick={() => handleRowClick(row.uid)}
-														className="w-32 mr-20 "
+												<Chip
+													className="min-w-64"
+													color={row.enable ? 'primary' : 'error'}
+													label={row.enable ? 'Ativo' : 'Inativo'}
+												/>
+											</Stack>
+										</TableCell>
+										<TableCell
+											className="min-w-224 flex justify-end"
+											sx={{
+												color: theme => theme.palette.secondary.light
+											}}
+										>
+											<div className="flex w-full justify-between">
+												<div
+													onClick={() => handleRowClick(row.uid)}
+													className="w-32 mr-20 "
+												>
+													<FuseSvgIcon
+														sx={{
+															cursor: 'pointer'
+														}}
 													>
-														<FuseSvgIcon
-															sx={{
-																cursor: 'pointer'
-															}}
-														>
-															heroicons-outline:pencil
-														</FuseSvgIcon>
-													</div>
-													<FormGroup>
-														<FormControlLabel
-															control={
-																<Switch
-																	name="enable"
-																	checked={row.enable}
-																	onChange={() => handleStatus(row)}
-																/>
-															}
-															label={row.enable ? 'Inativar' : 'Ativar'}
-														/>
-													</FormGroup>
+														heroicons-outline:pencil
+													</FuseSvgIcon>
 												</div>
-											</TableCell>
-										</TableRow>
-									))
+												<FormGroup>
+													<FormControlLabel
+														control={
+															<Switch
+																name="enable"
+																checked={row.enable}
+																onChange={() => handleStatus(row)}
+															/>
+														}
+														label={row.enable ? 'Inativar' : 'Ativar'}
+													/>
+												</FormGroup>
+											</div>
+										</TableCell>
+									</TableRow>
+								))
 							)}
 						</TableBody>
 					</Table>
@@ -229,7 +255,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 					page={page}
 					onPageChange={handleChangePage}
 					onRowsPerPageChange={handleChangeRowsPerPage}
-					labelRowsPerPage="Categorias por página:"
+					labelRowsPerPage="Produtos por página:"
 				/>
 			</Paper>
 		</Box>

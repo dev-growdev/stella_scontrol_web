@@ -6,7 +6,7 @@ type AppRootStateType = RootStateType<productSliceType>;
 
 export interface Product {
 	uid: string;
-	categoryId: string;
+	category: { uid: string; name: string; enable: boolean };
 	code: string;
 	name: string;
 	enable: boolean;
@@ -42,7 +42,7 @@ export const getProducts = createAsyncThunk('products/getProducts', async () => 
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
 
-		return response.data;
+		return response.data.data;
 	} catch (error) {
 		return error;
 	}
@@ -51,7 +51,7 @@ export const getProducts = createAsyncThunk('products/getProducts', async () => 
 export const updateProduct = createAsyncThunk('products/updateProduct', async (data: Product) => {
 	try {
 		const body = {
-			categoryId: data.categoryId,
+			category: data.categoryId,
 			code: data.code,
 			name: data.name,
 			enable: data.enable,
@@ -116,8 +116,8 @@ const productsSlice = createSlice({
 	}
 });
 
-export default productsSlice.reducer;
-
 export const selectProducts = (state: AppRootStateType) => state.products;
 
 export type productSliceType = typeof productsSlice;
+
+export default productsSlice.reducer;
