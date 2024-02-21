@@ -1,6 +1,7 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -79,7 +80,17 @@ export default function CreateProductsPage() {
 	function handleSubmitEdit() {
 		const categoryId = categories.categories.find(category => category.name === formDataProduct.category);
 		if (formDataProduct.uid === '' || !formDataProduct.uid) {
-			return alert('deu xabu');
+			dispatch(
+				showMessage({
+					message: 'Selecione um produto válido para ser editado.',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'warning'
+				})
+			);
+			clearStates();
 		}
 		const updateProductForm = {
 			uid: formDataProduct.uid,
@@ -92,6 +103,7 @@ export default function CreateProductsPage() {
 		};
 
 		dispatch(updateProduct(updateProductForm));
+		clearStates();
 	}
 
 	const handlePropertiesChange = (field, value) => {
@@ -122,7 +134,7 @@ export default function CreateProductsPage() {
 						variant="h4"
 						fontWeight={400}
 					>
-						Cadastrar Produto
+						{editMode ? 'Editar produto' : 'Cadastrar Produto'}
 					</Typography>
 				</Paper>
 
