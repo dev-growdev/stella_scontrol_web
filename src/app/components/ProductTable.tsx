@@ -1,5 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import {
+	Box,
 	Button,
 	Chip,
 	CircularProgress,
@@ -9,18 +10,17 @@ import {
 	MenuItem,
 	Stack,
 	Switch,
+	Table,
 	TableBody,
+	TableCell,
+	TableContainer,
 	TableHead,
+	TablePagination,
 	TableRow,
-	TextField
+	TextField,
+	Toolbar,
+	Typography
 } from '@mui/material';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Product, ProductsType } from '../main/products/productsSlice';
 
@@ -39,10 +39,6 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 	const [anchorStatusMenu, setAnchorStatusMenu] = useState<null | HTMLElement>(null);
 
 	const openMenuStatus = Boolean(anchorStatusMenu);
-
-	useEffect(() => {
-		console.log('CONSOLE DE DENTRO DO PRODUCT TABLE', productsData);
-	}, [productsData]);
 
 	useEffect(() => {
 		if (selectedItemId !== null && productsData.products) {
@@ -95,6 +91,10 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 		}
 		setAnchorStatusMenu(null);
 	};
+
+	useEffect(() => {
+		console.log(sortedProducts, '-=--------');
+	}, [sortedProducts]);
 
 	return (
 		<Box sx={{ width: '100%' }}>
@@ -171,9 +171,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 										{row.name}
 									</TableCell>
 
-									<TableCell className="min-w-200 flex justify-center">
-										{row.category.name ?? 'deu xabu'}
-									</TableCell>
+									<TableCell className="min-w-200 flex justify-center">{row.category.name}</TableCell>
 									<TableCell className="min-w-200 flex justify-end">
 										<Stack
 											direction="row"
@@ -204,6 +202,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 												<FormControlLabel
 													control={
 														<Switch
+															color="primary"
 															name="enable"
 															checked={row.enable}
 															onChange={() => handleStatus(row)}
