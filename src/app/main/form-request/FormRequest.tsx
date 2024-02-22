@@ -1,5 +1,5 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -184,10 +184,27 @@ export default function PaymentRequestFormGeneral() {
 							ADICIONAR ITEM
 						</Button>
 					</div>
+
 					<CustomizedTables
 						tableHead={['PRODUTO', 'MARCA']}
 						tableData={formData.tableData}
 					/>
+
+					<div className="flex items-center gap-24 flex-col sm:flex-row">
+						<TextField
+							className="w-full"
+							type="text"
+							label="Fornecedor"
+						/>
+
+						<Button
+							className="w-full sm:w-256"
+							sx={{ borderRadius: '7px' }}
+							variant="contained"
+						>
+							BUSCAR FORNECEDOR
+						</Button>
+					</div>
 
 					<TextField
 						onChange={e => setFormData(prevState => ({ ...prevState, description: e.target.value }))}
