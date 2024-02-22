@@ -18,7 +18,6 @@ interface CreatableProps {
 export interface ProductOptionType {
 	inputValue?: string;
 	name?: string;
-	category?: string;
 }
 
 const filter = createFilterOptions<ProductOptionType>();
@@ -27,10 +26,7 @@ export default function CreatableOptions({ newData, selectedData, products, clea
 	const [value, setValue] = useState<ProductOptionType | null>(null);
 	const [open, toggleOpen] = useState(false);
 	const [controlCharacter, setControlCharacter] = useState('');
-	const [dialogValue, setDialogValue] = useState({
-		name: '',
-		category: ''
-	});
+	const [dialogValue, setDialogValue] = useState('');
 
 	useEffect(() => {
 		setValue(null);
@@ -41,22 +37,19 @@ export default function CreatableOptions({ newData, selectedData, products, clea
 	};
 
 	const handleClose = () => {
-		setDialogValue({
-			name: '',
-			category: ''
-		});
+		setDialogValue('');
 		toggleOpen(false);
 	};
 
 	useEffect(() => {
 		if (value) {
-			selectedData({ name: value.name, category: value.category });
+			selectedData({ name: value.name });
 		}
 	}, [value]);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		newData(dialogValue);
+		newData({ name: dialogValue });
 		handleClose();
 	};
 
@@ -67,19 +60,12 @@ export default function CreatableOptions({ newData, selectedData, products, clea
 				onChange={(event, newValue) => {
 					if (typeof newValue === 'string') {
 						toggleOpen(true);
-						setDialogValue({
-							name: newValue,
-							category: ''
-						});
-
-						selectedData(dialogValue);
+						setDialogValue(newValue);
+						selectedData({ name: newValue });
 					} else if (newValue && newValue.inputValue) {
 						toggleOpen(true);
-						setDialogValue({
-							name: newValue.inputValue,
-							category: ''
-						});
-						selectedData(dialogValue);
+						setDialogValue(newValue.inputValue);
+						selectedData({ name: newValue.inputValue });
 					} else {
 						setValue(newValue as ProductOptionType);
 					}
@@ -110,11 +96,7 @@ export default function CreatableOptions({ newData, selectedData, products, clea
 				selectOnFocus
 				clearOnBlur
 				handleHomeEndKeys
-				renderOption={(props, option) => (
-					<li {...props}>
-						{option.name} {option.category ? `| ${option.category}` : ''}
-					</li>
-				)}
+				renderOption={(props, option) => <li {...props}>{option.name}</li>}
 				fullWidth
 				freeSolo
 				renderInput={params => (
@@ -139,30 +121,12 @@ export default function CreatableOptions({ newData, selectedData, products, clea
 							autoFocus
 							margin="dense"
 							id="name"
-							value={dialogValue.name}
-							onChange={event =>
-								setDialogValue({
-									...dialogValue,
-									name: event.target.value
-								})
-							}
+							value={dialogValue}
+							onChange={event => setDialogValue(event.target.value)}
 							label="Produto"
 							type="text"
 							variant="standard"
-						/>
-						<TextField
-							margin="dense"
-							id="name"
-							value={dialogValue.category}
-							onChange={event =>
-								setDialogValue({
-									...dialogValue,
-									category: event.target.value
-								})
-							}
-							label="Categoria"
-							type="text"
-							variant="standard"
+							fullWidth
 						/>
 					</DialogContent>
 					<DialogActions>
