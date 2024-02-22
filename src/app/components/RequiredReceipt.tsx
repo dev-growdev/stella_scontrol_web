@@ -20,6 +20,7 @@ export default function RequiredReceipt({ formData, setFormData }: RequiredRecei
 						<Checkbox
 							onClick={() => setFormData(prevState => ({ ...prevState, requiredReceipt: true }))}
 							checked={formData.requiredReceipt}
+							color="primary"
 						/>
 					}
 					label="Sim"
@@ -29,6 +30,7 @@ export default function RequiredReceipt({ formData, setFormData }: RequiredRecei
 						<Checkbox
 							onClick={() => setFormData(prevState => ({ ...prevState, requiredReceipt: false }))}
 							checked={!formData.requiredReceipt}
+							color="primary"
 						/>
 					}
 					label="Não"

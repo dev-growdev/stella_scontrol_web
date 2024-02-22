@@ -20,6 +20,7 @@ export default function IsRatiable({ formData, setFormData }: RatiableProps) {
 						<Checkbox
 							onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: true }))}
 							checked={formData.isRatiable}
+							color="primary"
 						/>
 					}
 					label="Sim"
@@ -29,6 +30,7 @@ export default function IsRatiable({ formData, setFormData }: RatiableProps) {
 						<Checkbox
 							onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: false }))}
 							checked={!formData.isRatiable}
+							color="primary"
 						/>
 					}
 					label="Não"
