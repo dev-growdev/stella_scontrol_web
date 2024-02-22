@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-import * as React from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 interface CreatableProps {
 	newData: (data: ProductOptionType) => void;
@@ -24,19 +24,19 @@ export interface ProductOptionType {
 const filter = createFilterOptions<ProductOptionType>();
 
 export default function CreatableOptions({ newData, selectedData, products, cleanInput }: CreatableProps) {
-	const [value, setValue] = React.useState<ProductOptionType | null>(null);
-	const [open, toggleOpen] = React.useState(false);
-	const [controlCharacter, setControlCharacter] = React.useState('');
-	const [dialogValue, setDialogValue] = React.useState({
+	const [value, setValue] = useState<ProductOptionType | null>(null);
+	const [open, toggleOpen] = useState(false);
+	const [controlCharacter, setControlCharacter] = useState('');
+	const [dialogValue, setDialogValue] = useState({
 		name: '',
 		category: ''
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setValue(null);
 	}, [cleanInput]);
 
-	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setControlCharacter(event.target.value);
 	};
 
@@ -48,13 +48,13 @@ export default function CreatableOptions({ newData, selectedData, products, clea
 		toggleOpen(false);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (value) {
 			selectedData({ name: value.name, category: value.category });
 		}
 	}, [value]);
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		newData(dialogValue);
 		handleClose();
