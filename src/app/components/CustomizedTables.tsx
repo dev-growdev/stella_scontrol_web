@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 
 export interface CutomizedTableProps {
 	tableHead: string[];
-	tableData?: { [key: string]: any }[];
+	tableData?: { [key: string]: string }[];
 }
 
 export default function CustomizedTables({ tableData, tableHead }: CutomizedTableProps) {

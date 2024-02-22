@@ -20,11 +20,25 @@ import UploadFiles from '../../components/UploadFiles';
 import { getProducts, selectProducts } from '../products/productsSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
+export interface FormDataProps {
+	paymentMethod: string[];
+	dueDate: Date | null;
+	valueProducts: { product: string; brand: string } | null;
+	requiredReceipt: boolean;
+	isRatiable: boolean;
+	tableData: { produto: string; marca: string }[];
+	description: string;
+	totalValue: string;
+	typeAccount: string;
+	uploadedFiles: File[];
+}
+
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
 	const user = useSelector(selectUser);
 	const productsRedux = useSelector(selectProducts);
-	const [formData, setFormData] = useState({
+
+	const [formData, setFormData] = useState<FormDataProps>({
 		paymentMethod: [],
 		dueDate: null,
 		valueProducts: null,
