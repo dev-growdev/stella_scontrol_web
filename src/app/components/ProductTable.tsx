@@ -92,10 +92,6 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 		setAnchorStatusMenu(null);
 	};
 
-	useEffect(() => {
-		console.log(sortedProducts, '-=--------');
-	}, [sortedProducts]);
-
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Toolbar>
