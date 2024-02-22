@@ -38,9 +38,6 @@ export default function PaymentRequestFormGeneral() {
 	});
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const [cleanInputCreatable, setCleanInputCreatable] = useState(false);
-	const currentDate = new Date();
-	const minDate = new Date();
-	minDate.setDate(currentDate.getDate() + 7);
 
 	useEffect(() => {
 		dispatch(getProducts());
@@ -222,7 +219,7 @@ export default function PaymentRequestFormGeneral() {
 							className="w-full"
 							value={formData.totalValue}
 							type="number"
-							label="Valor total"
+							label="Valor"
 							InputProps={{
 								startAdornment: <InputAdornment position="start">R$</InputAdornment>,
 								sx: { height: '3.73em' }
@@ -243,13 +240,19 @@ export default function PaymentRequestFormGeneral() {
 							/>
 						</LocalizationProvider>
 
-						<PaymentMethod
-							formData={formData}
-							handleChangeSelect={handleChangeSelectPaymentMethod}
-							handleChangeTypeAccount={handleChangeTypeAccount}
-						/>
+						<Button
+							className="rounded-4"
+							onClick={handleSubmitRequest}
+							variant="contained"
+						>
+							<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
+						</Button>
 					</div>
-
+					<PaymentMethod
+						formData={formData}
+						handleChangeSelect={handleChangeSelectPaymentMethod}
+						handleChangeTypeAccount={handleChangeTypeAccount}
+					/>
 					<AccountType
 						formData={formData}
 						handleChangeTypeAccount={handleChangeTypeAccount}
