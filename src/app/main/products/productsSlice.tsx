@@ -141,10 +141,9 @@ export const disableProduct = createAsyncThunk('products/disableProduct', async 
 		};
 
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/products/${data.uid}/disable`, body);
-		console.log(response, '------ RESPONSE');
+
 		return response.data.data;
 	} catch (error) {
-		console.log('TA CAINDO NO CATCH', error);
 		return error;
 	}
 });
