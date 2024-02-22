@@ -1,6 +1,5 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
+import { Box, Button, InputAdornment, Paper, TextField, Typography } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -44,7 +43,7 @@ export default function PaymentRequestFormGeneral() {
 	minDate.setDate(currentDate.getDate() + 7);
 
 	useEffect(() => {
-		dispatch(getProducts()); //analisar colcoar isso em AuthContext
+		dispatch(getProducts());
 	}, []);
 
 	useEffect(() => {
@@ -52,7 +51,7 @@ export default function PaymentRequestFormGeneral() {
 			const refProducts = productsRedux.products
 				.map(product => {
 					if (product.enable) {
-						return { name: product.name, category: product.category.name };
+						return { name: product.name };
 					}
 				})
 				.filter(product => product);
@@ -93,7 +92,7 @@ export default function PaymentRequestFormGeneral() {
 
 	function handleAddProducts() {
 		if (formData.valueProducts) {
-			const newProduct = { produto: formData.valueProducts.product, categoria: formData.valueProducts.category };
+			const newProduct = { produtos: formData.valueProducts.product };
 			setFormData(prevState => ({
 				...prevState,
 				tableData: [...prevState.tableData, newProduct],
@@ -105,7 +104,7 @@ export default function PaymentRequestFormGeneral() {
 	}
 
 	function handleCreatableProducts(data: ProductOptionType) {
-		const newProduct = { produto: data.name, categoria: data.category };
+		const newProduct = { produtos: data.name };
 
 		setFormData(prevState => ({
 			...prevState,
@@ -117,7 +116,7 @@ export default function PaymentRequestFormGeneral() {
 	function getDataFromCreatable(data: ProductOptionType) {
 		setFormData(prevState => ({
 			...prevState,
-			valueProducts: { product: data.name, category: data.category }
+			valueProducts: { product: data.name }
 		}));
 	}
 
@@ -206,16 +205,15 @@ export default function PaymentRequestFormGeneral() {
 						</Button>
 					</div>
 					<CustomizedTables
-						tableHead={['PRODUTO', 'CATEGORIA']}
+						tableHead={['PRODUTOS']}
 						tableData={formData.tableData}
 					/>
 
 					<TextField
 						onChange={e => setFormData(prevState => ({ ...prevState, description: e.target.value }))}
-						multiline
-						value={formData.description}
 						rows={4}
 						label="Descrição da solicitação"
+						multiline
 					/>
 
 					<div className="flex flex-col sm:flex-row items-center gap-24">
