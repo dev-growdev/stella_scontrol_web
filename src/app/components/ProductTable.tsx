@@ -218,6 +218,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 															name="enable"
 															checked={row.enable}
 															onChange={() => handleStatus(row)}
+															color='primary'
 														/>
 													}
 													label={row.enable ? 'Inativar' : 'Ativar'}
