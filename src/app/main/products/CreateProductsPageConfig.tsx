@@ -32,7 +32,7 @@ const CreateProductsPageConfig: FuseRouteConfigType = {
 	auth: authRoles.admin,
 	routes: [
 		{
-			path: 'cadastrar-produto/:productUid',
+			path: 'cadastrar-produto/:productUid?',
 			element: <CreateProductsPage />
 		}
 	]
