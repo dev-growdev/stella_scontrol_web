@@ -4,6 +4,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useAppDispatch } from 'app/store';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ptBR } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -17,18 +18,17 @@ import PaymentMethod from '../../components/PaymentMethod';
 import RequestUser from '../../components/RequestUser';
 import RequiredReceipt from '../../components/RequiredReceipt';
 import UploadFiles from '../../components/UploadFiles';
+import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
-import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 export interface FormDataProps {
 	paymentMethod: string[];
-	dueDate: Date | null;
-	valueProducts: { product: string; brand: string } | null;
+	valueProducts: { product: string } | null;
 	requiredReceipt: boolean;
 	isRatiable: boolean;
-	tableData: { produto: string; marca: string }[];
+	tableData: { produtos: string }[];
 	description: string;
-	totalValue: string;
+	payments: { value: string; dueDate: Date | null }[];
 	typeAccount: string;
 	uploadedFiles: File[];
 }
@@ -40,18 +40,21 @@ export default function PaymentRequestFormGeneral() {
 
 	const [formData, setFormData] = useState<FormDataProps>({
 		paymentMethod: [],
-		dueDate: null,
 		valueProducts: null,
 		requiredReceipt: false,
 		isRatiable: false,
 		tableData: [],
 		description: '',
-		totalValue: '',
+		payments: [],
 		typeAccount: '',
 		uploadedFiles: []
 	});
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const [cleanInputCreatable, setCleanInputCreatable] = useState(false);
+	const [paymentsState, setPaymentsState] = useState<{ value: string; dueDate: Date | null }>({
+		value: '',
+		dueDate: null
+	});
 
 	useEffect(() => {
 		dispatch(getProducts());
@@ -85,7 +88,14 @@ export default function PaymentRequestFormGeneral() {
 	const handleFileRemove = (indexToRemove: number) => {
 		setFormData(prevState => ({
 			...prevState,
-			uploadedFiles: prevState.uploadedFiles.filter((file, index) => index !== indexToRemove)
+			uploadedFiles: prevState.uploadedFiles.filter((_file, index) => index !== indexToRemove)
+		}));
+	};
+
+	const handleRemoveDueDate = (indexToRemove: number) => {
+		setFormData(prevState => ({
+			...prevState,
+			payments: prevState.payments.filter((_payment, index) => index !== indexToRemove)
 		}));
 	};
 
@@ -139,28 +149,47 @@ export default function PaymentRequestFormGeneral() {
 	};
 
 	async function handleSubmitRequest() {
-		const newRequest = {
-			description: formData.description,
-			sendReceipt: formData.requiredReceipt,
-			totalRequestValue: +formData.totalValue,
-			dueDate: formData.dueDate
-		};
+		// const newRequest = {
+		// 	description: formData.description,
+		// 	sendReceipt: formData.requiredReceipt,
+		// 	totalRequestValue: +formData.totalValue,
+		// 	dueDate: formData.dueDate
+		// };
+		// dispatch(createRequestPaymentGeneral(newRequest));
+	}
 
-		dispatch(createRequestPaymentGeneral(newRequest));
+	function handleAddDueDate() {
+		if (paymentsState.dueDate !== null) {
+			setFormData(prevState => ({ ...prevState, payments: [...prevState.payments, paymentsState] }));
+			setPaymentsState({
+				value: '',
+				dueDate: null
+			});
+		} else {
+			dispatch(
+				showMessage({
+					message: 'É necessário informar um vencimento.',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+		}
 	}
 
 	function clearFormState() {
 		setFormData({
 			paymentMethod: [],
-			dueDate: null,
 			valueProducts: null,
 			requiredReceipt: false,
 			isRatiable: false,
 			tableData: [],
 			description: '',
-			totalValue: '',
 			typeAccount: '',
-			uploadedFiles: []
+			uploadedFiles: [],
+			payments: []
 		});
 	}
 
@@ -227,40 +256,87 @@ export default function PaymentRequestFormGeneral() {
 						multiline
 					/>
 
-					<div className="flex flex-col sm:flex-row items-center gap-24">
-						<TextField
-							onChange={e => setFormData(prevState => ({ ...prevState, totalValue: e.target.value }))}
-							className="w-full"
-							value={formData.totalValue}
-							type="number"
-							label="Valor"
-							InputProps={{
-								startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-								sx: { height: '3.73em' }
-							}}
-						/>
-
-						<LocalizationProvider
-							dateAdapter={AdapterDateFns}
-							adapterLocale={ptBR}
-						>
-							<DatePicker
-								className="w-full"
-								label="Vencimento"
-								value={formData.dueDate}
-								minDate={minDate}
-								format="dd/MM/yyyy"
-								onChange={d => setFormData(prevState => ({ ...prevState, dueDate: d }))}
+					<div className="flex flex-col w-full ">
+						<div className="flex flex-col w-full sm:flex-row items-center gap-24">
+							<ValueAndDueDate
+								setFormDataDueDate={d => setPaymentsState(prevState => ({ ...prevState, dueDate: d }))}
+								formData={paymentsState}
+								setFormDataValue={e =>
+									setPaymentsState(prevState => ({ ...prevState, value: e.target.value }))
+								}
 							/>
-						</LocalizationProvider>
 
-						<Button
-							className="rounded-4"
-							onClick={handleSubmitRequest}
-							variant="contained"
-						>
-							<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
-						</Button>
+							<Button
+								className="rounded-4"
+								onClick={handleAddDueDate}
+								variant="contained"
+							>
+								<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
+							</Button>
+						</div>
+						<div>
+							{formData.payments.length > 0 && (
+								<>
+									{formData.payments.map((payment, index) => {
+										return (
+											<div key={payment.dueDate.toString()}>
+												<div className="flex mt-24 flex-col sm:flex-row items-center gap-24">
+													<TextField
+														className="w-full"
+														onChange={e => {
+															const newValue = e.target.value;
+															setFormData(prevState => ({
+																...prevState,
+																payments: prevState.payments.map((payment, idx) =>
+																	idx === index
+																		? { ...payment, value: newValue }
+																		: payment
+																)
+															}));
+														}}
+														value={payment.value}
+														type="number"
+														label="Valor"
+														InputProps={{
+															startAdornment: (
+																<InputAdornment position="start">R$</InputAdornment>
+															),
+															sx: { height: '3.73em' }
+														}}
+													/>
+
+													<LocalizationProvider
+														dateAdapter={AdapterDateFns}
+														adapterLocale={ptBR}
+													>
+														<DatePicker
+															onChange={e => {
+																const newDate = e;
+																setFormData(prevState => ({
+																	...prevState,
+																	payments: prevState.payments.map((payment, idx) =>
+																		idx === index
+																			? { ...payment, dueDate: newDate }
+																			: payment
+																	)
+																}));
+															}}
+															className="w-full"
+															label="Vencimento"
+															value={payment.dueDate}
+															format="dd/MM/yyyy"
+														/>
+													</LocalizationProvider>
+													<FuseSvgIcon onClick={() => handleRemoveDueDate(index)}>
+														heroicons-outline:trash
+													</FuseSvgIcon>
+												</div>
+											</div>
+										);
+									})}
+								</>
+							)}
+						</div>
 					</div>
 					<PaymentMethod
 						formData={formData}
