@@ -18,7 +18,7 @@ import PaymentMethod from '../../components/PaymentMethod';
 import RequestUser from '../../components/RequestUser';
 import RequiredReceipt from '../../components/RequiredReceipt';
 import UploadFiles from '../../components/UploadFiles';
-import { createRequestPaymentGeneral } from './FormRequestSlice';
+import { createRequestPaymentGeneral, findSupplierByCPForCNPJ } from './FormRequestSlice';
 
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
@@ -30,6 +30,7 @@ export default function PaymentRequestFormGeneral() {
 		requiredReceipt: false,
 		isRatiable: false,
 		tableData: [],
+		supplier: '',
 		description: '',
 		totalValue: '',
 		typeAccount: '',
@@ -106,7 +107,10 @@ export default function PaymentRequestFormGeneral() {
 	};
 
 	async function handleSubmitRequest() {
+		await dispatch(findSupplierByCPForCNPJ(formData.supplier));
+
 		const newRequest = {
+			supplier: formData.supplier,
 			description: formData.description,
 			sendReceipt: formData.requiredReceipt,
 			totalRequestValue: +formData.totalValue,
@@ -114,6 +118,8 @@ export default function PaymentRequestFormGeneral() {
 		};
 
 		dispatch(createRequestPaymentGeneral(newRequest));
+
+		clearFormState();
 	}
 
 	function clearFormState() {
@@ -124,6 +130,7 @@ export default function PaymentRequestFormGeneral() {
 			requiredReceipt: false,
 			isRatiable: false,
 			tableData: [],
+			supplier: '',
 			description: '',
 			totalValue: '',
 			typeAccount: '',
@@ -195,15 +202,10 @@ export default function PaymentRequestFormGeneral() {
 							className="w-full"
 							type="text"
 							label="Fornecedor"
+							placeholder="Digite o CPF ou CNPJ do fornecedor"
+							value={formData.supplier}
+							onChange={e => setFormData(prevState => ({ ...prevState, supplier: e.target.value }))}
 						/>
-
-						<Button
-							className="w-full sm:w-256"
-							sx={{ borderRadius: '7px' }}
-							variant="contained"
-						>
-							BUSCAR FORNECEDOR
-						</Button>
 					</div>
 
 					<TextField
