@@ -132,7 +132,8 @@ export default function CreateProductsPage() {
 						className="text-20 md:text-28"
 						component="h1"
 						variant="h4"
-						fontWeight={400}
+						fontWeight={500}
+						color={theme => theme.palette.secondary.main}
 					>
 						{editMode ? 'Editar produto' : 'Cadastrar Produto'}
 					</Typography>

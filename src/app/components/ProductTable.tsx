@@ -6,8 +6,7 @@ import {
 	CircularProgress,
 	FormControlLabel,
 	FormGroup,
-	Menu,
-	MenuItem,
+	InputAdornment,
 	Stack,
 	Switch,
 	Table,
@@ -19,9 +18,12 @@ import {
 	TableRow,
 	TextField,
 	Toolbar,
-	Typography
+	Typography,
+	styled
 } from '@mui/material';
+import { tableCellClasses } from '@mui/material/TableCell';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Product, ProductsType } from '../main/products/productsSlice';
 
 interface ProductTableProps {
@@ -29,6 +31,29 @@ interface ProductTableProps {
 	productsData: ProductsType | { products: []; loading: false };
 	handleStatus: (item: Product) => void;
 }
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+	[`&.${tableCellClasses.head}`]: {
+		color: theme.palette.secondary.dark
+	},
+	[`&.${tableCellClasses.body}`]: {
+		fontSize: 14,
+		color: theme.palette.secondary.dark
+	}
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+	'&:nth-of-type(odd)': {
+		backgroundColor: theme.palette.common.white
+	},
+	'&:nth-of-type(even)': {
+		backgroundColor: theme.palette.action.hover
+	},
+
+	'&:last-child td, &:last-child th': {
+		border: 0
+	}
+}));
 
 export default function ProductTable({ selectItem, productsData, handleStatus }: ProductTableProps) {
 	const [page, setPage] = useState(0);
@@ -39,6 +64,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 	const [anchorStatusMenu, setAnchorStatusMenu] = useState<null | HTMLElement>(null);
 
 	const openMenuStatus = Boolean(anchorStatusMenu);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (selectedItemId !== null && productsData.products) {
@@ -79,74 +105,63 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 
 	const sortedProducts = filteredProducts.slice().reverse();
 
-	const handleOpenStatusMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorStatusMenu(event.currentTarget);
-	};
-
-	const handleCloseStatusMenu = (value?: 'all' | 'active' | 'inactive') => {
-		if (typeof value === 'string') {
-			setFilterByStatus(value);
-		} else {
-			setFilterByStatus(filterByStatus);
-		}
-		setAnchorStatusMenu(null);
+	const handleNavigateCreateProduct = () => {
+		navigate('/cadastrar-produto');
 	};
 
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Toolbar>
-				<div className="flex flex-col sm:flex-row w-full items-center gap-24">
+				<div className="flex flex-col sm:flex-row w-full items-center gap-24 justify-between">
 					<Typography
-						variant="h6"
-						component="div"
+						className="text-20 md:text-28"
+						component="h1"
+						variant="h4"
+						fontWeight={500}
+						color={theme => theme.palette.secondary.main}
 					>
-						Produtos cadastrados
+						Produtos
 					</Typography>
+					<Button
+						id="basic-button"
+						aria-haspopup="true"
+						onClick={handleNavigateCreateProduct}
+						className="w-full sm:w-256 shadow-lg py-24"
+						variant="contained"
+						startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
+					>
+						Cadastro de novo produto
+					</Button>
+				</div>
+			</Toolbar>
+			<Toolbar>
+				<div className="flex flex-row sm:flex-row w-full items-center gap-24 justify-end">
 					<TextField
 						onChange={handleSearch}
 						value={searchValue}
-						label="Pesquise por categorias"
+						className="sm:w-512"
+						label="Pesquise por produtos"
 						fullWidth
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position="end">
+									<FuseSvgIcon color="primary">heroicons-outline:search</FuseSvgIcon>
+								</InputAdornment>
+							)
+						}}
 					/>
-					<div>
-						<Button
-							id="basic-button"
-							aria-controls={openMenuStatus ? 'basic-menu' : undefined}
-							aria-haspopup="true"
-							aria-expanded={openMenuStatus ? 'true' : undefined}
-							onClick={handleOpenStatusMenu}
-							className="w-full sm:w-144 pl-60 pr-64"
-							variant="contained"
-							startIcon={<FuseSvgIcon>heroicons-outline:filter</FuseSvgIcon>}
-						>
-							{filterByStatus === 'all' && 'FILTRAR'}
-							{filterByStatus === 'active' && 'ATIVOS'}
-							{filterByStatus === 'inactive' && 'INATIVOS'}
-						</Button>
-
-						<Menu
-							id="basic-menu"
-							anchorEl={anchorStatusMenu}
-							open={openMenuStatus}
-							onClose={handleCloseStatusMenu}
-							MenuListProps={{
-								'aria-labelledby': 'basic-button'
-							}}
-						>
-							<MenuItem onClick={() => handleCloseStatusMenu('all')}>Todos</MenuItem>
-							<MenuItem onClick={() => handleCloseStatusMenu('active')}>Ativos</MenuItem>
-							<MenuItem onClick={() => handleCloseStatusMenu('inactive')}>Inativos</MenuItem>
-						</Menu>
-					</div>
 				</div>
 			</Toolbar>
 			<TableContainer>
 				<Table>
-					<TableHead className="flex justify-between">
-						<TableCell>Nome</TableCell>
-						<TableCell>Categoria</TableCell>
-						<TableCell>Status</TableCell>
-						<TableCell>Ações</TableCell>
+					<TableHead
+						className="flex justify-between font-600"
+						sx={{ backgroundColor: theme => theme.palette.action.hover }}
+					>
+						<StyledTableCell>Nome</StyledTableCell>
+						<StyledTableCell>Categoria</StyledTableCell>
+						<StyledTableCell>Status</StyledTableCell>
+						<StyledTableCell>Ações</StyledTableCell>
 					</TableHead>
 					<TableBody>
 						{productsData.loading ? (
@@ -155,39 +170,42 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 							</Box>
 						) : (
 							sortedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-								<TableRow
+								<StyledTableRow
 									className="flex justify-between"
 									key={row.uid}
 								>
-									<TableCell
+									<StyledTableCell
 										className="min-w-200"
 										component="th"
 										scope="row"
 									>
 										{row.name}
-									</TableCell>
+									</StyledTableCell>
 
-									<TableCell className="min-w-200 flex justify-center">{row.category.name}</TableCell>
-									<TableCell className="min-w-200 flex justify-end">
+									<StyledTableCell className="min-w-200 flex justify-center">
+										{row.category.name}
+									</StyledTableCell>
+									<StyledTableCell className="min-w-200 flex justify-end">
 										<Stack
 											direction="row"
 											spacing={1}
 										>
 											<Chip
 												className="min-w-64"
-												color={row.enable ? 'primary' : 'error'}
+												color={row.enable ? 'primary' : 'default'}
+												sx={{
+													color: row.enable
+														? theme => theme.palette.common.white
+														: theme => theme.palette.secondary.light
+												}}
 												label={row.enable ? 'Ativo' : 'Inativo'}
 											/>
 										</Stack>
-									</TableCell>
-									<TableCell
-										className="min-w-224 flex justify-end"
-										sx={{
-											color: theme => theme.palette.secondary.light
-										}}
-									>
+									</StyledTableCell>
+									<StyledTableCell className="min-w-224 flex justify-end">
 										<div className="flex w-full justify-between">
 											<FuseSvgIcon
+												color="primary"
 												onClick={() => handleRowClick(row.uid)}
 												className="w-32 mr-20 cursor-pointer"
 											>
@@ -208,8 +226,8 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 												/>
 											</FormGroup>
 										</div>
-									</TableCell>
-								</TableRow>
+									</StyledTableCell>
+								</StyledTableRow>
 							))
 						)}
 					</TableBody>
@@ -223,7 +241,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 				page={page}
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
-				labelRowsPerPage="Categorias por página:"
+				labelRowsPerPage="Produtos por página:"
 			/>
 		</Box>
 	);
