@@ -8,6 +8,7 @@ type AppRootStateType = RootStateType<requestPaymentGeneralSliceType>;
 
 interface RequestsType {
 	uid: string;
+	supplier: string;
 	description?: string;
 	sendReceipt: boolean;
 	totalRequestValue: number;
@@ -20,6 +21,7 @@ interface RequestPaymentGeneralType {
 }
 
 export interface createRequestGeneral {
+	supplier: string;
 	description: string;
 	sendReceipt: boolean;
 	totalRequestValue: number;
@@ -42,6 +44,7 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 						variant: 'success'
 					})
 				);
+
 				return response.data.data;
 			}
 		} catch (error) {
@@ -55,10 +58,21 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 					variant: 'error'
 				})
 			);
+
 			throw new Error(error.response.data.message);
 		}
 	}
 );
+
+export const findSupplierByCPForCNPJ = createAppAsyncThunk('/supplier/', async (cpfOrCnpj: string) => {
+	try {
+		const response = await axios.post(`${process.env.REACT_APP_API_URL}/supplier/${cpfOrCnpj}`);
+
+		return response.data.data;
+	} catch (error) {
+		throw new Error(error.response.data.message);
+	}
+});
 
 const initialState: RequestPaymentGeneralType = {
 	loading: false,
@@ -77,6 +91,13 @@ const requestPaymentGeneralSlice = createSlice({
 			.addCase(createRequestPaymentGeneral.fulfilled, (state, action) => {
 				state.loading = false;
 
+				action.payload && state.requests.push(action.payload);
+			})
+			.addCase(findSupplierByCPForCNPJ.pending, state => {
+				state.loading = true;
+			})
+			.addCase(findSupplierByCPForCNPJ.fulfilled, (state, action) => {
+				state.loading = false;
 				action.payload && state.requests.push(action.payload);
 			});
 	}
