@@ -1,5 +1,5 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Box, Button, InputAdornment, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, InputAdornment, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -8,7 +8,9 @@ import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ptBR } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import '../../../styles/muiCustomComponents.css';
 import AccountType from '../../components/AccountType';
 import CreatableOptions, { ProductOptionType } from '../../components/CreatableOptions';
@@ -20,6 +22,7 @@ import RequiredReceipt from '../../components/RequiredReceipt';
 import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
+import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 export interface FormDataProps {
 	paymentMethod: string[];
@@ -31,10 +34,13 @@ export interface FormDataProps {
 	payments: { value: string; dueDate: Date | null }[];
 	typeAccount: string;
 	uploadedFiles: File[];
+	valueTest: string;
+	dateTest?: Date | null;
 }
 
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 	const user = useSelector(selectUser);
 	const productsRedux = useSelector(selectProducts);
 
@@ -47,15 +53,41 @@ export default function PaymentRequestFormGeneral() {
 		description: '',
 		payments: [],
 		typeAccount: '',
-		uploadedFiles: []
+		uploadedFiles: [],
+		valueTest: ''
 	});
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+	const [productToTable, setProductToTable] = useState<ProductOptionType>({ name: '' });
+
 	const [cleanInputCreatable, setCleanInputCreatable] = useState(false);
 	const [paymentsState, setPaymentsState] = useState<{ value: string; dueDate: Date | null }>({
 		value: '',
 		dueDate: null
 	});
+	const [openTooltip, setOpenTooltip] = useState(false);
 
+	const defaultValues = {
+		paymentMethod: [],
+		valueProducts: null,
+		requiredReceipt: false,
+		isRatiable: false,
+		tableData: [],
+		description: '',
+		payments: [],
+		typeAccount: '',
+		uploadedFiles: [],
+		valueTest: ''
+	};
+	const { control, handleSubmit, register, setValue, watch } = useForm<FormDataProps>({
+		defaultValues
+	});
+
+	const payments = [...watch('payments')];
+	const tableData = [...watch('tableData')];
+
+	function onSubmit(data) {
+		console.log(data);
+	}
 	useEffect(() => {
 		dispatch(getProducts());
 	}, []);
@@ -63,15 +95,21 @@ export default function PaymentRequestFormGeneral() {
 	useEffect(() => {
 		if (productsRedux.products.length > 0) {
 			const refProducts = productsRedux.products
-				.map(product => {
-					if (product.enable) {
-						return { name: product.name };
-					}
-				})
+				.map(product => product.enable && { name: product.name })
 				.filter(product => product);
 			setProductsToOptionsSelect(refProducts);
 		}
 	}, [productsRedux]);
+
+	useEffect(() => {
+		if (paymentsState.value.length === 0) {
+			setOpenTooltip(false);
+		} else if (paymentsState.dueDate === null) {
+			setOpenTooltip(false);
+		} else {
+			setOpenTooltip(true);
+		}
+	}, [paymentsState]);
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const { files } = event.target;
@@ -112,33 +150,18 @@ export default function PaymentRequestFormGeneral() {
 	};
 
 	function handleAddProducts() {
-		if (formData.valueProducts) {
-			const newProduct = { produtos: formData.valueProducts.product };
-			setFormData(prevState => ({
-				...prevState,
-				tableData: [...prevState.tableData, newProduct],
-				valueProducts: null
-			}));
+		const currentTableData = watch('tableData');
+		setValue('tableData', [...currentTableData, { produtos: productToTable.name }]);
+		setProductToTable({ name: '' });
+		setCleanInputCreatable(!cleanInputCreatable);
+	}
 
-			setCleanInputCreatable(!cleanInputCreatable);
+	function getDataFromCreatable(data: ProductOptionType | string) {
+		if (typeof data === 'string') {
+			setProductToTable({ name: data });
+		} else if (typeof data === 'object') {
+			setProductToTable(data);
 		}
-	}
-
-	function handleCreatableProducts(data: ProductOptionType) {
-		const newProduct = { produtos: data.name };
-
-		setFormData(prevState => ({
-			...prevState,
-			tableData: [...prevState.tableData, newProduct],
-			valueProducts: null
-		}));
-	}
-
-	function getDataFromCreatable(data: ProductOptionType) {
-		setFormData(prevState => ({
-			...prevState,
-			valueProducts: { product: data.name }
-		}));
 	}
 
 	const handleChangeTypeAccount = (event: SelectChangeEvent) => {
@@ -148,34 +171,46 @@ export default function PaymentRequestFormGeneral() {
 		}));
 	};
 
-	async function handleSubmitRequest() {
-		// const newRequest = {
-		// 	description: formData.description,
-		// 	sendReceipt: formData.requiredReceipt,
-		// 	totalRequestValue: +formData.totalValue,
-		// 	dueDate: formData.dueDate
-		// };
-		// dispatch(createRequestPaymentGeneral(newRequest));
+	function handleAddDueDate() {
+		setValue('payments', [...watch('payments'), paymentsState]);
 	}
 
-	function handleAddDueDate() {
-		if (paymentsState.dueDate !== null) {
-			setFormData(prevState => ({ ...prevState, payments: [...prevState.payments, paymentsState] }));
-			setPaymentsState({
-				value: '',
-				dueDate: null
-			});
-		} else {
+	async function handleSubmitRequest() {
+		const newRequest = {
+			description: formData.description,
+			sendReceipt: formData.requiredReceipt,
+			payments: formData.payments
+		};
+
+		if (newRequest.description === '') {
 			dispatch(
 				showMessage({
-					message: 'É necessário informar um vencimento.',
+					message: 'É necessário preencher uma descrição.',
 					anchorOrigin: {
 						vertical: 'top',
 						horizontal: 'center'
 					},
-					variant: 'error'
+					variant: 'warning'
 				})
 			);
+		} else if (newRequest.payments.length === 0) {
+			dispatch(
+				showMessage({
+					message: 'É necessário vincular valor e vencimento.',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'warning'
+				})
+			);
+		} else {
+			dispatch(createRequestPaymentGeneral(newRequest)).then(res => {
+				if (res.payload) {
+					clearFormState();
+					navigate('/solicitacoes');
+				}
+			});
 		}
 	}
 
@@ -189,13 +224,18 @@ export default function PaymentRequestFormGeneral() {
 			description: '',
 			typeAccount: '',
 			uploadedFiles: [],
-			payments: []
+			payments: [],
+			valueTest: ''
 		});
+		setPaymentsState({ value: '', dueDate: null });
 	}
 
 	return (
 		<Box className="flex flex-col w-full">
-			<div className="p-32 mt-20">
+			<form
+				onSubmit={handleSubmit(onSubmit)}
+				className="p-32 mt-20"
+			>
 				<Button
 					className="mb-12"
 					variant="text"
@@ -230,7 +270,6 @@ export default function PaymentRequestFormGeneral() {
 					<div className="flex items-center gap-24 flex-col sm:flex-row">
 						<CreatableOptions
 							selectedData={getDataFromCreatable}
-							newData={handleCreatableProducts}
 							products={productsToOptionsSelect}
 							cleanInput={cleanInputCreatable}
 						/>
@@ -246,14 +285,20 @@ export default function PaymentRequestFormGeneral() {
 					</div>
 					<CustomizedTables
 						tableHead={['PRODUTOS']}
-						tableData={formData.tableData}
+						tableData={tableData}
 					/>
 
-					<TextField
-						onChange={e => setFormData(prevState => ({ ...prevState, description: e.target.value }))}
-						rows={4}
-						label="Descrição da solicitação"
-						multiline
+					<Controller
+						name="description"
+						control={control}
+						render={({ field }) => (
+							<TextField
+								{...field}
+								rows={4}
+								label="Descrição da solicitação"
+								multiline
+							/>
+						)}
 					/>
 
 					<div className="flex flex-col w-full ">
@@ -266,34 +311,41 @@ export default function PaymentRequestFormGeneral() {
 								}
 							/>
 
-							<Button
-								className="rounded-4"
-								onClick={handleAddDueDate}
-								variant="contained"
+							<Tooltip
+								placement="top-start"
+								arrow
+								title="Clique para vincular à solicitação de pagamento."
+								open={openTooltip}
 							>
-								<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
-							</Button>
+								<Button
+									onClick={handleAddDueDate}
+									className="rounded-4"
+									variant="contained"
+								>
+									<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
+								</Button>
+							</Tooltip>
 						</div>
 						<div>
-							{formData.payments.length > 0 && (
+							{payments.length > 0 && (
 								<>
-									{formData.payments.map((payment, index) => {
+									{payments.map((payment, index) => {
 										return (
 											<div key={payment.dueDate.toString()}>
 												<div className="flex mt-24 flex-col sm:flex-row items-center gap-24">
 													<TextField
 														className="w-full"
-														onChange={e => {
-															const newValue = e.target.value;
-															setFormData(prevState => ({
-																...prevState,
-																payments: prevState.payments.map((payment, idx) =>
-																	idx === index
-																		? { ...payment, value: newValue }
-																		: payment
-																)
-															}));
-														}}
+														// onChange={e => {
+														// 	const newValue = e.target.value;
+														// 	setFormData(prevState => ({
+														// 		...prevState,
+														// 		payments: prevState.payments.map((payment, idx) =>
+														// 			idx === index
+														// 				? { ...payment, value: newValue }
+														// 				: payment
+														// 		)
+														// 	}));
+														// }}
 														value={payment.value}
 														type="number"
 														label="Valor"
@@ -310,26 +362,30 @@ export default function PaymentRequestFormGeneral() {
 														adapterLocale={ptBR}
 													>
 														<DatePicker
-															onChange={e => {
-																const newDate = e;
-																setFormData(prevState => ({
-																	...prevState,
-																	payments: prevState.payments.map((payment, idx) =>
-																		idx === index
-																			? { ...payment, dueDate: newDate }
-																			: payment
-																	)
-																}));
-															}}
+															// onChange={e => {
+															// 	const newDate = e;
+															// 	setFormData(prevState => ({
+															// 		...prevState,
+															// 		payments: prevState.payments.map((payment, idx) =>
+															// 			idx === index
+															// 				? { ...payment, dueDate: newDate }
+															// 				: payment
+															// 		)
+															// 	}));
+															// }}
 															className="w-full"
 															label="Vencimento"
 															value={payment.dueDate}
 															format="dd/MM/yyyy"
 														/>
 													</LocalizationProvider>
-													<FuseSvgIcon onClick={() => handleRemoveDueDate(index)}>
-														heroicons-outline:trash
-													</FuseSvgIcon>
+
+													<Button
+														onClick={() => handleRemoveDueDate(index)}
+														variant="text"
+													>
+														<FuseSvgIcon>heroicons-outline:trash</FuseSvgIcon>
+													</Button>
 												</div>
 											</div>
 										);
@@ -374,14 +430,15 @@ export default function PaymentRequestFormGeneral() {
 						</Button>
 						<Button
 							className="rounded-4"
-							onClick={handleSubmitRequest}
+							// onClick={handleSubmitRequest}
+							type="submit"
 							variant="contained"
 						>
 							ENVIAR
 						</Button>
 					</div>
 				</Paper>
-			</div>
+			</form>
 		</Box>
 	);
 }

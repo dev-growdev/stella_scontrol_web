@@ -60,10 +60,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [searchValue, setSearchValue] = useState('');
 	const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-	const [filterByStatus, setFilterByStatus] = useState<'all' | 'active' | 'inactive'>('all');
-	const [anchorStatusMenu, setAnchorStatusMenu] = useState<null | HTMLElement>(null);
 
-	const openMenuStatus = Boolean(anchorStatusMenu);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -94,12 +91,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 		productsData.products && productsData.products.length > 0
 			? productsData.products.filter((row: Product) => {
 					const matchesSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
-					const matchesStatus =
-						filterByStatus === 'all' ||
-						(filterByStatus === 'active' && row.enable) ||
-						(filterByStatus === 'inactive' && !row.enable);
-
-					return matchesSearch && matchesStatus;
+					return matchesSearch;
 			  })
 			: [];
 
