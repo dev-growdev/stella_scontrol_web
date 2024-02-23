@@ -106,7 +106,7 @@ export default function CreateProductsPage() {
 		clearStates();
 	}
 
-	const handlePropertiesChange = (field, value) => {
+	const handlePropertiesChange = (field, value: string) => {
 		setFormDataProduct({
 			...formDataProduct,
 			[field]: value
@@ -182,8 +182,8 @@ export default function CreateProductsPage() {
 							<Autocomplete
 								id="combo-box-demo"
 								className="w-full"
-								options={categories.categories.map(category => category.name)}
-								onChange={(e, value) => handlePropertiesChange('category', value)}
+								options={categories.categories.map(category => category.enable && category.name)}
+								onChange={(e, value) => handlePropertiesChange('category', value as string)}
 								value={formDataProduct.category}
 								renderInput={params => (
 									<TextField
