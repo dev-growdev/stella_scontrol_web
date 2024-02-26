@@ -1,5 +1,5 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -19,6 +19,7 @@ import RequestUser from '../../components/RequestUser';
 import RequiredReceipt from '../../components/RequiredReceipt';
 import UploadFiles from '../../components/UploadFiles';
 import { createRequestPaymentGeneral, findSupplierByCPForCNPJ } from './FormRequestSlice';
+import { useNavigate } from 'react-router';
 
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useAppDispatch();
@@ -36,6 +37,7 @@ export default function PaymentRequestFormGeneral() {
 		typeAccount: '',
 		uploadedFiles: []
 	});
+	const navigate = useNavigate();
 
 	const currentDate = new Date();
 	const minDate = new Date();
@@ -120,6 +122,8 @@ export default function PaymentRequestFormGeneral() {
 		dispatch(createRequestPaymentGeneral(newRequest));
 
 		clearFormState();
+
+		navigate('/solicitacoes');
 	}
 
 	function clearFormState() {

@@ -8,6 +8,7 @@ import authenticationConfig from '../main/authentication/authenticationConfig';
 import categoriesPageConfig from '../main/categories/CategoriesPageConfig';
 import PaymentRequestFormGeneral from '../main/form-request/FormRequest';
 import paymentRequestFormGeneralPageConfig from '../main/form-request/FormRequestConfig';
+import RequestsPage from '../main/requests/RequestsPage';
 
 const routeConfigs: FuseRouteConfigsType = [
 	paymentRequestFormGeneralPageConfig,
@@ -40,6 +41,10 @@ const routes: FuseRoutesType = [
 	{
 		path: 'solicitar-pagamento',
 		element: <PaymentRequestFormGeneral />
+	},
+	{
+		path: 'solicitacoes',
+		element: <RequestsPage />
 	}
 ];
 
