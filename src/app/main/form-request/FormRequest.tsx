@@ -50,7 +50,7 @@ const schema = object().shape({
 	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
 	requiredReceipt: boolean(),
 	isRatiable: boolean(),
-	tableData: array().required().min(1),
+	tableData: array(),
 	description: string().required('É necessário uma descrição.'),
 	payments: array(),
 	typeAccount: string(),
@@ -91,6 +91,9 @@ export default function PaymentRequestFormGeneral() {
 		console.log('clicou', data);
 		if (watch('payments').length === 0) {
 			setError('payments', { message: 'É necessário adicionar valor e data de vencimento.' });
+		}
+		if (watch('tableData').length === 0) {
+			setError('tableData', { message: 'É necessário adicionar algum produto.' });
 		}
 	}
 
@@ -212,7 +215,7 @@ export default function PaymentRequestFormGeneral() {
 							products={productsToOptionsSelect}
 							cleanInput={cleanInputCreatable}
 							control={control}
-							errors={errors.tableData}
+							errors={errors ?? undefined}
 						/>
 						<Button
 							className="w-full sm:w-256"

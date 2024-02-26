@@ -1,4 +1,3 @@
-import { FormHelperText } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
@@ -31,6 +30,10 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 		selectedData(event);
 	};
 
+	useEffect(() => {
+		console.log(errors);
+	}, [errors]);
+
 	return (
 		<Controller
 			name="tableData"
@@ -46,17 +49,15 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 					options={controlCharacter.length > 2 ? products : []}
 					getOptionLabel={option => option.name || ''}
 					renderInput={params => (
-						<>
-							<TextField
-								{...field}
-								fullWidth
-								onChange={e => handleInputChange(e.target.value)}
-								{...params}
-								label="Digite um produto"
-								error={!!errors?.tableData}
-							/>
-							<FormHelperText error>{errors?.tableData?.message}</FormHelperText>
-						</>
+						<TextField
+							{...field}
+							fullWidth
+							onChange={e => handleInputChange(e.target.value)}
+							{...params}
+							label="Digite um produto"
+							error={!!errors.tableData}
+							helperText={errors?.tableData?.message}
+						/>
 					)}
 				/>
 			)}
