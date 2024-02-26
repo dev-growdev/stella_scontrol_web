@@ -1,6 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, InputAdornment, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, FormHelperText, InputAdornment, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useAppDispatch } from 'app/store';
@@ -47,7 +47,7 @@ const defaultValues = {
 };
 
 const schema = object().shape({
-	paymentMethod: string().required('É necessário adicionar uma forma de pagamento'),
+	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
 	requiredReceipt: boolean(),
 	isRatiable: boolean(),
 	tableData: array().required().min(1),
@@ -89,23 +89,9 @@ export default function PaymentRequestFormGeneral() {
 
 	function onSubmit(data) {
 		console.log('clicou', data);
-		// const currentTableData = watch('tableData');
-
-		// const newRequest = {
-		// 	description: watch('description'),
-		// 	sendReceipt: watch('requiredReceipt'),
-		// 	payments: watch('payments')
-		// };
-		// schema
-		// 	.validate(newRequest)
-		// 	.then(validate => {
-		// 		console.log(validate);
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err);
-		// 	});
-
-		// dispatch(createRequestPaymentGeneral(newRequest));
+		if (watch('payments').length === 0) {
+			setError('payments', { message: 'É necessário adicionar valor e data de vencimento.' });
+		}
 	}
 
 	useEffect(() => {
@@ -262,6 +248,7 @@ export default function PaymentRequestFormGeneral() {
 					<div className="flex flex-col w-full ">
 						<div className="flex flex-col w-full sm:flex-row items-center gap-24">
 							<ValueAndDueDate
+								errors={errors.payments ?? undefined}
 								setFormDataDueDate={d => setPaymentsState(prevState => ({ ...prevState, dueDate: d }))}
 								formData={paymentsState}
 								setFormDataValue={e =>
@@ -284,6 +271,14 @@ export default function PaymentRequestFormGeneral() {
 								</Button>
 							</Tooltip>
 						</div>
+						{errors.payments && (
+							<FormHelperText
+								className="mt-10"
+								error
+							>
+								{errors.payments.message}
+							</FormHelperText>
+						)}
 						<div>
 							{payments.length > 0 && (
 								<>
