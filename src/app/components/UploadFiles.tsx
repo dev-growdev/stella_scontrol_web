@@ -1,14 +1,13 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Button, Paper, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
-import { FormDataProps } from '../main/form-request/FormRequest';
 
 interface UploadFilesProps {
 	handleFileChange: (arg) => void;
-	formData: FormDataProps;
+	uploadedFiles: File[];
 	handleFileRemove: (index: number) => void;
 }
 
-export default function UploadFiles({ handleFileChange, formData, handleFileRemove }: UploadFilesProps) {
+export default function UploadFiles({ handleFileChange, uploadedFiles, handleFileRemove }: UploadFilesProps) {
 	const theme = useTheme();
 	return (
 		<>
@@ -52,7 +51,7 @@ export default function UploadFiles({ handleFileChange, formData, handleFileRemo
 					</Button>
 				</div>
 			</div>
-			{formData.uploadedFiles.length > 0 && (
+			{uploadedFiles.length > 0 && (
 				<>
 					<Typography
 						className="mr-10"
@@ -63,7 +62,7 @@ export default function UploadFiles({ handleFileChange, formData, handleFileRemo
 					s
 					<TableContainer component={Paper}>
 						<TableBody className="flex flex-col">
-							{formData.uploadedFiles.map((file, index) => (
+							{uploadedFiles.map((file, index) => (
 								<TableRow key={index}>
 									<TableCell>{file.name}</TableCell>
 									<TableCell>

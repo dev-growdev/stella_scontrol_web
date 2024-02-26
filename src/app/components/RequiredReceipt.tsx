@@ -1,13 +1,11 @@
 import { Checkbox, FormControlLabel, FormGroup, Typography } from '@mui/material';
-import { Dispatch, SetStateAction } from 'react';
-import { FormDataProps } from '../main/form-request/FormRequest';
 
 interface RequiredReceiptProps {
-	formData: FormDataProps;
-	setFormData: Dispatch<SetStateAction<FormDataProps>>;
+	requiredReceipt: boolean;
+	setToggleCheck: (arg: boolean) => void;
 }
 
-export default function RequiredReceipt({ formData, setFormData }: RequiredReceiptProps) {
+export default function RequiredReceipt({ requiredReceipt, setToggleCheck }: RequiredReceiptProps) {
 	return (
 		<div className="flex flex-row items-center">
 			<Typography
@@ -20,8 +18,8 @@ export default function RequiredReceipt({ formData, setFormData }: RequiredRecei
 				<FormControlLabel
 					control={
 						<Checkbox
-							onClick={() => setFormData(prevState => ({ ...prevState, requiredReceipt: true }))}
-							checked={formData.requiredReceipt}
+							onClick={() => setToggleCheck(true)}
+							checked={requiredReceipt}
 							color="primary"
 						/>
 					}
@@ -30,8 +28,8 @@ export default function RequiredReceipt({ formData, setFormData }: RequiredRecei
 				<FormControlLabel
 					control={
 						<Checkbox
-							onClick={() => setFormData(prevState => ({ ...prevState, requiredReceipt: false }))}
-							checked={!formData.requiredReceipt}
+							onClick={() => setToggleCheck(false)}
+							checked={!requiredReceipt}
 							color="primary"
 						/>
 					}
