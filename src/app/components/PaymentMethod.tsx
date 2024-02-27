@@ -1,7 +1,7 @@
-import { FormHelperText, InputLabel, OutlinedInput, Theme, useTheme } from '@mui/material';
+import { FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { FormDataProps } from '../main/form-request/FormRequest';
 
@@ -19,32 +19,14 @@ const MenuProps = {
 
 const paymentMethods = ['Boleto', 'Cartão de crédito', 'Cartão corporativo', 'Pix', 'Transferência bancária'];
 
-interface PaymentMethodProps {
+interface PaymentMethod {
 	paymentMethod: string;
-	handleChangeSelect?: (e: SelectChangeEvent<string>) => void;
-	handleChangeTypeAccount?: (e: SelectChangeEvent) => void;
 	register: UseFormRegister<FormDataProps>;
 	control: Control<FormDataProps>;
 	errors: FieldErrors<FormDataProps>;
 }
 
-export default function PaymentMethod({
-	paymentMethod,
-	handleChangeSelect,
-	handleChangeTypeAccount,
-	register,
-	control,
-	errors
-}: PaymentMethodProps) {
-	const theme = useTheme();
-
-	function getStyles(name: string, personName: string, theme: Theme) {
-		return {
-			fontWeight:
-				personName.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightMedium
-		};
-	}
-
+export default function PaymentMethod({ paymentMethod, register, control, errors }: PaymentMethod) {
 	return (
 		<Controller
 			name="paymentMethod"
@@ -73,7 +55,6 @@ export default function PaymentMethod({
 							<MenuItem
 								key={name}
 								value={name}
-								style={getStyles(name, paymentMethod, theme)} // testar o que acontece se remover
 							>
 								{name}
 							</MenuItem>

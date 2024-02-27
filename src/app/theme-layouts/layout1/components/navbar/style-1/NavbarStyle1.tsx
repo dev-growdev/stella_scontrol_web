@@ -7,7 +7,7 @@ import { navbarCloseMobile, selectFuseNavbar } from 'app/store/fuse/navbarSlice'
 import { selectFuseCurrentLayoutConfig } from 'app/store/fuse/settingsSlice';
 import { Layout1ConfigDefaultsType } from 'app/theme-layouts/layout1/Layout1Config';
 import { useSelector } from 'react-redux';
-//import '../../../../../../styles/muiCustomComponents.css';
+
 import NavbarStyle1Content from './NavbarStyle1Content';
 
 const navbarWidth = 280;

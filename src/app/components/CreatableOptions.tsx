@@ -1,10 +1,10 @@
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { FormDataProps } from '../main/form-request/FormRequest';
 
-interface CreatableProps {
+interface CreatableOptions {
 	selectedData: (data: ProductOptionType | string) => void;
 	products: ProductOptionType[];
 	cleanInput: boolean;
@@ -17,7 +17,7 @@ export interface ProductOptionType {
 	name?: string;
 }
 
-export default function CreatableOptions({ selectedData, products, cleanInput, errors, control }: CreatableProps) {
+export default function CreatableOptions({ selectedData, products, cleanInput, errors, control }: CreatableOptions) {
 	const [value, setValue] = useState<ProductOptionType | null>(null);
 	const [controlCharacter, setControlCharacter] = useState('');
 
@@ -25,15 +25,10 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 		setValue(null);
 	}, [cleanInput]);
 
-	const handleInputChange = (event: string) => {
-		setControlCharacter(event);
-		selectedData(event);
+	const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		setControlCharacter(event.target.value);
+		selectedData(event.target.value);
 	};
-
-	useEffect(() => {
-		console.log(errors);
-	}, [errors]);
-
 	return (
 		<Controller
 			name="tableData"
@@ -42,9 +37,9 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 				<Autocomplete
 					className="w-full"
 					value={value}
-					onChange={(event, newValue) => {
-						setValue(newValue);
-						selectedData(newValue);
+					onChange={(event: ChangeEvent<HTMLInputElement>) => {
+						setValue({ name: event.target.value });
+						selectedData({ name: event.target.value });
 					}}
 					options={controlCharacter.length > 2 ? products : []}
 					getOptionLabel={option => option.name || ''}
@@ -52,7 +47,7 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 						<TextField
 							{...field}
 							fullWidth
-							onChange={e => handleInputChange(e.target.value)}
+							onChange={e => handleInputChange(e)}
 							{...params}
 							label="Digite um produto"
 							error={!!errors.tableData}

@@ -2,7 +2,7 @@ import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
 import { authRoles } from 'src/app/auth';
 
-const ProductsPage = lazy(() => import('../products/ProductsPage'));
+const ProductsPage = lazy(() => import('./ProductsPage'));
 
 /**
  * The sign up pages config.

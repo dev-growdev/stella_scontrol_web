@@ -1,5 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import {
+	Box,
 	Button,
 	Chip,
 	CircularProgress,
@@ -10,18 +11,18 @@ import {
 	MenuItem,
 	Stack,
 	Switch,
+	Table,
 	TableBody,
+	TableCell,
+	TableContainer,
 	TableHead,
+	TablePagination,
 	TableRow,
 	TextField,
-	styled
+	Toolbar,
+	styled,
+	tableCellClasses
 } from '@mui/material';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
-import Toolbar from '@mui/material/Toolbar';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CategoriesType, Category } from '../main/categories/categoriesSlice';
 
@@ -129,7 +130,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 						className="sm:w-512"
 						onChange={handleSearch}
 						value={searchValue}
-						label="Pesquise por categorias"
+						label="Pesquise por categoria"
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position="end">

@@ -53,15 +53,6 @@ const inputGlobalStyles = (
 					color: `${theme.palette.primary.main}!important`
 				}
 			},
-
-			/*  'code:not([class*="language-"])': {
-        color: theme.palette.secondary.dark,
-        backgroundColor:
-          theme.palette.mode === 'light' ? 'rgba(255, 255, 255, .9)' : 'rgba(0, 0, 0, .9)',
-        padding: '2px 3px',
-        borderRadius: 2,
-        lineHeight: 1.7,
-      }, */
 			'table.simple tbody tr th': {
 				borderColor: theme.palette.divider
 			},
