@@ -142,6 +142,10 @@ export default function PaymentRequestFormGeneral() {
 		});
 	}
 
+	const handleSupplierChange = e => {
+		setFormData(prevState => ({ ...prevState, supplier: e.target.value }));
+	};
+
 	useEffect(() => {
 		console.log(formData);
 	}, [formData]);
@@ -208,7 +212,7 @@ export default function PaymentRequestFormGeneral() {
 							label="Fornecedor"
 							placeholder="Digite o CPF ou CNPJ do fornecedor"
 							value={formData.supplier}
-							onChange={e => setFormData(prevState => ({ ...prevState, supplier: e.target.value }))}
+							onChange={handleSupplierChange}
 						/>
 					</div>
 
