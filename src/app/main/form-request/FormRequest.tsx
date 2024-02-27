@@ -116,7 +116,12 @@ export default function PaymentRequestFormGeneral() {
 			requiredReceipt: data.requiredReceipt,
 			payments: data.payments
 		};
-		dispatch(createRequestPaymentGeneral(newRequest));
+		dispatch(createRequestPaymentGeneral(newRequest)).then(res => {
+			if (res.payload) {
+				clearFormState();
+				navigate('/');
+			}
+		});
 	}
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
