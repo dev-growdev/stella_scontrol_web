@@ -59,7 +59,6 @@ export default function UploadFiles({ handleFileChange, uploadedFiles, handleFil
 					>
 						Documentos anexados:
 					</Typography>
-					s
 					<TableContainer component={Paper}>
 						<TableBody className="flex flex-col">
 							{uploadedFiles.map((file, index) => (
