@@ -5,6 +5,7 @@ import {
 	CircularProgress,
 	FormControlLabel,
 	FormGroup,
+	InputAdornment,
 	Menu,
 	MenuItem,
 	Stack,
@@ -12,18 +13,40 @@ import {
 	TableBody,
 	TableHead,
 	TableRow,
-	TextField
+	TextField,
+	styled
 } from '@mui/material';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CategoriesType, Category } from '../main/categories/categoriesSlice';
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+	[`&.${tableCellClasses.head}`]: {
+		color: theme.palette.secondary.dark
+	},
+	[`&.${tableCellClasses.body}`]: {
+		fontSize: 14,
+		color: theme.palette.secondary.dark
+	}
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+	'&:nth-of-type(odd)': {
+		backgroundColor: theme.palette.common.white
+	},
+	'&:nth-of-type(even)': {
+		backgroundColor: theme.palette.action.hover
+	},
+	// hide last border
+	'&:last-child td, &:last-child th': {
+		border: 0
+	}
+}));
 
 interface DataTableProps {
 	selectItem: (item: Category | null) => void;
@@ -100,138 +123,145 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 
 	return (
 		<Box sx={{ width: '100%' }}>
-			<Paper sx={{ width: '100%', mb: 2 }}>
-				<Toolbar>
-					<div className="flex flex-col sm:flex-row w-full items-center gap-24">
-						<Typography
-							variant="h6"
-							component="div"
+			<Toolbar>
+				<div className="flex justify-end flex-col sm:flex-row w-full items-center gap-24">
+					<TextField
+						className="sm:w-512"
+						onChange={handleSearch}
+						value={searchValue}
+						label="Pesquise por categorias"
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position="end">
+									<FuseSvgIcon color="primary">heroicons-outline:search</FuseSvgIcon>
+								</InputAdornment>
+							)
+						}}
+					/>
+					<div>
+						<Button
+							id="basic-button"
+							aria-controls={openMenuStatus ? 'basic-menu' : undefined}
+							aria-haspopup="true"
+							aria-expanded={openMenuStatus ? 'true' : undefined}
+							onClick={handleOpenStatusMenu}
+							className="w-full sm:w-144 "
+							variant="contained"
+							startIcon={<FuseSvgIcon className="">heroicons-outline:filter</FuseSvgIcon>}
 						>
-							Categorias cadastradas
-						</Typography>
-						<TextField
-							onChange={handleSearch}
-							value={searchValue}
-							label="Pesquise por categorias"
-							fullWidth
-						/>
-						<div>
-							<Button
-								id="basic-button"
-								aria-controls={openMenuStatus ? 'basic-menu' : undefined}
-								aria-haspopup="true"
-								aria-expanded={openMenuStatus ? 'true' : undefined}
-								onClick={handleOpenStatusMenu}
-								className="w-full sm:w-144 pl-60 pr-64"
-								variant="contained"
-								startIcon={<FuseSvgIcon>heroicons-outline:filter</FuseSvgIcon>}
-							>
-								{filterByStatus === 'all' && 'FILTRAR'}
-								{filterByStatus === 'active' && 'ATIVOS'}
-								{filterByStatus === 'inactive' && 'INATIVOS'}
-							</Button>
+							{filterByStatus === 'all' && 'FILTRAR'}
+							{filterByStatus === 'active' && 'ATIVOS'}
+							{filterByStatus === 'inactive' && 'INATIVOS'}
+						</Button>
 
-							<Menu
-								id="basic-menu"
-								anchorEl={anchorStatusMenu}
-								open={openMenuStatus}
-								onClose={handleCloseStatusMenu}
-								MenuListProps={{
-									'aria-labelledby': 'basic-button'
-								}}
-							>
-								<MenuItem onClick={() => handleCloseStatusMenu('all')}>Todos</MenuItem>
-								<MenuItem onClick={() => handleCloseStatusMenu('active')}>Ativos</MenuItem>
-								<MenuItem onClick={() => handleCloseStatusMenu('inactive')}>Inativos</MenuItem>
-							</Menu>
-						</div>
+						<Menu
+							id="basic-menu"
+							anchorEl={anchorStatusMenu}
+							open={openMenuStatus}
+							onClose={handleCloseStatusMenu}
+							MenuListProps={{
+								'aria-labelledby': 'basic-button'
+							}}
+						>
+							<MenuItem onClick={() => handleCloseStatusMenu('all')}>Todos</MenuItem>
+							<MenuItem onClick={() => handleCloseStatusMenu('active')}>Ativos</MenuItem>
+							<MenuItem onClick={() => handleCloseStatusMenu('inactive')}>Inativos</MenuItem>
+						</Menu>
 					</div>
-				</Toolbar>
-				<TableContainer>
-					<Table>
-						<TableHead className="flex justify-between">
-							<TableCell>Nome</TableCell>
-							<TableCell>Status</TableCell>
-							<TableCell>Ações</TableCell>
-						</TableHead>
-						<TableBody>
-							{categoriesData.loading ? (
-								<Box className="flex justify-center items-center">
-									<CircularProgress color="primary" />
-								</Box>
-							) : (
-								sortedCategories
-									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-									.map(row => (
-										<TableRow
-											className="flex justify-between"
-											key={row.uid}
+				</div>
+			</Toolbar>
+			<TableContainer className="mt-28">
+				<Table>
+					<TableHead
+						className="flex justify-between font-600"
+						sx={{ backgroundColor: theme => theme.palette.action.hover }}
+					>
+						<StyledTableCell>Nome</StyledTableCell>
+						<StyledTableCell>Status</StyledTableCell>
+						<StyledTableCell>Ações</StyledTableCell>
+					</TableHead>
+					<TableBody>
+						{categoriesData.loading ? (
+							<Box className="flex justify-center items-center">
+								<CircularProgress color="primary" />
+							</Box>
+						) : (
+							sortedCategories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+								<StyledTableRow
+									className="flex justify-between"
+									key={row.uid}
+								>
+									<StyledTableCell
+										className="min-w-160"
+										component="th"
+										scope="row"
+									>
+										{row.name}
+									</StyledTableCell>
+
+									<StyledTableCell className="min-w-160 flex justify-end">
+										<Stack
+											direction="row"
+											spacing={1}
 										>
-											<TableCell
-												className="min-w-160"
-												component="th"
-												scope="row"
-											>
-												{row.name}
-											</TableCell>
-
-											<TableCell className="min-w-160 flex justify-end">
-												<Stack
-													direction="row"
-													spacing={1}
-												>
-													<Chip
-														className="min-w-64"
-														color={row.enable ? 'primary' : 'error'}
-														label={row.enable ? 'Ativo' : 'Inativo'}
-													/>
-												</Stack>
-											</TableCell>
-											<TableCell
-												className="min-w-224 flex justify-end"
+											<Chip
+												className="min-w-64"
+												color={row.enable ? 'primary' : 'default'}
 												sx={{
-													color: theme => theme.palette.secondary.light
+													color: row.enable
+														? theme => theme.palette.common.white
+														: theme => theme.palette.secondary.light
 												}}
+												label={row.enable ? 'Ativo' : 'Inativo'}
+											/>
+										</Stack>
+									</StyledTableCell>
+									<StyledTableCell
+										className="min-w-224 flex justify-end"
+										sx={{
+											color: theme => theme.palette.secondary.light
+										}}
+									>
+										<div className="flex w-full justify-between">
+											<FuseSvgIcon
+												className="w-32 mr-20 cursor-pointer"
+												color="primary"
+												onClick={() => handleRowEdit(row.uid)}
 											>
-												<div className="flex w-full justify-between">
-													<FuseSvgIcon
-														className="w-32 mr-20 cursor-pointer"
-														onClick={() => handleRowEdit(row.uid)}
-													>
-														heroicons-outline:pencil
-													</FuseSvgIcon>
+												heroicons-outline:pencil
+											</FuseSvgIcon>
 
-													<FormGroup>
-														<FormControlLabel
-															control={
-																<Switch
-																	name="enable"
-																	checked={row.enable}
-																	onChange={() => handleToggleStatusCategory(row)}
-																/>
-															}
-															label={row.enable ? 'Inativar' : 'Ativar'}
+											<FormGroup>
+												<FormControlLabel
+													control={
+														<Switch
+															name="enable"
+															checked={row.enable}
+															onChange={() => handleToggleStatusCategory(row)}
+															color="primary"
 														/>
-													</FormGroup>
-												</div>
-											</TableCell>
-										</TableRow>
-									))
-							)}
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[5, 10, 25]}
-					component="div"
-					count={sortedCategories.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-					labelRowsPerPage="Categorias por página:"
-				/>
-			</Paper>
+													}
+													label={row.enable ? 'Inativar' : 'Ativar'}
+												/>
+											</FormGroup>
+										</div>
+									</StyledTableCell>
+								</StyledTableRow>
+							))
+						)}
+					</TableBody>
+				</Table>
+			</TableContainer>
+			<TablePagination
+				rowsPerPageOptions={[5, 10, 25]}
+				component="div"
+				count={sortedCategories.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
+				labelRowsPerPage="Categorias por página:"
+			/>
 		</Box>
 	);
 }

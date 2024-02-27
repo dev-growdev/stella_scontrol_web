@@ -9,9 +9,17 @@ import categoriesPageConfig from '../main/categories/CategoriesPageConfig';
 import PaymentRequestFormGeneral from '../main/form-request/FormRequest';
 import paymentRequestFormGeneralPageConfig from '../main/form-request/FormRequestConfig';
 import RequestsPage from '../main/requests/RequestsPage';
+import requestPageConfig from '../main/form-request/RequestConfig';
+import CreateProductsPage from '../main/products/CreateProductsPage';
+import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
+import ProductsPage from '../main/products/ProductsPage';
+import ProductsPageConfig from '../main/products/ProductsPageConfig';
 
 const routeConfigs: FuseRouteConfigsType = [
 	paymentRequestFormGeneralPageConfig,
+	requestPageConfig,
+	CreateProductsPageConfig,
+	ProductsPageConfig,
 	categoriesPageConfig,
 	...authenticationConfig
 ];
@@ -45,6 +53,14 @@ const routes: FuseRoutesType = [
 	{
 		path: 'solicitacoes',
 		element: <RequestsPage />
+	},
+	{
+		path: 'cadastrar-produto',
+		element: <CreateProductsPage />
+	},
+	{
+		path: 'produtos',
+		element: <ProductsPage />
 	}
 ];
 

@@ -24,14 +24,30 @@ const navigationConfig: FuseNavigationType = [
 		title: 'Nova Solicitação',
 		type: 'item',
 		icon: 'heroicons-outline:document-add',
-		url: 'example'
+		url: 'solicitar-pagamento'
 	},
 	{
 		id: 'clock',
 		title: 'Cadastros',
-		type: 'item',
+		type: 'collapse',
 		icon: 'heroicons-outline:clock',
-		url: 'example'
+		// url: 'example',
+		children: [
+			{
+				id: 'cube2',
+				title: 'Produtos',
+				type: 'collapse',
+				icon: 'heroicons-outline:cube',
+				url: 'cadastrar-produto'
+			},
+			{
+				id: 'tag2',
+				title: 'Categorias',
+				type: 'item',
+				icon: 'heroicons-outline:tag',
+				url: 'categorias'
+			}
+		]
 	},
 	{
 		id: 'cog',
@@ -40,6 +56,22 @@ const navigationConfig: FuseNavigationType = [
 		icon: 'heroicons-outline:cog',
 		url: 'example'
 	},
+	{
+		id: 'cube',
+		title: 'Produtos',
+		type: 'collapse',
+		icon: 'heroicons-outline:cube',
+		url: 'produtos',
+		children: [
+			{
+				id: 'tag',
+				title: 'Categorias',
+				type: 'item',
+				icon: 'heroicons-outline:tag',
+				url: 'categorias'
+			}
+		]
+	}
 ];
 
 export default navigationConfig;

@@ -94,7 +94,8 @@ export default function CategoriesPage() {
 						className="text-20 md:text-28"
 						component="h1"
 						variant="h4"
-						fontWeight={400}
+						fontWeight={500}
+						sx={{ color: theme => theme.palette.secondary.main }}
 					>
 						Cadastro de categorias
 					</Typography>
@@ -102,11 +103,9 @@ export default function CategoriesPage() {
 
 				<Paper
 					elevation={4}
-					className="mt-24 p-36 flex flex-col gap-24"
+					className="mt-24 flex flex-col gap-24"
 				>
-					<Typography color="GrayText">Adicione novas categorias.</Typography>
-
-					<div className="flex flex-col sm:flex-row items-center gap-24">
+					<div className="flex px-24 mt-32 flex-col sm:flex-row items-center gap-24">
 						<TextField
 							name="name"
 							fullWidth
@@ -130,7 +129,7 @@ export default function CategoriesPage() {
 						</Button>
 					</div>
 					{editMode && (
-						<div className="flex">
+						<div className="flex px-24">
 							<Button
 								className="w-full sm:w-144 pl-60 pr-64"
 								variant="contained"
