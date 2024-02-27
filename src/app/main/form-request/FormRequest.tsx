@@ -22,6 +22,7 @@ import RequiredReceipt from '../../components/RequiredReceipt';
 import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
+import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 export interface FormDataProps {
 	paymentMethod: string;
@@ -78,7 +79,6 @@ export default function PaymentRequestFormGeneral() {
 		register,
 		reset,
 		formState: { errors },
-		clearErrors,
 		setError
 	} = useForm<FormDataProps>({
 		defaultValues,
@@ -86,16 +86,6 @@ export default function PaymentRequestFormGeneral() {
 	});
 
 	const payments = [...watch('payments')];
-
-	function onSubmit(data) {
-		console.log('clicou', data);
-		if (watch('payments').length === 0) {
-			setError('payments', { message: 'É necessário adicionar valor e data de vencimento.' });
-		}
-		if (watch('tableData').length === 0) {
-			setError('tableData', { message: 'É necessário adicionar algum produto.' });
-		}
-	}
 
 	useEffect(() => {
 		dispatch(getProducts());
@@ -119,6 +109,15 @@ export default function PaymentRequestFormGeneral() {
 			setOpenTooltip(true);
 		}
 	}, [paymentsState]);
+
+	function onSubmit(data: FormDataProps) {
+		const newRequest = {
+			description: data.description,
+			requiredReceipt: data.requiredReceipt,
+			payments: data.payments
+		};
+		dispatch(createRequestPaymentGeneral(newRequest));
+	}
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const { files } = event.target;
