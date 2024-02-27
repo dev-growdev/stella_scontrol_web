@@ -1,9 +1,9 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { useEffect } from 'react';
-import ProductTable from '../../components/ProductTable';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import ProductTable from '../../components/ProductTable';
 import { Product, disableProduct, getProducts, selectProducts } from './productsSlice';
 
 export default function ProductsPage() {
