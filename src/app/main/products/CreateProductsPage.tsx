@@ -113,6 +113,10 @@ export default function CreateProductsPage() {
 		});
 	};
 
+	function handleRedirectToProducts() {
+		navigate('/produtos');
+	}
+
 	return (
 		<Box className="flex flex-col w-full">
 			<div className="p-32 mt-20">
@@ -120,8 +124,9 @@ export default function CreateProductsPage() {
 					className="mb-12"
 					variant="text"
 					startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}
+					onClick={handleRedirectToProducts}
 				>
-					VOLTAR
+					PRODUTOS
 				</Button>
 
 				<Paper
