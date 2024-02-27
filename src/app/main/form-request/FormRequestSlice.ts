@@ -20,7 +20,7 @@ interface RequestPaymentGeneralType {
 
 export interface createRequestGeneral {
 	description: string;
-	sendReceipt: boolean;
+	requiredReceipt: boolean;
 	payments: { value: string; dueDate: Date }[];
 }
 
