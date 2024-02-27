@@ -191,7 +191,7 @@ export default function PaymentRequestFormGeneral() {
 					variant="text"
 					startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}
 				>
-					VOLTAR
+					SOLICITAÇÕES
 				</Button>
 
 				<Paper
@@ -256,6 +256,20 @@ export default function PaymentRequestFormGeneral() {
 						)}
 					/>
 
+					<Controller
+						name="supplier"
+						control={control}
+						render={({ field }) => (
+							<TextField
+								{...field}
+								{...register('supplier')}
+								error={!!errors.supplier}
+								helperText={errors?.supplier?.message}
+								label="Fornecedor"
+								placeholder="Digite um CPF ou CNPJ"
+							/>
+						)}
+					/>
 					<div className="flex flex-col w-full ">
 						<div className="flex flex-col w-full sm:flex-row items-center gap-24">
 							<ValueAndDueDate
