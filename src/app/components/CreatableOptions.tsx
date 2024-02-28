@@ -29,6 +29,7 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 		setControlCharacter(event.target.value);
 		selectedData(event.target.value);
 	};
+
 	return (
 		<Controller
 			name="tableData"
@@ -38,8 +39,8 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 					className="w-full"
 					value={value}
 					onChange={(event: ChangeEvent<HTMLInputElement>) => {
-						setValue({ name: event.target.value });
-						selectedData({ name: event.target.value });
+						setValue({ name: event.target.outerText });
+						selectedData({ name: event.target.outerText });
 					}}
 					options={controlCharacter.length > 2 ? products : []}
 					getOptionLabel={option => option.name || ''}
