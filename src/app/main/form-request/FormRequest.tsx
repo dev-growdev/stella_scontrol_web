@@ -37,7 +37,7 @@ const defaultValues = {
 	valueProducts: null,
 	requiredReceipt: false,
 	isRatiable: false,
-	tableData: [],
+	tableData: [''],
 	description: '',
 	supplier: '',
 	payments: [{ value: '', dueDate: null }],
@@ -49,15 +49,19 @@ const schema = object().shape({
 	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
 	requiredReceipt: boolean(),
 	isRatiable: boolean(),
-	tableData: array(),
+	tableData: array()
+		.of(string().required('É necessário adicionar um produto.'))
+		.required('É necessário adicionar um produto.'),
 	description: string().required('É necessário uma descrição.'),
 	supplier: string().required('É necessário adicionar um fornecedor.'),
-	payments: array().of(
-		object().shape({
-			value: string().required('É necessário um valor.'),
-			dueDate: date().nullable().required('É necessário adicionar uma data de vencimento.')
-		})
-	),
+	payments: array()
+		.of(
+			object().shape({
+				value: string().required('É necessário um valor.'),
+				dueDate: date().nullable().required('É necessário adicionar uma data de vencimento.')
+			})
+		)
+		.required(),
 	typeAccount: string(),
 	uploadedFiles: array()
 });
@@ -197,7 +201,7 @@ export default function PaymentRequestFormGeneral() {
 							products={productsToOptionsSelect}
 							cleanInput={cleanInputCreatable}
 							control={control}
-							errors={errors ?? undefined}
+							errors={errors}
 						/>
 						<Button
 							className="w-full sm:w-256"

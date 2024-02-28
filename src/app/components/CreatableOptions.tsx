@@ -25,6 +25,10 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 		setValue(null);
 	}, [cleanInput]);
 
+	useEffect(() => {
+		console.log(errors);
+	}, [errors]);
+
 	const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setControlCharacter(event.target.value);
 		selectedData(event.target.value);
@@ -38,8 +42,8 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 					className="w-full"
 					value={value}
 					onChange={(event: ChangeEvent<HTMLInputElement>) => {
-						setValue({ name: event.target.value });
-						selectedData({ name: event.target.value });
+						setValue({ name: event.target.outerText });
+						selectedData({ name: event.target.outerText });
 					}}
 					options={controlCharacter.length > 2 ? products : []}
 					getOptionLabel={option => option.name || ''}
@@ -50,8 +54,8 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 							onChange={e => handleInputChange(e)}
 							{...params}
 							label="Digite um produto"
-							error={!!errors.tableData}
-							helperText={errors?.tableData?.message}
+							error={!!errors?.tableData?.[0]?.message}
+							helperText={errors?.tableData?.[0]?.message}
 						/>
 					)}
 				/>
