@@ -1,12 +1,13 @@
 import Hidden from '@mui/material/Hidden';
-import { Theme } from '@mui/system/createTheme';
-import { styled } from '@mui/material/styles';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import { useSelector } from 'react-redux';
+import { styled } from '@mui/material/styles';
+import { Theme } from '@mui/system/createTheme';
+import { useAppDispatch } from 'app/store';
 import { navbarCloseMobile, selectFuseNavbar } from 'app/store/fuse/navbarSlice';
 import { selectFuseCurrentLayoutConfig } from 'app/store/fuse/settingsSlice';
-import { useAppDispatch } from 'app/store';
 import { Layout1ConfigDefaultsType } from 'app/theme-layouts/layout1/Layout1Config';
+import { useSelector } from 'react-redux';
+
 import NavbarStyle1Content from './NavbarStyle1Content';
 
 const navbarWidth = 280;

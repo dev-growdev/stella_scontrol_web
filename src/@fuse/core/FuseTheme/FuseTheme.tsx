@@ -1,7 +1,7 @@
-import { alpha, ThemeProvider } from '@mui/material/styles';
-import { memo, ReactNode, useEffect, useLayoutEffect } from 'react';
-import { Theme } from '@mui/material/styles/createTheme';
 import GlobalStyles from '@mui/material/GlobalStyles';
+import { alpha, ThemeProvider } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles/createTheme';
+import { memo, ReactNode, useEffect, useLayoutEffect } from 'react';
 
 /**
  * The useEnhancedEffect function is used to conditionally use the useLayoutEffect hook if the window object is defined.
@@ -24,17 +24,35 @@ const inputGlobalStyles = (
 			},
 			body: {
 				backgroundColor: theme.palette.background.default,
-				color: theme.palette.text.primary
-			},
+				color: theme.palette.text.primary,
 
-			/*  'code:not([class*="language-"])': {
-        color: theme.palette.secondary.dark,
-        backgroundColor:
-          theme.palette.mode === 'light' ? 'rgba(255, 255, 255, .9)' : 'rgba(0, 0, 0, .9)',
-        padding: '2px 3px',
-        borderRadius: 2,
-        lineHeight: 1.7,
-      }, */
+				'& label.Mui-focused': {
+					color: `${theme.palette.primary.main}!important`
+				},
+				'& .MuiInput-underline:after': {
+					borderBottomColor: '#B2BAC2'
+				},
+				'& .MuiOutlinedInput-root': {
+					'& fieldset': {
+						borderColor: '#E0E3E7'
+					},
+					'&:hover fieldset': {
+						borderColor: '#B2BAC2'
+					},
+					'&.Mui-focused fieldset': {
+						borderColor: `${theme.palette.primary.main}!important`
+					}
+				},
+				'& .MuiIconButton-edgeEnd': {
+					color: `${theme.palette.primary.main}!important`
+				},
+				'& .MuiInputAdornment-positionStart': {
+					color: `${theme.palette.primary.main}!important`
+				},
+				' & .muiltr-f6jxy6-MuiTypography-root': {
+					color: `${theme.palette.primary.main}!important`
+				}
+			},
 			'table.simple tbody tr th': {
 				borderColor: theme.palette.divider
 			},

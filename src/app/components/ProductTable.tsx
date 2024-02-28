@@ -7,8 +7,6 @@ import {
 	FormControlLabel,
 	FormGroup,
 	InputAdornment,
-	Menu,
-	MenuItem,
 	Stack,
 	Switch,
 	Table,
@@ -20,11 +18,19 @@ import {
 	TableRow,
 	TextField,
 	Toolbar,
-	styled,
-	tableCellClasses
+	Typography,
+	styled
 } from '@mui/material';
+import { tableCellClasses } from '@mui/material/TableCell';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { CategoriesType, Category } from '../main/categories/categoriesSlice';
+import { useNavigate } from 'react-router';
+import { Product, ProductsType } from '../main/products/productsSlice';
+
+interface ProductTableProps {
+	selectItem: (item: Product | null) => void;
+	productsData: ProductsType | { products: []; loading: false };
+	handleStatus: (item: Product) => void;
+}
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -43,36 +49,26 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	'&:nth-of-type(even)': {
 		backgroundColor: theme.palette.action.hover
 	},
-	// hide last border
+
 	'&:last-child td, &:last-child th': {
 		border: 0
 	}
 }));
 
-interface DataTableProps {
-	selectItem: (item: Category | null) => void;
-	categoriesData: CategoriesType | { categories: []; loading: false };
-	handleStatus?: (item: Category) => void;
-}
-
-export default function DataTable({ selectItem, categoriesData, handleStatus }: DataTableProps) {
+export default function ProductTable({ selectItem, productsData, handleStatus }: ProductTableProps) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [searchValue, setSearchValue] = useState('');
 	const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-	const [filterByStatus, setFilterByStatus] = useState<'all' | 'active' | 'inactive'>('all');
-	const [anchorStatusMenu, setAnchorStatusMenu] = useState<null | HTMLElement>(null);
 
-	const openMenuStatus = Boolean(anchorStatusMenu);
+	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (selectedItemId !== null && categoriesData.categories) {
-			const findItem = categoriesData.categories.find(item => item.uid === selectedItemId);
+		if (selectedItemId !== null && productsData.products) {
+			const findItem = productsData.products.find(item => item.uid === selectedItemId);
 			selectItem(findItem || null);
-		} else {
-			selectItem(null);
 		}
-	}, [selectedItemId, categoriesData.categories]);
+	}, [selectedItemId, productsData.products]);
 
 	const handleChangePage = (event: unknown, newPage: number) => {
 		setPage(newPage);
@@ -87,50 +83,57 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		setSearchValue(e.target.value);
 	};
 
-	const handleRowEdit = (itemId: string) => {
+	const handleRowClick = (itemId: string) => {
 		setSelectedItemId(itemId === selectedItemId ? null : itemId);
 	};
 
-	const filteredCategories: Category[] =
-		categoriesData.categories && categoriesData.categories.length > 0
-			? categoriesData.categories.filter((row: Category) => {
+	const filteredProducts: Product[] =
+		productsData.products && productsData.products.length > 0
+			? productsData.products.filter((row: Product) => {
 					const matchesSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
-					const matchesStatus =
-						filterByStatus === 'all' ||
-						(filterByStatus === 'active' && row.enable) ||
-						(filterByStatus === 'inactive' && !row.enable);
-					return matchesSearch && matchesStatus;
+					return matchesSearch;
 			  })
 			: [];
 
-	const sortedCategories = filteredCategories.slice().reverse();
+	const sortedProducts = filteredProducts.slice().reverse();
 
-	const handleOpenStatusMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorStatusMenu(event.currentTarget);
+	const handleNavigateCreateProduct = () => {
+		navigate('/cadastrar-produto');
 	};
-
-	const handleCloseStatusMenu = (value?: 'all' | 'active' | 'inactive') => {
-		if (typeof value === 'string') {
-			setFilterByStatus(value);
-		} else {
-			setFilterByStatus(filterByStatus);
-		}
-		setAnchorStatusMenu(null);
-	};
-
-	function handleToggleStatusCategory(category: Category) {
-		handleStatus(category);
-	}
 
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Toolbar>
-				<div className="flex justify-end flex-col sm:flex-row w-full items-center gap-24">
+				<div className="flex flex-col sm:flex-row w-full items-center gap-24 justify-between">
+					<Typography
+						className="text-20 md:text-28"
+						component="h1"
+						variant="h4"
+						fontWeight={500}
+						color={theme => theme.palette.secondary.main}
+					>
+						Produtos
+					</Typography>
+					<Button
+						id="basic-button"
+						aria-haspopup="true"
+						onClick={handleNavigateCreateProduct}
+						className="w-full sm:w-256 shadow-lg py-24"
+						variant="contained"
+						startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
+					>
+						Cadastro de novo produto
+					</Button>
+				</div>
+			</Toolbar>
+			<Toolbar>
+				<div className="flex flex-row sm:flex-row w-full items-center gap-24 justify-end">
 					<TextField
-						className="sm:w-512"
 						onChange={handleSearch}
 						value={searchValue}
-						label="Pesquise por categoria"
+						className="sm:w-512"
+						label="Pesquise por produtos"
+						fullWidth
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position="end">
@@ -139,68 +142,42 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 							)
 						}}
 					/>
-					<div>
-						<Button
-							id="basic-button"
-							aria-controls={openMenuStatus ? 'basic-menu' : undefined}
-							aria-haspopup="true"
-							aria-expanded={openMenuStatus ? 'true' : undefined}
-							onClick={handleOpenStatusMenu}
-							className="w-full sm:w-144 "
-							variant="contained"
-							startIcon={<FuseSvgIcon className="">heroicons-outline:filter</FuseSvgIcon>}
-						>
-							{filterByStatus === 'all' && 'FILTRAR'}
-							{filterByStatus === 'active' && 'ATIVOS'}
-							{filterByStatus === 'inactive' && 'INATIVOS'}
-						</Button>
-
-						<Menu
-							id="basic-menu"
-							anchorEl={anchorStatusMenu}
-							open={openMenuStatus}
-							onClose={handleCloseStatusMenu}
-							MenuListProps={{
-								'aria-labelledby': 'basic-button'
-							}}
-						>
-							<MenuItem onClick={() => handleCloseStatusMenu('all')}>Todos</MenuItem>
-							<MenuItem onClick={() => handleCloseStatusMenu('active')}>Ativos</MenuItem>
-							<MenuItem onClick={() => handleCloseStatusMenu('inactive')}>Inativos</MenuItem>
-						</Menu>
-					</div>
 				</div>
 			</Toolbar>
-			<TableContainer className="mt-28">
+			<TableContainer>
 				<Table>
 					<TableHead
 						className="flex justify-between font-600"
 						sx={{ backgroundColor: theme => theme.palette.action.hover }}
 					>
 						<StyledTableCell>Nome</StyledTableCell>
+						<StyledTableCell>Categoria</StyledTableCell>
 						<StyledTableCell>Status</StyledTableCell>
 						<StyledTableCell>Ações</StyledTableCell>
 					</TableHead>
 					<TableBody>
-						{categoriesData.loading ? (
+						{productsData.loading ? (
 							<Box className="flex justify-center items-center">
 								<CircularProgress color="primary" />
 							</Box>
 						) : (
-							sortedCategories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+							sortedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
 								<StyledTableRow
 									className="flex justify-between"
 									key={row.uid}
 								>
 									<StyledTableCell
-										className="min-w-160"
+										className="min-w-200"
 										component="th"
 										scope="row"
 									>
 										{row.name}
 									</StyledTableCell>
 
-									<StyledTableCell className="min-w-160 flex justify-end">
+									<StyledTableCell className="min-w-200 flex justify-center">
+										{row.category.name}
+									</StyledTableCell>
+									<StyledTableCell className="min-w-200 flex justify-end">
 										<Stack
 											direction="row"
 											spacing={1}
@@ -217,17 +194,12 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 											/>
 										</Stack>
 									</StyledTableCell>
-									<StyledTableCell
-										className="min-w-224 flex justify-end"
-										sx={{
-											color: theme => theme.palette.secondary.light
-										}}
-									>
+									<StyledTableCell className="min-w-224 flex justify-end">
 										<div className="flex w-full justify-between">
 											<FuseSvgIcon
-												className="w-32 mr-20 cursor-pointer"
 												color="primary"
-												onClick={() => handleRowEdit(row.uid)}
+												onClick={() => handleRowClick(row.uid)}
+												className="w-32 mr-20 cursor-pointer"
 											>
 												heroicons-outline:pencil
 											</FuseSvgIcon>
@@ -236,10 +208,10 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 												<FormControlLabel
 													control={
 														<Switch
+															color="primary"
 															name="enable"
 															checked={row.enable}
-															onChange={() => handleToggleStatusCategory(row)}
-															color="primary"
+															onChange={() => handleStatus(row)}
 														/>
 													}
 													label={row.enable ? 'Inativar' : 'Ativar'}
@@ -256,12 +228,12 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 			<TablePagination
 				rowsPerPageOptions={[5, 10, 25]}
 				component="div"
-				count={sortedCategories.length}
+				count={sortedProducts.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
-				labelRowsPerPage="Categorias por página:"
+				labelRowsPerPage="Produtos por página:"
 			/>
 		</Box>
 	);

@@ -3,11 +3,11 @@ import { Button, Paper, TableBody, TableCell, TableContainer, TableRow, Typograp
 
 interface UploadFilesProps {
 	handleFileChange: (arg) => void;
-	formData: any;
+	uploadedFiles: File[];
 	handleFileRemove: (index: number) => void;
 }
 
-export default function UploadFiles({ handleFileChange, formData, handleFileRemove }: UploadFilesProps) {
+export default function UploadFiles({ handleFileChange, uploadedFiles, handleFileRemove }: UploadFilesProps) {
 	const theme = useTheme();
 	return (
 		<>
@@ -51,7 +51,7 @@ export default function UploadFiles({ handleFileChange, formData, handleFileRemo
 					</Button>
 				</div>
 			</div>
-			{formData.uploadedFiles.length > 0 && (
+			{uploadedFiles.length > 0 && (
 				<>
 					<Typography
 						className="mr-10"
@@ -59,10 +59,9 @@ export default function UploadFiles({ handleFileChange, formData, handleFileRemo
 					>
 						Documentos anexados:
 					</Typography>
-					s
 					<TableContainer component={Paper}>
 						<TableBody className="flex flex-col">
-							{formData.uploadedFiles.map((file, index) => (
+							{uploadedFiles.map((file, index) => (
 								<TableRow key={index}>
 									<TableCell>{file.name}</TableCell>
 									<TableCell>

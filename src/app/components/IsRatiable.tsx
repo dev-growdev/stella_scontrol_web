@@ -1,11 +1,11 @@
 import { Checkbox, FormControlLabel, FormGroup, Typography } from '@mui/material';
 
 interface RatiableProps {
-	formData: any;
-	setFormData: (arg: any) => void;
+	isRatiable: boolean;
+	setToggleRatiable: (arg: boolean) => void;
 }
 
-export default function IsRatiable({ formData, setFormData }: RatiableProps) {
+export default function IsRatiable({ isRatiable, setToggleRatiable }: RatiableProps) {
 	return (
 		<div className="flex items-center">
 			<Typography
@@ -18,8 +18,9 @@ export default function IsRatiable({ formData, setFormData }: RatiableProps) {
 				<FormControlLabel
 					control={
 						<Checkbox
-							onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: true }))}
-							checked={formData.isRatiable}
+							onClick={() => setToggleRatiable(true)}
+							checked={isRatiable}
+							color="primary"
 						/>
 					}
 					label="Sim"
@@ -27,8 +28,9 @@ export default function IsRatiable({ formData, setFormData }: RatiableProps) {
 				<FormControlLabel
 					control={
 						<Checkbox
-							onClick={() => setFormData(prevState => ({ ...prevState, isRatiable: false }))}
-							checked={!formData.isRatiable}
+							onClick={() => setToggleRatiable(false)}
+							checked={!isRatiable}
+							color="primary"
 						/>
 					}
 					label="Não"

@@ -6,11 +6,16 @@ import { Navigate } from 'react-router-dom';
 import Error404Page from '../main/404/Error404Page';
 import authenticationConfig from '../main/authentication/authenticationConfig';
 import categoriesPageConfig from '../main/categories/CategoriesPageConfig';
-import PaymentRequestFormGeneral from '../main/form-request/FormRequest';
 import paymentRequestFormGeneralPageConfig from '../main/form-request/FormRequestConfig';
+import requestPageConfig from '../main/form-request/RequestConfig';
+import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
+import ProductsPageConfig from '../main/products/ProductsPageConfig';
 
 const routeConfigs: FuseRouteConfigsType = [
 	paymentRequestFormGeneralPageConfig,
+	requestPageConfig,
+	CreateProductsPageConfig,
+	ProductsPageConfig,
 	categoriesPageConfig,
 	...authenticationConfig
 ];
@@ -36,10 +41,6 @@ const routes: FuseRoutesType = [
 	{
 		path: '*',
 		element: <Navigate to="404" />
-	},
-	{
-		path: 'solicitar-pagamento',
-		element: <PaymentRequestFormGeneral />
 	}
 ];
 

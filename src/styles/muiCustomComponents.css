@@ -1,4 +1,3 @@
-/* contained */
 .muiltr-370b5p-MuiButtonBase-root-MuiButton-root {
 	color: white;
 	border-radius: 7px;
@@ -9,19 +8,16 @@
 	background-color: #02798d;
 }
 
-/* outlined */
 .muiltr-bjdztq-MuiButtonBase-root-MuiButton-root {
 	border-color: #00abc8;
 	border-radius: 7px;
 	color: #00abc8;
 }
 
-/* button type text */
 .muiltr-w3cj8e-MuiButtonBase-root-MuiButton-root {
 	color: #00abc8;
 }
 
-/* textfield */
 .muiltr-c9j379-MuiInputBase-root-MuiOutlinedInput-root {
 	border-color: #02798d;
 	border-radius: 7px;
@@ -29,10 +25,6 @@
 
 .muiltr-c9j379-MuiInputBase-root-MuiOutlinedInput-root:hover {
 	border-color: #02798d;
-}
-
-.muiltr-n5tsn5-MuiList-root .fuse-list-item:hover {
-	background-color: #00b2d01a;
 }
 
 .muiltr-154j6x2-MuiInputBase-input-MuiOutlinedInput-input {

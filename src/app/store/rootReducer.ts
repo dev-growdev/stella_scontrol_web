@@ -1,9 +1,11 @@
 import { combineReducers, ReducersMapObject } from '@reduxjs/toolkit';
 import categories from '../main/categories/categoriesSlice';
 import requestPaymentGeneral from '../main/form-request/FormRequestSlice';
+import products from '../main/products/productsSlice';
 import fuse from './fuse';
 import i18n from './i18nSlice';
 import user from './user/userSlice';
+
 /**
  * Creates a reducer function that combines the provided reducers with the async reducers.
  */
@@ -13,6 +15,7 @@ const createReducer = (asyncReducers: ReducersMapObject) =>
 		user,
 		categories,
 		requestPaymentGeneral,
+		products,
 		i18n,
 		...asyncReducers
 	} as ReducersMapObject);
