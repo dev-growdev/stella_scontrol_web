@@ -29,7 +29,7 @@ export interface FormDataProps {
 	requiredReceipt: boolean;
 	isRatiable: boolean;
 	tableData: { produtos: string }[];
-	description: string;
+	description?: string;
 	supplier: string;
 	payments: { value: string; dueDate: Date | null }[];
 	typeAccount: string;
@@ -54,7 +54,7 @@ const schema = object().shape({
 	requiredReceipt: boolean(),
 	isRatiable: boolean(),
 	tableData: array(),
-	description: string().required('É necessário uma descrição.'),
+	description: string(),
 	supplier: string().required('É necessário adicionar um fornecedor.'),
 	payments: array(),
 	typeAccount: string(),
