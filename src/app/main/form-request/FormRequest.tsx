@@ -1,6 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { selectUser } from 'app/store/user/userSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -10,21 +10,22 @@ import { useNavigate } from 'react-router';
 import { array, boolean, date, object, string } from 'yup';
 import '../../../styles/muiCustomComponents.css';
 import AccountType from '../../components/AccountType';
-import CreatableOptions, { ProductOptionType } from '../../components/CreatableOptions';
-import CustomizedTables from '../../components/CustomizedTables';
+import { ProductOptionType } from '../../components/CreatableOptions';
 import IsRatiable from '../../components/IsRatiable';
 import PaymentMethod from '../../components/PaymentMethod';
 import RequestUser from '../../components/RequestUser';
 import RequiredReceipt from '../../components/RequiredReceipt';
+import TableProductsFromRequest from '../../components/TableProductsFromRequest';
 import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
+import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 export interface FormDataProps {
 	paymentMethod: string;
 	requiredReceipt: boolean;
 	isRatiable: boolean;
-	tableData: { produtos: string }[];
+	products: { product: string }[];
 	description?: string;
 	supplier: string;
 	payments: { value: string; dueDate: Date | null }[];
@@ -32,12 +33,16 @@ export interface FormDataProps {
 	uploadedFiles: File[];
 }
 
+export interface ProductOptionType {
+	product: string;
+}
+
 const defaultValues = {
 	paymentMethod: '',
 	valueProducts: null,
 	requiredReceipt: false,
 	isRatiable: false,
-	tableData: [],
+	products: [],
 	description: '',
 	supplier: '',
 	payments: [{ value: '', dueDate: null }],
@@ -49,9 +54,15 @@ const schema = object().shape({
 	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
 	requiredReceipt: boolean(),
 	isRatiable: boolean(),
-	tableData: array()
-		.of(string().required('É necessário adicionar um produto.'))
-		.required('É necessário adicionar um produto.'),
+	products: array()
+		.of(
+			object()
+				.shape({
+					product: string().required()
+				})
+				.required('É necessário adicionar um produto.')
+		)
+		.min(1, 'É necessário adicionar um produto.'),
 	description: string().required('É necessário uma descrição.'),
 	supplier: string().required('É necessário adicionar um fornecedor.'),
 	payments: array()
@@ -72,9 +83,7 @@ export default function PaymentRequestFormGeneral() {
 	const user = useSelector(selectUser);
 	const productsRedux = useSelector(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
-	const [productToTable, setProductToTable] = useState<ProductOptionType>({ name: '' });
-	const [cleanInputCreatable, setCleanInputCreatable] = useState(false);
-	const [openTooltip, setOpenTooltip] = useState(false);
+
 	const {
 		control,
 		handleSubmit,
@@ -88,17 +97,13 @@ export default function PaymentRequestFormGeneral() {
 		resolver: yupResolver(schema)
 	});
 
-	const { fields, append, remove } = useFieldArray({
-		control,
-		name: 'payments'
-	});
 	const {
-		fields: fieldsTableData,
-		append: appendTableData,
-		remove: removeTableData
+		fields: fieldsPayments,
+		append: appendPayments,
+		remove: removePayments
 	} = useFieldArray({
 		control,
-		name: 'tableData'
+		name: 'payments'
 	});
 
 	useEffect(() => {
@@ -108,26 +113,25 @@ export default function PaymentRequestFormGeneral() {
 	useEffect(() => {
 		if (productsRedux.products.length > 0) {
 			const refProducts = productsRedux.products
-				.map(product => product.enable && { name: product.name })
+				.map(product => product.enable && { product: product.name })
 				.filter(product => product);
 			setProductsToOptionsSelect(refProducts);
 		}
 	}, [productsRedux]);
 
 	function onSubmit(data: FormDataProps) {
-		console.log(data);
-		// const newRequest = {
-		// 	description: data.description,
-		// 	supplier: data.supplier,
-		// 	requiredReceipt: data.requiredReceipt,
-		// 	payments: data.payments
-		// };
-		// dispatch(createRequestPaymentGeneral(newRequest)).then(res => {
-		// 	if (res.payload) {
-		// 		clearFormState();
-		// 		navigate('/');
-		// 	}
-		// });
+		const newRequest = {
+			description: data.description,
+			supplier: data.supplier,
+			requiredReceipt: data.requiredReceipt,
+			payments: data.payments
+		};
+		dispatch(createRequestPaymentGeneral(newRequest)).then(res => {
+			if (res.payload) {
+				clearFormState();
+				navigate('/');
+			}
+		});
 	}
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -145,23 +149,6 @@ export default function PaymentRequestFormGeneral() {
 		const updatedFiles = currentFiles.filter((_file, index) => index !== indexToRemove);
 		setValue('uploadedFiles', updatedFiles);
 	};
-
-	function handleAddProducts() {
-		const currentTableData = watch('tableData');
-
-		setValue('tableData', [...currentTableData, { produtos: productToTable.name }]);
-
-		setProductToTable({ name: '' });
-		setCleanInputCreatable(!cleanInputCreatable);
-	}
-
-	function getDataFromCreatable(data: ProductOptionType | string) {
-		if (typeof data === 'string') {
-			setProductToTable({ name: data });
-		} else if (typeof data === 'object') {
-			setProductToTable(data);
-		}
-	}
 
 	function clearFormState() {
 		reset();
@@ -201,30 +188,14 @@ export default function PaymentRequestFormGeneral() {
 					className="mt-24 p-36 flex flex-col gap-24"
 				>
 					<RequestUser user={user} />
-
 					<Typography color="GrayText">Adicione os produtos para solicitação de pagamento</Typography>
 
-					<div className="flex items-center gap-24 flex-col sm:flex-row">
-						<CreatableOptions
-							selectedData={getDataFromCreatable}
-							products={productsToOptionsSelect}
-							cleanInput={cleanInputCreatable}
-							control={control}
-							errors={errors}
-						/>
-						<Button
-							className="w-full sm:w-256"
-							onClick={handleAddProducts}
-							sx={{ borderRadius: '7px' }}
-							variant="contained"
-							startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
-						>
-							ADICIONAR ITEM
-						</Button>
-					</div>
-					<CustomizedTables
-						tableHead={['PRODUTOS']}
-						tableData={watch('tableData')}
+					<TableProductsFromRequest
+						control={control}
+						errors={errors}
+						productsToOptions={productsToOptionsSelect}
+						setValueProducts={setValue}
+						watch={watch}
 					/>
 
 					<Controller
@@ -242,7 +213,6 @@ export default function PaymentRequestFormGeneral() {
 							/>
 						)}
 					/>
-
 					<Controller
 						name="supplier"
 						control={control}
@@ -259,7 +229,7 @@ export default function PaymentRequestFormGeneral() {
 					/>
 					<div className="flex flex-col w-full ">
 						<div>
-							{fields.map((field, index) => (
+							{fieldsPayments.map((field, index) => (
 								<div
 									className="my-24"
 									key={field.id}
@@ -269,29 +239,22 @@ export default function PaymentRequestFormGeneral() {
 										index={index}
 										control={control}
 										register={register}
-										remove={remove}
+										remove={removePayments}
 									/>
 								</div>
 							))}
 						</div>
 						<div className="flex items-center ">
-							<Tooltip
-								placement="top-start"
-								arrow
-								title="Adicionar mais pagamentos."
-								open={openTooltip}
+							<Button
+								onClick={() => appendPayments({ value: '', dueDate: null })}
+								className="rounded-4"
+								variant="contained"
 							>
-								<Button
-									onClick={() => append({ value: '', dueDate: null })}
-									className="rounded-4"
-									variant="contained"
-								>
-									<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
-									{watch('payments').length > 0
-										? 'Adicionar mais pagamentos.'
-										: 'Adicionar algum pagamento.'}
-								</Button>
-							</Tooltip>
+								<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
+								{watch('payments').length > 0
+									? 'Adicionar mais pagamentos.'
+									: 'Adicionar algum pagamento.'}
+							</Button>
 						</div>
 					</div>
 					<PaymentMethod
@@ -306,23 +269,19 @@ export default function PaymentRequestFormGeneral() {
 						register={register}
 						accountType={watch('typeAccount')}
 					/>
-
 					<RequiredReceipt
 						requiredReceipt={watch('requiredReceipt')}
 						setToggleCheck={e => setValue('requiredReceipt', e)}
 					/>
-
 					<UploadFiles
 						uploadedFiles={watch('uploadedFiles')}
 						handleFileChange={handleFileChange}
 						handleFileRemove={handleFileRemove}
 					/>
-
 					<IsRatiable
 						isRatiable={watch('isRatiable')}
 						setToggleRatiable={e => setValue('isRatiable', e)}
 					/>
-
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"
