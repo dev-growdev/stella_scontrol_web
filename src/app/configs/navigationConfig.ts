@@ -31,7 +31,6 @@ const navigationConfig: FuseNavigationType = [
 		title: 'Cadastros',
 		type: 'collapse',
 		icon: 'heroicons-outline:clock',
-		// url: 'example',
 		children: [
 			{
 				id: 'cube2',
@@ -49,28 +48,12 @@ const navigationConfig: FuseNavigationType = [
 			}
 		]
 	},
-	// {
-	// 	id: 'cog',
-	// 	title: 'Configurações',
-	// 	type: 'item',
-	// 	icon: 'heroicons-outline:cog',
-	// 	url: 'example'
-	// },
 	{
 		id: 'cube',
 		title: 'Produtos',
 		type: 'collapse',
 		icon: 'heroicons-outline:cube',
 		url: 'produtos'
-		// children: [
-		// 	{
-		// 		id: 'tag',
-		// 		title: 'Categorias',
-		// 		type: 'item',
-		// 		icon: 'heroicons-outline:tag',
-		// 		url: 'categorias'
-		// 	}
-		// ]
 	}
 ];
 
