@@ -21,7 +21,7 @@ export default function ValueAndDueDate({ control, register, index, errors, remo
 
 	return (
 		<div className="flex flex-col w-full">
-			<div className="flex w-full flex-col sm:flex-row justify-center items-center gap-24">
+			<div className="flex relative w-full flex-col sm:flex-row justify-center items-center gap-24">
 				<Controller
 					name={`payments.${index}.value`}
 					control={control}
@@ -29,6 +29,12 @@ export default function ValueAndDueDate({ control, register, index, errors, remo
 						<TextField
 							{...field}
 							className="w-full"
+							sx={{
+								'& .MuiFormHelperText-root': {
+									position: 'absolute',
+									top: '55px'
+								}
+							}}
 							error={!!errors.payments?.[index]?.value?.message}
 							type="number"
 							{...register(`payments.${index}.value`)}
@@ -36,7 +42,9 @@ export default function ValueAndDueDate({ control, register, index, errors, remo
 							label="Valor"
 							InputProps={{
 								startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-								sx: { height: '3.73em' }
+								sx: {
+									height: '3.73em'
+								}
 							}}
 						/>
 					)}
@@ -56,6 +64,12 @@ export default function ValueAndDueDate({ control, register, index, errors, remo
 								minDate={minDate}
 								format="dd/MM/yyyy"
 								onChange={field.onChange}
+								sx={{
+									'& .MuiFormHelperText-root': {
+										position: 'absolute',
+										top: '55px'
+									}
+								}}
 								{...field}
 								slotProps={{
 									textField: {
