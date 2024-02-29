@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router';
 import { array, boolean, date, object, string } from 'yup';
 import '../../../styles/muiCustomComponents.css';
 import AccountType from '../../components/AccountType';
-import { ProductOptionType } from '../../components/CreatableOptions';
 import IsRatiable from '../../components/IsRatiable';
 import PaymentMethod from '../../components/PaymentMethod';
 import RequestUser from '../../components/RequestUser';
