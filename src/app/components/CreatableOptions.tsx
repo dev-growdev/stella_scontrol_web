@@ -19,18 +19,12 @@ export interface ProductOptionType {
 
 export default function CreatableOptions({ selectedData, products, cleanInput, errors, control }: CreatableOptions) {
 	const [value, setValue] = useState<ProductOptionType | null>(null);
-	const [controlCharacter, setControlCharacter] = useState('');
 
 	useEffect(() => {
 		setValue(null);
 	}, [cleanInput]);
 
-	useEffect(() => {
-		console.log(errors);
-	}, [errors]);
-
 	const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		setControlCharacter(event.target.value);
 		selectedData(event.target.value);
 	};
 	return (
@@ -41,11 +35,12 @@ export default function CreatableOptions({ selectedData, products, cleanInput, e
 				<Autocomplete
 					className="w-full"
 					value={value}
+					noOptionsText="Adicione um novo produto."
 					onChange={(event: ChangeEvent<HTMLInputElement>) => {
 						setValue({ name: event.target.outerText });
 						selectedData({ name: event.target.outerText });
 					}}
-					options={controlCharacter.length > 2 ? products : []}
+					options={products}
 					getOptionLabel={option => option.name || ''}
 					renderInput={params => (
 						<TextField
