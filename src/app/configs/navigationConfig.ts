@@ -17,7 +17,7 @@ const navigationConfig: FuseNavigationType = [
 		title: 'Solicitações',
 		type: 'item',
 		icon: 'heroicons-outline:clipboard-list',
-		url: 'example'
+		url: 'solicitacoes'
 	},
 	{
 		id: 'document-add',
@@ -49,28 +49,28 @@ const navigationConfig: FuseNavigationType = [
 			}
 		]
 	},
-	{
-		id: 'cog',
-		title: 'Configurações',
-		type: 'item',
-		icon: 'heroicons-outline:cog',
-		url: 'example'
-	},
+	// {
+	// 	id: 'cog',
+	// 	title: 'Configurações',
+	// 	type: 'item',
+	// 	icon: 'heroicons-outline:cog',
+	// 	url: 'example'
+	// },
 	{
 		id: 'cube',
 		title: 'Produtos',
 		type: 'collapse',
 		icon: 'heroicons-outline:cube',
-		url: 'produtos',
-		children: [
-			{
-				id: 'tag',
-				title: 'Categorias',
-				type: 'item',
-				icon: 'heroicons-outline:tag',
-				url: 'categorias'
-			}
-		]
+		url: 'produtos'
+		// children: [
+		// 	{
+		// 		id: 'tag',
+		// 		title: 'Categorias',
+		// 		type: 'item',
+		// 		icon: 'heroicons-outline:tag',
+		// 		url: 'categorias'
+		// 	}
+		// ]
 	}
 ];
 
