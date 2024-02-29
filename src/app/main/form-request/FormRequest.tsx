@@ -25,7 +25,7 @@ export interface FormDataProps {
 	requiredReceipt: boolean;
 	isRatiable: boolean;
 	tableData: { produtos: string }[];
-	description: string;
+	description?: string;
 	supplier: string;
 	payments: { value: string; dueDate: Date | null }[];
 	typeAccount: string;
@@ -37,7 +37,7 @@ const defaultValues = {
 	valueProducts: null,
 	requiredReceipt: false,
 	isRatiable: false,
-	tableData: [''],
+	tableData: [],
 	description: '',
 	supplier: '',
 	payments: [{ value: '', dueDate: null }],
@@ -92,6 +92,14 @@ export default function PaymentRequestFormGeneral() {
 		control,
 		name: 'payments'
 	});
+	const {
+		fields: fieldsTableData,
+		append: appendTableData,
+		remove: removeTableData
+	} = useFieldArray({
+		control,
+		name: 'tableData'
+	});
 
 	useEffect(() => {
 		dispatch(getProducts());
@@ -142,6 +150,7 @@ export default function PaymentRequestFormGeneral() {
 		const currentTableData = watch('tableData');
 
 		setValue('tableData', [...currentTableData, { produtos: productToTable.name }]);
+
 		setProductToTable({ name: '' });
 		setCleanInputCreatable(!cleanInputCreatable);
 	}

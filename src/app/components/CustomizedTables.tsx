@@ -5,6 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { useEffect } from 'react';
 
 export interface CutomizedTableProps {
 	tableHead: string[];
@@ -12,6 +13,10 @@ export interface CutomizedTableProps {
 }
 
 export default function CustomizedTables({ tableData, tableHead }: CutomizedTableProps) {
+	useEffect(() => {
+		console.log(tableData, '-------');
+	}, [tableData]);
+
 	return (
 		<TableContainer
 			component={Paper}
