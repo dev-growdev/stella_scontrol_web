@@ -114,13 +114,15 @@ export default function PaymentRequestFormGeneral() {
 	}, [paymentsState]);
 
 	function onSubmit(data: FormDataProps) {
-		const newRequest = {
-			description: data.description,
-			supplier: data.supplier,
-			requiredReceipt: data.requiredReceipt,
-			payments: data.payments
-		};
-		dispatch(createRequestPaymentGeneral(newRequest)).then(res => {
+		const formData = new FormData();
+		const json = JSON.stringify(data);
+		formData.append('document', json);
+
+		data.uploadedFiles.forEach(file => {
+			formData.append('file', file);
+		});
+
+		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
 				clearFormState();
 				navigate('/');
