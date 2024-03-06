@@ -10,6 +10,7 @@ import paymentRequestFormGeneralPageConfig from '../main/form-request/FormReques
 import requestPageConfig from '../main/form-request/RequestConfig';
 import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
 import ProductsPageConfig from '../main/products/ProductsPageConfig';
+import PaymentsFormConfig from '../main/payments-form/PaymentsFormConfig';
 
 const routeConfigs: FuseRouteConfigsType = [
 	paymentRequestFormGeneralPageConfig,
@@ -17,6 +18,7 @@ const routeConfigs: FuseRouteConfigsType = [
 	CreateProductsPageConfig,
 	ProductsPageConfig,
 	categoriesPageConfig,
+	PaymentsFormConfig,
 	...authenticationConfig
 ];
 
