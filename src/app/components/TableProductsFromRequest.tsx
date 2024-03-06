@@ -7,7 +7,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { FormDataProps, ProductOptionType } from '../main/form-request/FormRequest';
 
@@ -28,10 +28,6 @@ export default function TableProductsFromRequest({
 }: TableProductsFromRequestProps) {
 	const [value, setValue] = useState<ProductOptionType | null>(null);
 	const products = watch('products');
-
-	useEffect(() => {
-		console.log(errors);
-	}, [errors]);
 
 	const handleInputValueAutoComplete = (event: ChangeEvent<HTMLInputElement>) => {
 		setValue({ product: event.target.outerText });
