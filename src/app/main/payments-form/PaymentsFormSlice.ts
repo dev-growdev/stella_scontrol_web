@@ -1,47 +1,108 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootStateType } from 'app/store/types';
-import axios from 'axios';
-import { CardHolder } from './CardHoldersSlice';
+import axios, { AxiosError } from 'axios';
 
 type AppRootStateType = RootStateType<paymentsFormSliceType>;
 
 export interface PaymentsFormType {
 	loading: boolean;
-	paymentsForm: PaymentForm[];
+	paymentsForm: PaymentForm[] | HolderType[];
 }
 
 export interface PaymentForm {
 	uid: string;
 	name: string;
 	enable: boolean;
-	cardHolders: CardHolder[];
+}
+export interface HolderType {
+	uid: string;
+	name: string;
+	enable: boolean;
+	type: string;
+	namePaymentForm: string;
+	uidPaymentForm: string;
+}
+
+interface DataType {
+	uid: string;
+	name: string;
+	enable: boolean;
+	type: string;
+	paymentForm?: {
+		name: string;
+		uid: string;
+	};
+}
+
+interface ResponseDataType {
+	success: boolean;
+	code: number;
+	data: DataType | DataType[];
 }
 
 export const getPaymentsForm = createAsyncThunk('payments-form/getPaymentsForm', async () => {
 	try {
-		const response = await axios.get(`${process.env.REACT_APP_API_URL}/payments-form`);
+		const response = await axios.get<ResponseDataType>(`${process.env.REACT_APP_API_URL}/payments-form`);
 
-		return response.data.data;
+		const { data } = response.data;
+
+		const converted =
+			Array.isArray(data) &&
+			data.map(item =>
+				item.type
+					? {
+							uid: item.uid,
+							name: item.name,
+							enable: item.enable,
+							type: item.type,
+							namePaymentForm: item.paymentForm.name,
+							uidPaymentForm: item.paymentForm.uid
+					  }
+					: { uid: item.uid, name: item.name, enable: item.enable }
+			);
+
+		return converted;
 	} catch (error) {
-		return error;
+		const axiosError = error as AxiosError<{ message: string }>;
+		throw new Error(axiosError.response?.data.message);
 	}
 });
 
-export const disablePaymentsForm = createAsyncThunk('payments-form/disablePaymentsForm', async (data: PaymentForm) => {
-	try {
-		const body = {
-			uid: data.uid,
-			name: data.name,
-			enable: data.enable
-		};
+export const disablePaymentsForm = createAsyncThunk(
+	'payments-form/disablePaymentsForm',
+	async (dataToUpdate: PaymentForm | HolderType) => {
+		try {
+			const response = await axios.put<ResponseDataType>(
+				`${process.env.REACT_APP_API_URL}/payments-form/${dataToUpdate.uid}`
+			);
 
-		const response = await axios.put(`${process.env.REACT_APP_API_URL}/payments-form/${data.uid}`, body);
+			const { data } = response.data;
 
-		return response.data.data;
-	} catch (error) {
-		return error;
+			if (!Array.isArray(data)) {
+				if (data.type) {
+					return {
+						uid: data.uid,
+						name: data.name,
+						enable: data.enable,
+						type: data.type,
+						namePaymentForm: data.paymentForm.name,
+						uidPaymentForm: data.paymentForm.uid
+					};
+				}
+
+				return {
+					uid: data.uid,
+					name: data.name,
+					enable: data.enable
+				};
+			}
+			throw new Error('Não foi possível desabilitar.');
+		} catch (error) {
+			const axiosError = error as AxiosError<{ message: string }>;
+			throw new Error(axiosError.response?.data.message);
+		}
 	}
-});
+);
 
 const initialState: PaymentsFormType = {
 	loading: false,
@@ -59,7 +120,9 @@ const paymentsFormSlice = createSlice({
 			})
 			.addCase(getPaymentsForm.fulfilled, (state, action) => {
 				state.loading = false;
-				state.paymentsForm = action.payload;
+				if (action.payload) {
+					state.paymentsForm = action.payload;
+				}
 			})
 			.addCase(disablePaymentsForm.pending, state => {
 				state.loading = true;
@@ -67,6 +130,7 @@ const paymentsFormSlice = createSlice({
 			.addCase(disablePaymentsForm.fulfilled, (state, action) => {
 				state.loading = false;
 				const indexUpdated = state.paymentsForm.findIndex(item => action.payload.uid === item.uid);
+
 				if (indexUpdated !== -1) {
 					state.paymentsForm[indexUpdated] = action.payload;
 				}

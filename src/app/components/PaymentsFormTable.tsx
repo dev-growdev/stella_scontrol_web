@@ -25,12 +25,7 @@ import {
 } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { ChangeEvent, useState } from 'react';
-import { PaymentForm, PaymentsFormType } from '../main/payments-form/PaymentsFormSlice';
-
-interface PaymentFormTableProps {
-	paymentsFormData: PaymentsFormType | { paymentsForm: []; loading: false };
-	handleStatus: (item: PaymentForm) => void;
-}
+import { HolderType, PaymentForm, PaymentsFormType } from '../main/payments-form/PaymentsFormSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -55,14 +50,41 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	}
 }));
 
+interface PaymentFormTableProps {
+	paymentsFormData: PaymentsFormType | { paymentsForm: []; loading: false };
+	handleStatus: (item: PaymentForm | HolderType) => void;
+}
+
+export interface formatedPaymentsArray {
+	uid: string;
+	formaDePagamento: string;
+	portador: string;
+	uidPortador: string;
+	enable: boolean;
+}
+
 export default function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFormTableProps) {
 	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [searchValue, setSearchValue] = useState('');
 	const [filterByStatus, setFilterByStatus] = useState<'all' | 'active' | 'inactive'>('all');
 	const [anchorStatusMenu, setAnchorStatusMenu] = useState<null | HTMLElement>(null);
 
 	const openMenuStatus = Boolean(anchorStatusMenu);
+
+	const filteredPayments =
+		paymentsFormData.paymentsForm && paymentsFormData.paymentsForm.length > 0
+			? paymentsFormData.paymentsForm.filter((row: PaymentForm) => {
+					const matchSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
+					const matchStatus =
+						filterByStatus === 'all' ||
+						(filterByStatus === 'active' && row.enable) ||
+						(filterByStatus === 'inactive' && !row.enable);
+					return matchSearch && matchStatus;
+			  })
+			: [];
+
+	const sortedPayments = filteredPayments.slice().reverse();
 
 	const handleChangePage = (event: unknown, newPage: number) => {
 		setPage(newPage);
@@ -75,27 +97,8 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 
 	const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchValue(e.target.value);
+		setPage(0);
 	};
-
-	const filteredPaymentsForm: any[] =
-		paymentsFormData.paymentsForm && paymentsFormData.paymentsForm.length > 0
-			? paymentsFormData.paymentsForm.filter((row: PaymentForm) => {
-					const matchesSearch =
-						!searchValue ||
-						row.cardHolders
-							.map(holder => holder.name)
-							.name.toLowerCase()
-							.includes(searchValue.toLowerCase());
-					const matchesStatus =
-						filterByStatus === 'all' ||
-						(filterByStatus === 'active' && row.enable) ||
-						(filterByStatus === 'inactive' && !row.enable);
-
-					return matchesSearch && matchesStatus;
-			  })
-			: [];
-
-	const sortedpaymentsForm = filteredPaymentsForm.slice().reverse();
 
 	const handleOpenStatusMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorStatusMenu(event.currentTarget);
@@ -108,6 +111,7 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 			setFilterByStatus(filterByStatus);
 		}
 		setAnchorStatusMenu(null);
+		setPage(0);
 	};
 
 	return (
@@ -190,26 +194,27 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 								<CircularProgress color="primary" />
 							</Box>
 						) : (
-							sortedpaymentsForm.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row =>
-								row.cardHolders.map(holder => (
+							sortedPayments
+								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+								.map((row: PaymentForm | HolderType) => (
 									<StyledTableRow
 										className="flex justify-between"
-										key={row.uid}
+										key={`${row.uid + Math.random() * 20}`}
 									>
 										<StyledTableCell
 											className="min-w-200"
 											component="th"
 											scope="row"
 										>
-											{row.uid}
+											{(row as HolderType).uidPaymentForm ?? row.uid}
 										</StyledTableCell>
 
 										<StyledTableCell className="min-w-200 flex justify-center">
-											{row.name}
+											{(row as HolderType).namePaymentForm ?? row.name}
 										</StyledTableCell>
 
 										<StyledTableCell className="min-w-200 flex justify-center">
-											{holder.name}
+											{(row as HolderType).type ? row.name : ''}
 										</StyledTableCell>
 
 										<StyledTableCell className="min-w-200 flex justify-end">
@@ -237,7 +242,7 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 															<Switch
 																color="primary"
 																name="enable"
-																checked={row.enable}
+																checked={!!row.enable}
 																onChange={() => handleStatus(row)}
 															/>
 														}
@@ -248,7 +253,6 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 										</StyledTableCell>
 									</StyledTableRow>
 								))
-							)
 						)}
 					</TableBody>
 				</Table>
@@ -256,7 +260,7 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 			<TablePagination
 				rowsPerPageOptions={[5, 10, 25]}
 				component="div"
-				count={sortedpaymentsForm.length}
+				count={sortedPayments.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
 				onPageChange={handleChangePage}

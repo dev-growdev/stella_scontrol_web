@@ -10,9 +10,11 @@ export interface CardHoldersType {
 }
 
 export interface CardHolder {
+	toLowerCase(): unknown;
 	uid: string;
 	name: string;
 	type: 'credit' | 'corporate';
+	enable: boolean;
 }
 
 export const getCardHolders = createAsyncThunk('card-holders/getCardHolders', async (data: CardHolder) => {
