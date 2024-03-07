@@ -73,7 +73,8 @@ export const findSupplierByCPForCNPJ = createAppAsyncThunk('/supplier/', async (
 
 		return response.data.data;
 	} catch (error) {
-		throw new Error(error.response.data.message);
+		const axiosError = error as AxiosError<{ message: string }>;
+		throw new Error(axiosError.response?.data.message);
 	}
 });
 
