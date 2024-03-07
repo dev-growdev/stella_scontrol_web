@@ -3,7 +3,7 @@ import { useAppDispatch } from 'app/store';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import PaymentsFormTable from '../../components/PaymentsFormTable';
-import { PaymentForm, disablePaymentsForm, getPaymentsForm, selectPaymentsForm } from './PaymentsFormSlice';
+import { HolderType, PaymentForm, disablePaymentsForm, getPaymentsForm, selectPaymentsForm } from './PaymentsFormSlice';
 
 export default function PaymentsForm() {
 	const dispatch = useAppDispatch();
@@ -13,16 +13,8 @@ export default function PaymentsForm() {
 		dispatch(getPaymentsForm());
 	}, []);
 
-	console.log(paymentsFormRedux);
-
-	async function handleGetStatus(item: PaymentForm) {
-		const itemToggleEnable = {
-			uid: item.uid,
-			name: item.name,
-			enable: !item.enable
-		};
-
-		dispatch(disablePaymentsForm(itemToggleEnable));
+	async function handleGetStatus(item: PaymentForm | HolderType) {
+		dispatch(disablePaymentsForm(item));
 	}
 
 	return (
