@@ -53,6 +53,12 @@ const inputGlobalStyles = (
 					color: `${theme.palette.primary.main}!important`
 				}
 			},
+			'& .MuiTextField-root': {
+				position: 'relative!important'
+			},
+			'& .MuiFormHelperText-root': {
+				marginLeft: '0!important'
+			},
 			'table.simple tbody tr th': {
 				borderColor: theme.palette.divider
 			},
