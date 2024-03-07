@@ -20,7 +20,6 @@ import {
 	TableRow,
 	TextField,
 	Toolbar,
-	Typography,
 	styled
 } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
@@ -117,22 +116,10 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Toolbar>
-				<div className="flex flex-col sm:flex-row w-full items-center gap-24 justify-between">
-					<Typography
-						className="text-20 md:text-28"
-						component="h1"
-						variant="h4"
-						fontWeight={500}
-						color={theme => theme.palette.secondary.main}
-					>
-						Formas de Pagamento
-					</Typography>
-				</div>
-				<div className="flex flex-row sm:flex-row w-full items-center gap-24 justify-end">
+				<div className="flex flex-row sm:flex-row w-full items-center gap-24 justify-end py-24">
 					<TextField
 						onChange={handleSearch}
 						value={searchValue}
-						className="sm:w-512"
 						label="Pesquise por produtos"
 						fullWidth
 						InputProps={{
@@ -183,10 +170,10 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 						className="flex justify-between font-600"
 						sx={{ backgroundColor: theme => theme.palette.action.hover }}
 					>
-						<StyledTableCell>ID</StyledTableCell>
 						<StyledTableCell>Forma de Pagamento</StyledTableCell>
 						<StyledTableCell>Portador</StyledTableCell>
 						<StyledTableCell>Status</StyledTableCell>
+						<StyledTableCell>Ações</StyledTableCell>
 					</TableHead>
 					<TableBody>
 						{paymentsFormData.loading ? (
@@ -199,31 +186,23 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 								.map((row: PaymentForm | HolderType) => (
 									<StyledTableRow
 										className="flex justify-between"
-										key={`${row.uid + Math.random() * 20}`}
+										key={row.uid}
 									>
-										<StyledTableCell
-											className="min-w-200"
-											component="th"
-											scope="row"
-										>
-											{(row as HolderType).uidPaymentForm ?? row.uid}
-										</StyledTableCell>
-
-										<StyledTableCell className="min-w-200 flex justify-center">
+										<StyledTableCell className="min-w-200">
 											{(row as HolderType).namePaymentForm ?? row.name}
 										</StyledTableCell>
 
-										<StyledTableCell className="min-w-200 flex justify-center">
+										<StyledTableCell className="min-w-216 flex justify-end">
 											{(row as HolderType).type ? row.name : ''}
 										</StyledTableCell>
 
-										<StyledTableCell className="min-w-200 flex justify-end">
+										<StyledTableCell className="min-w-256 flex justify-end">
 											<Stack
 												direction="row"
 												spacing={1}
 											>
 												<Chip
-													className="min-w-64"
+													className="min-w-64 text-center"
 													color={row.enable ? 'primary' : 'default'}
 													sx={{
 														color: row.enable
@@ -235,7 +214,7 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 											</Stack>
 										</StyledTableCell>
 										<StyledTableCell className="min-w-224 flex justify-end">
-											<div className="flex w-full justify-between">
+											<div className="flex w-full justify-end">
 												<FormGroup>
 													<FormControlLabel
 														control={
