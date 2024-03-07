@@ -24,17 +24,20 @@ export interface createRequestGeneral {
 	description: string;
 	requiredReceipt: boolean;
 	payments: { value: string; dueDate: Date }[];
+	uploadedFiles: File[];
 }
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',
-	async (data: createRequestGeneral, { dispatch }) => {
+	async (data: FormData, { dispatch }) => {
 		try {
 			const response = await axios.post<{
 				code: number;
 				success: boolean;
 				data: { request: RequestsType };
-			}>(`${process.env.REACT_APP_API_URL}/payment-request-general`, data);
+			}>(`${process.env.REACT_APP_API_URL}/payment-request-general`, data, {
+				headers: { 'Content-Type': 'multipart/form-data' }
+			});
 
 			if (response.data.code === 201) {
 				dispatch(
