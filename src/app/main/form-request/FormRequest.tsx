@@ -1,6 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { selectUser } from 'app/store/user/userSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
+import { getAccountingAccountByCostCenter, selectAccountingAccount } from './AccountingAccountSlice';
 
 export interface FormDataProps {
 	paymentMethod: string;
@@ -30,6 +31,7 @@ export interface FormDataProps {
 	payments: { value: string; dueDate: Date | null }[];
 	typeAccount: string;
 	uploadedFiles: File[];
+	accountingAccount: string;
 }
 
 export interface ProductOptionType {
@@ -73,7 +75,8 @@ const schema = object().shape({
 		)
 		.required(),
 	typeAccount: string(),
-	uploadedFiles: array()
+	uploadedFiles: array(),
+	accountingAccount: string()
 });
 
 export default function PaymentRequestFormGeneral() {
@@ -82,6 +85,8 @@ export default function PaymentRequestFormGeneral() {
 	const user = useSelector(selectUser);
 	const productsRedux = useSelector(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
+	const accountingAccountRedux = useSelector(selectAccountingAccount);
 
 	const {
 		control,
@@ -107,6 +112,7 @@ export default function PaymentRequestFormGeneral() {
 
 	useEffect(() => {
 		dispatch(getProducts());
+		dispatch(getAccountingAccountByCostCenter(19));
 	}, []);
 
 	useEffect(() => {
@@ -116,7 +122,14 @@ export default function PaymentRequestFormGeneral() {
 				.filter(product => product);
 			setProductsToOptionsSelect(refProducts);
 		}
-	}, [productsRedux]);
+
+		if (accountingAccountRedux.accountingAccount.length > 0) {
+			const refAccountingAccount = accountingAccountRedux.accountingAccount
+				.map(accountingAccount => accountingAccount.name)
+				.filter(accountingAccount => accountingAccount);
+			setAccountingAccountToOptionsSelect(refAccountingAccount);
+		}
+	}, [productsRedux, accountingAccountRedux]);
 
 	function onSubmit(data: FormDataProps) {
 		const formData = new FormData();
@@ -253,8 +266,8 @@ export default function PaymentRequestFormGeneral() {
 							>
 								<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
 								{watch('payments').length > 0
-									? 'Adicionar mais pagamentos.'
-									: 'Adicionar algum pagamento.'}
+									? 'Adicionar mais pagamentos'
+									: 'Adicionar algum pagamento'}
 							</Button>
 						</div>
 					</div>
@@ -283,6 +296,21 @@ export default function PaymentRequestFormGeneral() {
 						isRatiable={watch('isRatiable')}
 						setToggleRatiable={e => setValue('isRatiable', e)}
 					/>
+					{!watch('isRatiable') && (
+						<Autocomplete
+							className="w-full"
+							options={accountingAccountToOptionsSelect}
+							renderInput={params => (
+								<TextField
+									{...params}
+									label="Conta Contábil"
+									{...register('accountingAccount')}
+									error={!!errors.accountingAccount}
+									helperText={errors?.accountingAccount?.message}
+								/>
+							)}
+						/>
+					)}
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"
