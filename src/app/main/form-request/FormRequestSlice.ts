@@ -6,34 +6,50 @@ import axios, { AxiosError } from 'axios';
 
 type AppRootStateType = RootStateType<requestPaymentGeneralSliceType>;
 
-interface RequestsType {
+interface Payment {
+	value: string;
+	dueDate: Date;
+}
+
+interface RequestType {
 	uid: string;
 	supplier: string;
 	description?: string;
 	sendReceipt: boolean;
-	payments: { value: string; dueDate: Date }[];
+	payments: Payment[];
 }
 
 interface RequestPaymentGeneralType {
 	loading: boolean;
-	requests: RequestsType[];
+	requests: RequestType[];
 }
 
-export interface createRequestGeneral {
+export interface CreateRequestGeneral {
 	supplier: string;
 	description: string;
 	requiredReceipt: boolean;
-	payments: { value: string; dueDate: Date }[];
+	payments: Payment[];
+}
+
+interface DataType {
+	uid: string;
+	name: string;
+}
+
+interface ResponseAPI {
+	success: boolean;
+	code: number;
+	data: DataType;
 }
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',
-	async (data: createRequestGeneral, { dispatch }) => {
+	async (data: CreateRequestGeneral, { dispatch }) => {
 		try {
 			const response = await axios.post<{
 				code: number;
 				success: boolean;
-				data: { request: RequestsType };
+				data: { request: RequestType };
 			}>(`${process.env.REACT_APP_API_URL}/payment-request-general`, data);
 
 			if (response.data.code === 201) {
@@ -69,7 +85,7 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 
 export const findSupplierByCPForCNPJ = createAppAsyncThunk('/supplier/', async (cpfOrCnpj: string) => {
 	try {
-		const response = await axios.post(`${process.env.REACT_APP_API_URL}/supplier/${cpfOrCnpj}`);
+		const response = await axios.post<ResponseAPI>(`${process.env.REACT_APP_API_URL}/supplier/${cpfOrCnpj}`);
 
 		return response.data.data;
 	} catch (error) {
@@ -94,15 +110,18 @@ const requestPaymentGeneralSlice = createSlice({
 			})
 			.addCase(createRequestPaymentGeneral.fulfilled, (state, action) => {
 				state.loading = false;
-
-				action.payload && state.requests.push(action.payload);
+				if (action.payload) {
+					state.requests.push(action.payload);
+				}
 			})
 			.addCase(findSupplierByCPForCNPJ.pending, state => {
 				state.loading = true;
 			})
 			.addCase(findSupplierByCPForCNPJ.fulfilled, (state, action) => {
 				state.loading = false;
-				action.payload && state.requests.push(action.payload);
+				if (action.payload) {
+					state.requests.push(action.payload);
+				}
 			});
 	}
 });

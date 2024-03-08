@@ -23,7 +23,7 @@ import {
 	styled
 } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { HolderType, PaymentForm, PaymentsFormType } from '../main/payments-form/PaymentsFormSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -49,7 +49,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	}
 }));
 
-interface PaymentFormTableProps {
+interface PaymentFormTable {
 	paymentsFormData: PaymentsFormType | { paymentsForm: []; loading: false };
 	handleStatus: (item: PaymentForm | HolderType) => void;
 }
@@ -62,7 +62,7 @@ export interface formatedPaymentsArray {
 	enable: boolean;
 }
 
-export default function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFormTableProps) {
+export default function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFormTable) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [searchValue, setSearchValue] = useState('');
@@ -85,8 +85,8 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 
 	const sortedPayments = filteredPayments.slice().reverse();
 
-	const handleChangePage = (event: unknown, newPage: number) => {
-		setPage(newPage);
+	const handleChangePage = (_event: MouseEvent, value: number) => {
+		setPage(value);
 	};
 
 	const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
@@ -114,7 +114,7 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 	};
 
 	return (
-		<Box sx={{ width: '100%' }}>
+		<Box className="w-full">
 			<Toolbar>
 				<div className="flex flex-row sm:flex-row w-full items-center gap-24 justify-end py-24">
 					<TextField

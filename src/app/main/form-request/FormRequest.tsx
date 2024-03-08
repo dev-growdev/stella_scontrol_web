@@ -18,7 +18,7 @@ import TableProductsFromRequest from '../../components/TableProductsFromRequest'
 import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
-import { createRequestPaymentGeneral } from './FormRequestSlice';
+import { createRequestPaymentGeneral, findSupplierByCPForCNPJ } from './FormRequestSlice';
 
 export interface FormDataProps {
 	paymentMethod: string;
@@ -82,6 +82,10 @@ export default function PaymentRequestFormGeneral() {
 	const user = useSelector(selectUser);
 	const productsRedux = useSelector(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+
+	useEffect(() => {
+		dispatch(findSupplierByCPForCNPJ('94452968000100'));
+	}, []);
 
 	const {
 		control,
