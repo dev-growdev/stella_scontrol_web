@@ -138,7 +138,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 								return costCenter.name;
 							})}
 							value={costCenterName}
-							className="sm:w-1/3"
+							className="w-full sm:w-1/3"
 							onChange={handleChangeCostCenter}
 							renderInput={params => (
 								<TextField
@@ -157,7 +157,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 								return acc.name;
 							})}
 							noOptionsText="É necessário adicionar um centro de custo antes."
-							className="sm:w-1/3"
+							className="w-full sm:w-1/3"
 							onChange={handleChangeAccountingAccount}
 							renderInput={params => (
 								<TextField
