@@ -2,6 +2,7 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
+import { getCostCenters } from 'app/store/cost-center/costCenterSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -20,6 +21,17 @@ import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
+interface Payments {
+	value: string;
+	dueDate: Date | null;
+}
+
+export interface CostCenters {
+	costCenter: string;
+	accountingAccount: string;
+	value: string;
+}
+
 export interface FormDataProps {
 	paymentMethod: string;
 	requiredReceipt: boolean;
@@ -27,9 +39,10 @@ export interface FormDataProps {
 	products: { product: string }[];
 	description?: string;
 	supplier: string;
-	payments: { value: string; dueDate: Date | null }[];
+	payments: Payments[];
 	typeAccount: string;
 	uploadedFiles: File[];
+	costCenters?: CostCenters[];
 }
 
 export interface ProductOptionType {
@@ -46,7 +59,8 @@ const defaultValues = {
 	supplier: '',
 	payments: [{ value: '', dueDate: null }],
 	typeAccount: '',
-	uploadedFiles: []
+	uploadedFiles: [],
+	costCenters: []
 };
 
 const schema = object().shape({
@@ -73,7 +87,16 @@ const schema = object().shape({
 		)
 		.required(),
 	typeAccount: string(),
-	uploadedFiles: array()
+	uploadedFiles: array(),
+	costCenters: array()
+		.of(
+			object().shape({
+				costCenter: string().required('É necessário adicionar Centro de Custo.'),
+				accountingAccount: string().required('É necessário adicionar Conta Contábil'),
+				value: string().required()
+			})
+		)
+		.notRequired()
 });
 
 export default function PaymentRequestFormGeneral() {
@@ -107,6 +130,7 @@ export default function PaymentRequestFormGeneral() {
 
 	useEffect(() => {
 		dispatch(getProducts());
+		dispatch(getCostCenters());
 	}, []);
 
 	useEffect(() => {
@@ -282,6 +306,9 @@ export default function PaymentRequestFormGeneral() {
 					<IsRatiable
 						isRatiable={watch('isRatiable')}
 						setToggleRatiable={e => setValue('isRatiable', e)}
+						watch={watch}
+						errors={errors}
+						setValue={setValue}
 					/>
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
