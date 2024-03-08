@@ -31,19 +31,6 @@ export interface CreateRequestGeneral {
 	payments: Payment[];
 }
 
-interface DataType {
-	uid: string;
-	name: string;
-}
-
-interface ResponseAPI {
-	success: boolean;
-	code: number;
-	data: DataType;
-	payments: { value: string; dueDate: Date }[];
-	uploadedFiles: File[];
-}
-
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',
 	async (data: FormData, { dispatch }) => {
@@ -87,17 +74,6 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 	}
 );
 
-export const findSupplierByCPForCNPJ = createAppAsyncThunk('/supplier/', async (cpfOrCnpj: string) => {
-	try {
-		const response = await axios.post<ResponseAPI>(`${process.env.REACT_APP_API_URL}/supplier/${cpfOrCnpj}`);
-
-		return response.data.data;
-	} catch (error) {
-		const axiosError = error as AxiosError<{ message: string }>;
-		throw new Error(axiosError.response?.data.message);
-	}
-});
-
 const initialState: RequestPaymentGeneralType = {
 	loading: false,
 	requests: []
@@ -113,15 +89,6 @@ const requestPaymentGeneralSlice = createSlice({
 				state.loading = true;
 			})
 			.addCase(createRequestPaymentGeneral.fulfilled, (state, action) => {
-				state.loading = false;
-				if (action.payload) {
-					state.requests.push(action.payload);
-				}
-			})
-			.addCase(findSupplierByCPForCNPJ.pending, state => {
-				state.loading = true;
-			})
-			.addCase(findSupplierByCPForCNPJ.fulfilled, (state, action) => {
 				state.loading = false;
 				if (action.payload) {
 					state.requests.push(action.payload);
