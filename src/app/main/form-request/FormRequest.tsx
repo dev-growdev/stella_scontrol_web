@@ -313,7 +313,6 @@ export default function PaymentRequestFormGeneral() {
 						isRatiable={watch('isRatiable')}
 						setToggleRatiable={e => setValue('isRatiable', e)}
 						watch={watch}
-						errors={errors}
 						setValue={setValue}
 						remove={removeCostCenter}
 					/>
