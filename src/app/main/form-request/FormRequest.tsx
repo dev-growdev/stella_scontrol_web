@@ -48,7 +48,8 @@ const defaultValues = {
 	supplier: '',
 	payments: [{ value: '', dueDate: null }],
 	typeAccount: '',
-	uploadedFiles: []
+	uploadedFiles: [],
+	accountingAccount: ''
 };
 
 const schema = object().shape({
@@ -303,7 +304,7 @@ export default function PaymentRequestFormGeneral() {
 							renderInput={params => (
 								<TextField
 									{...params}
-									label="Conta Contábil"
+									label="Escolha a Conta Contábil"
 									{...register('accountingAccount')}
 									error={!!errors.accountingAccount}
 									helperText={errors?.accountingAccount?.message}
