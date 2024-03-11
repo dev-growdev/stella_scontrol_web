@@ -17,6 +17,7 @@ interface RequestType {
 	description?: string;
 	sendReceipt: boolean;
 	payments: Payment[];
+	files: any[];
 }
 
 interface RequestPaymentGeneralType {
@@ -74,6 +75,34 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 	}
 );
 
+export const listRequestsPaymentsByUser = createAppAsyncThunk(
+	'requestPaymentGeneral/get',
+	async (userUid: string, { dispatch }) => {
+		try {
+			const response = await axios.get<{
+				code: number;
+				success: boolean;
+				data: { request: RequestType }[];
+			}>(`${process.env.REACT_APP_API_URL}/${userUid}`);
+			const { data } = response.data;
+			return data;
+		} catch (error) {
+			const axiosError = error as AxiosError<{ message: string }>;
+			dispatch(
+				showMessage({
+					message: `${axiosError.response?.data.message}`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+			throw new Error(axiosError.response?.data.message);
+		}
+	}
+);
+
 const initialState: RequestPaymentGeneralType = {
 	loading: false,
 	requests: []
@@ -92,6 +121,15 @@ const requestPaymentGeneralSlice = createSlice({
 				state.loading = false;
 				if (action.payload) {
 					state.requests.push(action.payload);
+				}
+			})
+			.addCase(listRequestsPaymentsByUser.pending, state => {
+				state.loading = true;
+			})
+			.addCase(listRequestsPaymentsByUser.fulfilled, (state, action) => {
+				state.loading = false;
+				if (action.payload) {
+					state.requests = action.payload;
 				}
 			});
 	}
