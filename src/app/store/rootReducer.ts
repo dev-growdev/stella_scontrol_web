@@ -1,6 +1,7 @@
 import { combineReducers, ReducersMapObject } from '@reduxjs/toolkit';
 import categories from '../main/categories/categoriesSlice';
 import requestPaymentGeneral from '../main/form-request/FormRequestSlice';
+import paymentsForm from '../main/payments-form/PaymentsFormSlice';
 import products from '../main/products/productsSlice';
 import costCenter from './cost-center/costCenterSlice';
 import fuse from './fuse';
@@ -18,6 +19,7 @@ const createReducer = (asyncReducers: ReducersMapObject) =>
 		categories,
 		requestPaymentGeneral,
 		products,
+		paymentsForm,
 		i18n,
 		...asyncReducers
 	} as ReducersMapObject);
