@@ -162,7 +162,7 @@ export default function PaymentRequestFormGeneral() {
 		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
 				clearFormState();
-				navigate('/');
+				navigate('/solicitacoes');
 			}
 		});
 	}
@@ -196,6 +196,7 @@ export default function PaymentRequestFormGeneral() {
 				<Button
 					className="mb-12"
 					variant="text"
+					onClick={() => navigate('/solicitacoes')}
 					startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}
 				>
 					SOLICITAÇÕES
