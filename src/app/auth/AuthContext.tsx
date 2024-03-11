@@ -27,8 +27,7 @@ function AuthProvider(props: AuthProviderProps) {
 	const [waitAuthCheck, setWaitAuthCheck] = useState(true);
 	const dispatch = useAppDispatch();
 	const val = useMemo(() => ({ isAuthenticated }), [isAuthenticated]);
-	const { instance, accounts } = useMsal()
-
+	const { instance, accounts } = useMsal();
 
 	useEffect(() => {
 		jwtService.on('onAutoLogin', () => {
@@ -43,16 +42,19 @@ function AuthProvider(props: AuthProviderProps) {
 							...loginRequest,
 							account: accounts[0]
 						})
-						.then((getToken) => {
-							axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${getToken.accessToken}` } })
-								.then((responseFromToken) => {
-									success(user as UserType, '');
-								}).catch((err) => {
-									disableUser(user.idUserAd)
-									console.log(err)
+						.then(getToken => {
+							axios
+								.get(graphConfig.graphMeEndpoint, {
+									headers: { Authorization: `Bearer ${getToken.accessToken}` }
 								})
-
-						})
+								.then(responseFromToken => {
+									success(user as UserType, '');
+								})
+								.catch(err => {
+									disableUser(user.idUserAd);
+									console.log(err);
+								});
+						});
 				})
 				.catch((error: AxiosError) => {
 					pass(error.message);
@@ -60,9 +62,9 @@ function AuthProvider(props: AuthProviderProps) {
 		});
 
 		jwtService.on('onUserDisable', () => {
-			pass('Você não tem acesso.')
+			pass('Você não tem acesso.');
 			dispatch(logoutUser());
-		})
+		});
 
 		jwtService.on('onLogin', (user: UserType) => {
 			success(user, 'Você está logado.');
@@ -87,10 +89,7 @@ function AuthProvider(props: AuthProviderProps) {
 		jwtService.init();
 
 		function success(user: UserType, message: string) {
-			Promise.all([
-				dispatch(setUser(user))
-
-			]).then(() => {
+			Promise.all([dispatch(setUser(user))]).then(() => {
 				if (message) {
 					dispatch(showMessage({ message }));
 				}
@@ -110,7 +109,6 @@ function AuthProvider(props: AuthProviderProps) {
 		}
 	}, [dispatch]);
 
-
 	return waitAuthCheck ? <FuseSplashScreen /> : <AuthContext.Provider value={val}>{children}</AuthContext.Provider>;
 }
 
@@ -123,4 +121,3 @@ function useAuth() {
 }
 
 export { AuthProvider, useAuth };
-

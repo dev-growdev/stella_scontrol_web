@@ -149,8 +149,10 @@ export default function PaymentRequestFormGeneral() {
 	}, [productsRedux]);
 
 	function onSubmit(data: FormDataProps) {
+		const request = { ...data, userCreatedUid: user.uid };
+
 		const formData = new FormData();
-		const json = JSON.stringify(data);
+		const json = JSON.stringify(request);
 		formData.append('document', json);
 
 		data.uploadedFiles.forEach(file => {

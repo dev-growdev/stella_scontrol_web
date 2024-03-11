@@ -6,7 +6,6 @@ import jwtServiceConfig from './jwtServiceConfig';
 /* eslint-disable camelcase, class-methods-use-this */
 
 class JwtService extends FuseUtils.EventEmitter {
-
 	init() {
 		this.setInterceptors();
 		this.handleAuthentication();
@@ -46,7 +45,7 @@ class JwtService extends FuseUtils.EventEmitter {
 	};
 
 	signInWithToken = () => {
-		const token = getAccessToken()
+		const token = getAccessToken();
 
 		if (token) {
 			_setSession(token);
@@ -60,99 +59,107 @@ class JwtService extends FuseUtils.EventEmitter {
 					}
 				})
 
-				.then((response: AxiosResponse<{
-					data: {
-						user: {
-							uid: string,
-							name: string,
-							email: string,
-							idUserAd: string,
-							jobTitle: string,
+				.then(
+					(
+						response: AxiosResponse<{
 							data: {
-								displayName: string,
-								email: string
-							}
-						};
-						access_token: string
-					}
-				}>) => {
-					const userFromResponse = response.data.data.user
+								user: {
+									uid: string;
+									name: string;
+									email: string;
+									idUserAd: string;
+									jobTitle: string;
+									data: {
+										displayName: string;
+										email: string;
+										uid: string;
+									};
+								};
+								access_token: string;
+							};
+						}>
+					) => {
+						const userFromResponse = response.data.data.user;
 
-					if (userFromResponse) {
-						const user = {
-							uid: userFromResponse.uid,
-							idUserAd: userFromResponse.idUserAd,
-							jobTile: userFromResponse.jobTitle,
-							role: ["admin"],
-							data: {
-								displayName: userFromResponse.data.displayName,
-								email: userFromResponse.data.email
-							}
+						if (userFromResponse) {
+							const user = {
+								uid: userFromResponse.uid,
+								idUserAd: userFromResponse.idUserAd,
+								jobTile: userFromResponse.jobTitle,
+								role: ['admin'],
+								data: {
+									displayName: userFromResponse.data.displayName,
+									email: userFromResponse.data.email
+								}
+							};
+
+							resolve(user);
+						} else {
+							this.logout();
+							reject(new Error('Failed to login with token.'));
 						}
-
-						resolve(user);
-					} else {
-						this.logout();
-						reject(new Error('Failed to login with token.'));
 					}
-				})
+				)
 				.catch(() => {
 					this.logout();
 					reject(new Error('Failed to login with token.'));
 				});
 		});
-	}
+	};
 
 	signInWithId = (data: any) => {
 		return new Promise<UserType>((resolve, reject) => {
 			axios
 				.post(jwtServiceConfig.accessById, data)
-				.then((response: AxiosResponse<{
-					data: {
-						user: {
-							uid: string,
-							name: string,
-							email: string,
-							idUserAd: string,
-							jobTitle: string,
-							enable: boolean
-						};
-						access_token: string
-					}
-				}>) => {
-
-					const userFromResponse = response.data.data.user
-					if (userFromResponse) {
-						if (!userFromResponse.enable) {
-							this.emit('onUserDisable')
-							reject(new Error('Você não tem acesso'))
-						}
-
-						const token = response.data.data.access_token
-
-						_setSession(token);
-						const user = {
-							uid: userFromResponse.uid,
-							idUserAd: userFromResponse.idUserAd,
-							jobTile: userFromResponse.jobTitle,
-							role: ["admin"],
+				.then(
+					(
+						response: AxiosResponse<{
 							data: {
-								displayName: userFromResponse.name,
-								email: userFromResponse.email
+								user: {
+									uid: string;
+									name: string;
+									email: string;
+									idUserAd: string;
+									jobTitle: string;
+									enable: boolean;
+								};
+								access_token: string;
+							};
+						}>
+					) => {
+						const userFromResponse = response.data.data.user;
+						if (userFromResponse) {
+							if (!userFromResponse.enable) {
+								this.emit('onUserDisable');
+								reject(new Error('Você não tem acesso'));
 							}
+
+							const token = response.data.data.access_token;
+
+							_setSession(token);
+							const user = {
+								uid: userFromResponse.uid,
+								idUserAd: userFromResponse.idUserAd,
+								jobTile: userFromResponse.jobTitle,
+								role: ['admin'],
+								data: {
+									displayName: userFromResponse.name,
+									email: userFromResponse.email
+								}
+							};
+							resolve(user);
+						} else {
+							this.logout();
+							reject(new Error('Failed to login with token.'));
 						}
-						resolve(user);
-					} else {
-						this.logout();
-						reject(new Error('Failed to login with token.'));
 					}
-				})
+				)
 				.catch(() => {
 					this.logout();
 					reject(new Error('Failed to login with token.'));
 				});
-		})
-	}
+		});
+	};
 
 	logout = () => {
 		_setSession(null);
