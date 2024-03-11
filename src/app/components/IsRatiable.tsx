@@ -142,6 +142,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 		setValueCostCenter('');
 		setCostCenterName('');
 		setAccountingAccountName('');
+		setAccountingAccounts([]);
 		setError({ costCenter: false, accountingAccount: false, value: false, message: null });
 	};
 	return (
