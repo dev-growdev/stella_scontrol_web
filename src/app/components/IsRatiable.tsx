@@ -11,7 +11,7 @@ import {
 import { selectedCostCenters } from 'app/store/cost-center/costCenterSlice';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { UseFieldArrayRemove, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { FormDataProps } from '../main/form-request/FormRequest';
 import RatiableTable from './RatiableTable';
@@ -19,9 +19,9 @@ import RatiableTable from './RatiableTable';
 interface RatiableProps {
 	isRatiable: boolean;
 	setToggleRatiable: (arg: boolean) => void;
-	errors: FieldErrors<FormDataProps>;
 	watch: UseFormWatch<FormDataProps>;
 	setValue: UseFormSetValue<FormDataProps>;
+	remove: UseFieldArrayRemove;
 }
 
 interface AccountingAccountType {
@@ -29,14 +29,27 @@ interface AccountingAccountType {
 	name: string;
 }
 
-export default function IsRatiable({ isRatiable, setToggleRatiable, watch, errors, setValue }: RatiableProps) {
+interface HandleErrors {
+	costCenter: boolean;
+	accountingAccount: boolean;
+	value: boolean;
+	message: string | null;
+}
+
+export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setValue, remove }: RatiableProps) {
 	const costCentersRedux = useSelector(selectedCostCenters);
 	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
 	const [costCenterId, setCostCenterId] = useState('');
-	const [costCenterName, setCostCenterName] = useState('');
+	const [costCenterName, setCostCenterName] = useState<string | null>('');
 	const [accountingAccountId, setAccountingAccountId] = useState('');
-	const [accountingAccountName, setAccountingAccountName] = useState('');
+	const [accountingAccountName, setAccountingAccountName] = useState<string | null>('');
 	const [valueCostCenter, setValueCostCenter] = useState('');
+	const [error, setError] = useState<HandleErrors>({
+		costCenter: false,
+		accountingAccount: false,
+		value: false,
+		message: null
+	});
 	const formCostCenters = watch('costCenters');
 
 	useEffect(() => {
@@ -61,32 +74,66 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 		}
 	}, [isRatiable]);
 
+	useEffect(() => {
+		if (costCenterName !== '') {
+			setError({ ...error, costCenter: false, message: '' });
+		} else if (accountingAccountName !== '') {
+			setError({ ...error, accountingAccount: false, message: '' });
+		} else if (valueCostCenter !== '') {
+			setError({ ...error, value: false, message: '' });
+		}
+	}, [costCenterName, accountingAccountName, valueCostCenter]);
+
 	const handleChangeCostCenter = (event: ChangeEvent<HTMLInputElement>) => {
-		const findCostCenter = costCentersRedux.costCenters.find(
-			costCenter => costCenter.name === event.target.outerText
-		);
-		setCostCenterId(`${findCostCenter.id}`);
-		setCostCenterName(findCostCenter.name);
+		if (event.target.outerText) {
+			const findCostCenter = costCentersRedux.costCenters.find(
+				costCenter => costCenter.name === event.target.outerText
+			);
+			if (findCostCenter) {
+				setCostCenterId(`${findCostCenter.id}`);
+				setCostCenterName(findCostCenter.name);
+			}
+		} else {
+			clearStates();
+		}
 	};
 	const handleChangeAccountingAccount = (event: ChangeEvent<HTMLInputElement>) => {
-		const findAccountingAccount = accountingAccounts.find(acc => acc.name === event.target.outerText);
-
-		setAccountingAccountId(`${findAccountingAccount.id}`);
-		setAccountingAccountName(findAccountingAccount.name);
+		if (event.target.outerText) {
+			const findAccountingAccount = accountingAccounts.find(acc => acc.name === event.target.outerText);
+			if (findAccountingAccount) {
+				setAccountingAccountId(`${findAccountingAccount.id}`);
+				setAccountingAccountName(findAccountingAccount.name);
+			}
+		} else {
+			clearStates();
+		}
 	};
 
 	const handleValueCostCenter = (event: ChangeEvent<HTMLInputElement>) => {
-		setValueCostCenter(event.target.value);
+		let { value } = event.target;
+		value = value.replace(/[^\d,]/g, '');
+
+		setValueCostCenter(value);
 	};
 
 	const handleSubmiCostsCenter = () => {
 		const setCostCenter = {
 			costCenter: costCenterName,
+			costCenterId,
 			accountingAccount: accountingAccountName,
+			accountingAccountId,
 			value: valueCostCenter
 		};
-		setValue('costCenters', [...watch('costCenters'), setCostCenter]);
-		clearStates();
+		if (costCenterName === '') {
+			setError({ ...error, costCenter: true, message: 'É necessário adicionar um centro de custo.' });
+		} else if (accountingAccountName === '') {
+			setError({ ...error, accountingAccount: true, message: 'É necessário adicionar uma conta contábil.' });
+		} else if (valueCostCenter === '' || valueCostCenter === '0' || valueCostCenter === ',') {
+			setError({ ...error, value: true, message: 'É necessário adicionar um valor.' });
+		} else {
+			setValue('costCenters', [...watch('costCenters'), setCostCenter]);
+			clearStates();
+		}
 	};
 
 	const clearStates = () => {
@@ -95,6 +142,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 		setValueCostCenter('');
 		setCostCenterName('');
 		setAccountingAccountName('');
+		setError({ costCenter: false, accountingAccount: false, value: false, message: null });
 	};
 	return (
 		<div className="flex flex-col">
@@ -128,7 +176,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 					/>
 				</FormGroup>
 			</div>
-			{isRatiable ? (
+			{isRatiable && (
 				<>
 					<div className="flex sm:flex-row flex-col gap-24 items-center">
 						<Autocomplete
@@ -138,14 +186,15 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 								return costCenter.name;
 							})}
 							value={costCenterName}
+							noOptionsText="Adicione um centro de custo"
 							className="w-full sm:w-1/3"
 							onChange={handleChangeCostCenter}
 							renderInput={params => (
 								<TextField
 									{...params}
 									label="Centro de custo"
-									error={!!errors?.costCenters?.message}
-									helperText={errors?.costCenters?.message}
+									error={!!error.costCenter}
+									helperText={error.costCenter && error.message}
 								/>
 							)}
 						/>
@@ -163,19 +212,19 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 								<TextField
 									{...params}
 									label="Conta contábil"
-									error={!!errors?.costCenters?.message}
-									helperText={errors?.costCenters?.message}
+									error={!!error.accountingAccount}
+									helperText={error.accountingAccount && error.message}
 								/>
 							)}
 						/>
 						<TextField
 							className="sm:w-1/3"
 							label="Valor"
-							type="number"
+							type="text"
 							value={valueCostCenter}
 							onChange={handleValueCostCenter}
-							error={!!errors?.costCenters?.message}
-							helperText={errors?.costCenters?.message}
+							error={!!error.value}
+							helperText={error.value && error.message}
 							InputProps={{
 								startAdornment: <InputAdornment position="start">R$</InputAdornment>,
 								sx: {
@@ -183,6 +232,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 								}
 							}}
 						/>
+
 						<Button
 							onClick={handleSubmiCostsCenter}
 							variant="contained"
@@ -191,28 +241,11 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, error
 						</Button>
 					</div>
 
-					<RatiableTable costCenters={formCostCenters} />
+					<RatiableTable
+						remove={remove}
+						costCenters={formCostCenters}
+					/>
 				</>
-			) : (
-				<Autocomplete
-					disablePortal
-					id="combo-box-demo"
-					value={accountingAccountName}
-					options={accountingAccounts.map(acc => {
-						return acc.name;
-					})}
-					noOptionsText="Você não tem um centro de custo vinculado."
-					className="sm:w-1/3"
-					onChange={handleChangeAccountingAccount}
-					renderInput={params => (
-						<TextField
-							{...params}
-							label="Conta contábil"
-							error={!!errors?.costCenters?.message}
-							helperText={errors?.costCenters?.message}
-						/>
-					)}
-				/>
 			)}
 		</div>
 	);
