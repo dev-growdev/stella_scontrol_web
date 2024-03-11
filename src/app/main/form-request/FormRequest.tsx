@@ -28,7 +28,9 @@ interface Payments {
 
 export interface CostCenters {
 	costCenter: string;
+	costCenterId: string;
 	accountingAccount: string;
+	accountingAccountId: string;
 	value: string;
 }
 
@@ -92,7 +94,9 @@ const schema = object().shape({
 		.of(
 			object().shape({
 				costCenter: string().required('É necessário adicionar Centro de Custo.'),
+				costCenterId: string(),
 				accountingAccount: string().required('É necessário adicionar Conta Contábil'),
+				accountingAccountId: string(),
 				value: string().required()
 			})
 		)
@@ -127,6 +131,8 @@ export default function PaymentRequestFormGeneral() {
 		control,
 		name: 'payments'
 	});
+
+	const { remove: removeCostCenter } = useFieldArray({ control, name: 'costCenters' });
 
 	useEffect(() => {
 		dispatch(getProducts());
@@ -309,6 +315,7 @@ export default function PaymentRequestFormGeneral() {
 						watch={watch}
 						errors={errors}
 						setValue={setValue}
+						remove={removeCostCenter}
 					/>
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
