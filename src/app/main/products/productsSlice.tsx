@@ -9,20 +9,22 @@ type AppRootStateType = RootStateType<productSliceType>;
 
 export interface FormProductType {
 	uid?: string;
-	code: string;
+	code?: number;
 	name: string;
 	enable?: boolean;
 	category: Category | string;
+	description?: string;
 	quantity: string | number;
 	measurement: string;
 }
 
 export interface Product {
 	uid?: string;
-	code: string;
+	code?: number;
 	name: string;
 	enable: boolean;
 	measurement?: string;
+	description?: string;
 	quantity?: number;
 	category?: Category;
 }
@@ -34,9 +36,9 @@ export interface ProductsType {
 
 export interface CreateProduct {
 	categoryId: string;
-	code: string;
 	name: string;
 	enable: boolean;
+	description?: string;
 	measurement?: string;
 	quantity?: number;
 }
@@ -133,7 +135,6 @@ export const disableProduct = createAsyncThunk('products/disableProduct', async 
 	try {
 		const body = {
 			categoryId: data.category,
-			code: data.code,
 			name: data.name,
 			enable: data.enable,
 			measurement: data.measurement,
