@@ -116,7 +116,8 @@ export default function PaymentRequestFormGeneral() {
 		register,
 		reset,
 		formState: { errors },
-		setError
+		setError,
+		clearErrors
 	} = useForm<FormDataProps>({
 		defaultValues,
 		resolver: yupResolver(schema)
@@ -146,6 +147,13 @@ export default function PaymentRequestFormGeneral() {
 			setProductsToOptionsSelect(refProducts);
 		}
 	}, [productsRedux]);
+
+	useEffect(() => {
+		const apportionments = watch('apportionments');
+		if (apportionments.length > 0) {
+			clearErrors('apportionments');
+		}
+	}, [watch('apportionments')]);
 
 	function onSubmit(data: FormDataProps) {
 		if (watch('isRatiable')) {

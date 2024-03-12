@@ -45,12 +45,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 	const [accountingAccountId, setAccountingAccountId] = useState('');
 	const [accountingAccountName, setAccountingAccountName] = useState<string | null>('');
 	const [valueCostCenter, setValueCostCenter] = useState('');
-	const [error, setError] = useState<HandleErrors>({
-		costCenter: false,
-		accountingAccount: false,
-		value: false,
-		message: null
-	});
+
 	const formCostCenters = watch('apportionments');
 
 	useEffect(() => {
@@ -74,16 +69,6 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 			clearStates();
 		}
 	}, [isRatiable]);
-
-	useEffect(() => {
-		if (costCenterName !== '') {
-			setError({ ...error, costCenter: false, message: '' });
-		} else if (accountingAccountName !== '') {
-			setError({ ...error, accountingAccount: false, message: '' });
-		} else if (valueCostCenter !== '') {
-			setError({ ...error, value: false, message: '' });
-		}
-	}, [costCenterName, accountingAccountName, valueCostCenter]);
 
 	const handleChangeCostCenter = (event: ChangeEvent<HTMLInputElement>) => {
 		if (event.target.outerText) {
@@ -123,16 +108,9 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 			accountingAccount: accountingAccountName,
 			value: valueCostCenter
 		};
-		if (costCenterName === '') {
-			setError({ ...error, costCenter: true, message: 'É necessário adicionar um centro de custo.' });
-		} else if (accountingAccountName === '') {
-			setError({ ...error, accountingAccount: true, message: 'É necessário adicionar uma conta contábil.' });
-		} else if (valueCostCenter === '' || valueCostCenter === '0' || valueCostCenter === ',') {
-			setError({ ...error, value: true, message: 'É necessário adicionar um valor.' });
-		} else {
-			setValue('apportionments', [...watch('apportionments'), setCostCenter]);
-			clearStates();
-		}
+
+		setValue('apportionments', [...watch('apportionments'), setCostCenter]);
+		clearStates();
 	};
 
 	const clearStates = () => {
@@ -142,7 +120,6 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 		setCostCenterName('');
 		setAccountingAccountName('');
 		setAccountingAccounts([]);
-		setError({ costCenter: false, accountingAccount: false, value: false, message: null });
 	};
 	return (
 		<div className="flex flex-col">
