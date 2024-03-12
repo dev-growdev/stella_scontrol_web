@@ -6,12 +6,13 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import RequestsTable from '../../components/RequestsTable';
-import { listRequestsPaymentsByUser } from './FormRequestSlice';
+import { listRequestsPaymentsByUser, selectedRequestPaymentGeneral } from './FormRequestSlice';
 
 export default function Requests() {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const user = useSelector(selectUser);
+	const requests = useSelector(selectedRequestPaymentGeneral);
 
 	useEffect(() => {
 		dispatch(listRequestsPaymentsByUser(user.uid));
@@ -43,7 +44,7 @@ export default function Requests() {
 						Solicitações
 					</Typography>
 				</Paper>
-				<RequestsTable rows={[{ uid: '19023', name: 'oi' }]} />
+				<RequestsTable rows={requests.requests} />
 			</div>
 		</Box>
 	);
