@@ -38,7 +38,7 @@ export default function ProductsPage() {
 			<div className="p-32 mt-20">
 				<Paper
 					elevation={4}
-					className="mt-24 p-36 flex flex-col gap-24"
+					className="mt-24 flex flex-col gap-24 py-16"
 				>
 					<div className="flex items-center gap-24 flex-col sm:flex-row">
 						<ProductTable
