@@ -56,7 +56,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 		setAccountingAccountId('');
 		async function getAccountingAccounts() {
 			const res = await axios.get<{ data: AccountingAccountType[] }>(
-				`${process.env.REACT_APP_API_URL}/accounting-accounts/${costCenterId}`
+				`${process.env.REACT_APP_API_URL}/budget-account/accounting-accounts/${costCenterId}`
 			);
 			const { data } = res.data;
 			if (data) {

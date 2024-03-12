@@ -22,7 +22,7 @@ interface ResponseApi {
 
 export const getCostCenters = createAsyncThunk('costCenters/getCostCenters', async () => {
 	try {
-		const response = await axios.get<ResponseApi>(`${process.env.REACT_APP_API_URL}/cost-centers`);
+		const response = await axios.get<ResponseApi>(`${process.env.REACT_APP_API_URL}/budget-account/cost-centers`);
 
 		return response.data.data;
 	} catch (error) {
