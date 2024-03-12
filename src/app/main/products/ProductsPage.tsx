@@ -23,9 +23,9 @@ export default function ProductsPage() {
 		const itemToggleEnable = {
 			uid: item.uid,
 			category: item.category.uid,
-			code: item.code,
 			name: item.name,
 			enable: !item.enable,
+			description: item.description,
 			measurement: item.measurement,
 			quantity: item.quantity,
 			action: ''
