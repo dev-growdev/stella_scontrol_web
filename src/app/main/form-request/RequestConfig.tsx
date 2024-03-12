@@ -2,7 +2,7 @@ import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
 import { authRoles } from 'src/app/auth';
 
-const Request = lazy(() => import('./Request'));
+const Request = lazy(() => import('./Requests'));
 
 /**
  * The sign up pages config.
@@ -18,7 +18,7 @@ const requestPageConfig: FuseRouteConfigType = {
 					display: true
 				},
 				footer: {
-					display: false
+					display: true
 				},
 				leftSidePanel: {
 					display: true

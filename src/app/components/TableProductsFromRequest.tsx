@@ -43,7 +43,7 @@ export default function TableProductsFromRequest({
 
 	return (
 		<>
-			<div className="flex relative gap-24 items-center justify-center">
+			<div className="flex flex-col sm:flex-row relative gap-24 items-center justify-center">
 				<Controller
 					name="products"
 					control={control}

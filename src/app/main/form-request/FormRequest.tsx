@@ -2,6 +2,7 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
+import { getCostCenters } from 'app/store/cost-center/costCenterSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -20,6 +21,17 @@ import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
+interface Payments {
+	value: string;
+	dueDate: Date | null;
+}
+
+export interface Apportionments {
+	costCenter: string;
+	accountingAccount: string;
+	value: string;
+}
+
 export interface FormDataProps {
 	paymentMethod: string;
 	requiredReceipt: boolean;
@@ -27,9 +39,10 @@ export interface FormDataProps {
 	products: { product: string }[];
 	description?: string;
 	supplier: string;
-	payments: { value: string; dueDate: Date | null }[];
+	payments: Payments[];
 	typeAccount: string;
 	uploadedFiles: File[];
+	apportionments?: Apportionments[];
 }
 
 export interface ProductOptionType {
@@ -46,7 +59,8 @@ const defaultValues = {
 	supplier: '',
 	payments: [{ value: '', dueDate: null }],
 	typeAccount: '',
-	uploadedFiles: []
+	uploadedFiles: [],
+	apportionments: []
 };
 
 const schema = object().shape({
@@ -73,7 +87,18 @@ const schema = object().shape({
 		)
 		.required(),
 	typeAccount: string(),
-	uploadedFiles: array()
+	uploadedFiles: array(),
+	apportionments: array()
+		.of(
+			object().shape({
+				costCenter: string().required('É necessário adicionar Centro de Custo.'),
+
+				accountingAccount: string().required('É necessário adicionar Conta Contábil'),
+
+				value: string().required()
+			})
+		)
+		.notRequired()
 });
 
 export default function PaymentRequestFormGeneral() {
@@ -90,7 +115,9 @@ export default function PaymentRequestFormGeneral() {
 		watch,
 		register,
 		reset,
-		formState: { errors }
+		formState: { errors },
+		setError,
+		clearErrors
 	} = useForm<FormDataProps>({
 		defaultValues,
 		resolver: yupResolver(schema)
@@ -105,8 +132,11 @@ export default function PaymentRequestFormGeneral() {
 		name: 'payments'
 	});
 
+	const { remove: removeCostCenter } = useFieldArray({ control, name: 'apportionments' });
+
 	useEffect(() => {
 		dispatch(getProducts());
+		dispatch(getCostCenters());
 	}, []);
 
 	useEffect(() => {
@@ -118,9 +148,27 @@ export default function PaymentRequestFormGeneral() {
 		}
 	}, [productsRedux]);
 
+	useEffect(() => {
+		const apportionments = watch('apportionments');
+		if (apportionments.length > 0) {
+			clearErrors('apportionments');
+		}
+	}, [watch('apportionments')]);
+
 	function onSubmit(data: FormDataProps) {
+		if (watch('isRatiable')) {
+			const apportionments = watch('apportionments');
+
+			if (apportionments.length === 0) {
+				setError('apportionments', { message: 'É necessário adicionar rateio.' });
+				return;
+			}
+		}
+
+		const request = { ...data, userCreatedUid: user.uid };
+
 		const formData = new FormData();
-		const json = JSON.stringify(data);
+		const json = JSON.stringify(request);
 		formData.append('document', json);
 
 		data.uploadedFiles.forEach(file => {
@@ -130,7 +178,7 @@ export default function PaymentRequestFormGeneral() {
 		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
 				clearFormState();
-				navigate('/');
+				navigate('/solicitacoes');
 			}
 		});
 	}
@@ -164,6 +212,7 @@ export default function PaymentRequestFormGeneral() {
 				<Button
 					className="mb-12"
 					variant="text"
+					onClick={() => navigate('/solicitacoes')}
 					startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}
 				>
 					SOLICITAÇÕES
@@ -282,6 +331,11 @@ export default function PaymentRequestFormGeneral() {
 					<IsRatiable
 						isRatiable={watch('isRatiable')}
 						setToggleRatiable={e => setValue('isRatiable', e)}
+						watch={watch}
+						setValue={setValue}
+						remove={removeCostCenter}
+						errors={errors}
+						setError={setError}
 					/>
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
