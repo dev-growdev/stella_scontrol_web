@@ -17,7 +17,7 @@ const navigationConfig: FuseNavigationType = [
 		title: 'Solicitações',
 		type: 'item',
 		icon: 'heroicons-outline:clipboard-list',
-		url: 'example'
+		url: 'solicitacoes'
 	},
 	{
 		id: 'document-add',
