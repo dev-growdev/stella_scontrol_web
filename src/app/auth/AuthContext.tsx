@@ -47,7 +47,7 @@ function AuthProvider(props: AuthProviderProps) {
 								.get(graphConfig.graphMeEndpoint, {
 									headers: { Authorization: `Bearer ${getToken.accessToken}` }
 								})
-								.then(responseFromToken => {
+								.then(() => {
 									success(user as UserType, '');
 								})
 								.catch(err => {
