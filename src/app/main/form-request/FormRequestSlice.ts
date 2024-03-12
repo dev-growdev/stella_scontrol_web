@@ -11,13 +11,22 @@ interface Payment {
 	dueDate: Date;
 }
 
-interface RequestType {
+interface Files {
+	uid: string;
+	name: string;
+	key: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+export interface RequestType {
 	uid: string;
 	supplier: string;
 	description?: string;
 	sendReceipt: boolean;
 	payments: Payment[];
-	files: any[];
+	createdAt: Date;
+	files: Files[];
 }
 
 interface RequestPaymentGeneralType {
