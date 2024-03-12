@@ -42,14 +42,12 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
 	const [costCenterId, setCostCenterId] = useState('');
 	const [costCenterName, setCostCenterName] = useState<string | null>('');
-	const [accountingAccountId, setAccountingAccountId] = useState('');
 	const [accountingAccountName, setAccountingAccountName] = useState<string | null>('');
 	const [valueCostCenter, setValueCostCenter] = useState('');
 
 	const formCostCenters = watch('apportionments');
 
 	useEffect(() => {
-		setAccountingAccountId('');
 		async function getAccountingAccounts() {
 			const res = await axios.get<{ data: AccountingAccountType[] }>(
 				`${process.env.REACT_APP_API_URL}/budget-account/accounting-accounts/${costCenterId}`
@@ -87,7 +85,6 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 		if (event.target.outerText) {
 			const findAccountingAccount = accountingAccounts.find(acc => acc.name === event.target.outerText);
 			if (findAccountingAccount) {
-				setAccountingAccountId(`${findAccountingAccount.id}`);
 				setAccountingAccountName(findAccountingAccount.name);
 			}
 		} else {
@@ -115,7 +112,6 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 
 	const clearStates = () => {
 		setCostCenterId('');
-		setAccountingAccountId('');
 		setValueCostCenter('');
 		setCostCenterName('');
 		setAccountingAccountName('');
