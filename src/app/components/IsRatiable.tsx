@@ -11,7 +11,7 @@ import {
 import { selectedCostCenters } from 'app/store/cost-center/costCenterSlice';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { UseFieldArrayRemove, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { FieldErrors, UseFieldArrayRemove, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { FormDataProps } from '../main/form-request/FormRequest';
 import RatiableTable from './RatiableTable';
@@ -22,6 +22,7 @@ interface RatiableProps {
 	watch: UseFormWatch<FormDataProps>;
 	setValue: UseFormSetValue<FormDataProps>;
 	remove: UseFieldArrayRemove;
+	errors: FieldErrors<FormDataProps>;
 }
 
 interface AccountingAccountType {
@@ -36,7 +37,7 @@ interface HandleErrors {
 	message: string | null;
 }
 
-export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setValue, remove }: RatiableProps) {
+export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setValue, remove, errors }: RatiableProps) {
 	const costCentersRedux = useSelector(selectedCostCenters);
 	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
 	const [costCenterId, setCostCenterId] = useState('');
@@ -50,13 +51,13 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 		value: false,
 		message: null
 	});
-	const formCostCenters = watch('costCenters');
+	const formCostCenters = watch('apportionments');
 
 	useEffect(() => {
 		setAccountingAccountId('');
 		async function getAccountingAccounts() {
 			const res = await axios.get<{ data: AccountingAccountType[] }>(
-				`${process.env.REACT_APP_API_URL}/accounting-accounts/${costCenterId}`
+				`${process.env.REACT_APP_API_URL}/budget-account/accounting-accounts/${costCenterId}`
 			);
 			const { data } = res.data;
 			if (data) {
@@ -119,9 +120,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 	const handleSubmiCostsCenter = () => {
 		const setCostCenter = {
 			costCenter: costCenterName,
-			costCenterId,
 			accountingAccount: accountingAccountName,
-			accountingAccountId,
 			value: valueCostCenter
 		};
 		if (costCenterName === '') {
@@ -131,7 +130,7 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 		} else if (valueCostCenter === '' || valueCostCenter === '0' || valueCostCenter === ',') {
 			setError({ ...error, value: true, message: 'É necessário adicionar um valor.' });
 		} else {
-			setValue('costCenters', [...watch('costCenters'), setCostCenter]);
+			setValue('apportionments', [...watch('apportionments'), setCostCenter]);
 			clearStates();
 		}
 	};
@@ -194,8 +193,8 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 								<TextField
 									{...params}
 									label="Centro de custo"
-									error={!!error.costCenter}
-									helperText={error.costCenter && error.message}
+									error={!!errors?.apportionments?.message}
+									helperText={errors?.apportionments?.message}
 								/>
 							)}
 						/>
@@ -213,8 +212,8 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 								<TextField
 									{...params}
 									label="Conta contábil"
-									error={!!error.accountingAccount}
-									helperText={error.accountingAccount && error.message}
+									error={!!errors?.apportionments?.message}
+									helperText={errors?.apportionments?.message}
 								/>
 							)}
 						/>
@@ -224,8 +223,8 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 							type="text"
 							value={valueCostCenter}
 							onChange={handleValueCostCenter}
-							error={!!error.value}
-							helperText={error.value && error.message}
+							error={!!errors?.apportionments?.message}
+							helperText={errors?.apportionments?.message}
 							InputProps={{
 								startAdornment: <InputAdornment position="start">R$</InputAdornment>,
 								sx: {

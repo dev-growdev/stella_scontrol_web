@@ -26,11 +26,9 @@ interface Payments {
 	dueDate: Date | null;
 }
 
-export interface CostCenters {
+export interface Apportionments {
 	costCenter: string;
-	costCenterId: string;
 	accountingAccount: string;
-	accountingAccountId: string;
 	value: string;
 }
 
@@ -44,7 +42,7 @@ export interface FormDataProps {
 	payments: Payments[];
 	typeAccount: string;
 	uploadedFiles: File[];
-	costCenters?: CostCenters[];
+	apportionments?: Apportionments[];
 }
 
 export interface ProductOptionType {
@@ -62,7 +60,7 @@ const defaultValues = {
 	payments: [{ value: '', dueDate: null }],
 	typeAccount: '',
 	uploadedFiles: [],
-	costCenters: []
+	apportionments: []
 };
 
 const schema = object().shape({
@@ -90,13 +88,13 @@ const schema = object().shape({
 		.required(),
 	typeAccount: string(),
 	uploadedFiles: array(),
-	costCenters: array()
+	apportionments: array()
 		.of(
 			object().shape({
 				costCenter: string().required('É necessário adicionar Centro de Custo.'),
-				costCenterId: string(),
+
 				accountingAccount: string().required('É necessário adicionar Conta Contábil'),
-				accountingAccountId: string(),
+
 				value: string().required()
 			})
 		)
@@ -117,7 +115,8 @@ export default function PaymentRequestFormGeneral() {
 		watch,
 		register,
 		reset,
-		formState: { errors }
+		formState: { errors },
+		setError
 	} = useForm<FormDataProps>({
 		defaultValues,
 		resolver: yupResolver(schema)
@@ -132,7 +131,7 @@ export default function PaymentRequestFormGeneral() {
 		name: 'payments'
 	});
 
-	const { remove: removeCostCenter } = useFieldArray({ control, name: 'costCenters' });
+	const { remove: removeCostCenter } = useFieldArray({ control, name: 'apportionments' });
 
 	useEffect(() => {
 		dispatch(getProducts());
@@ -149,8 +148,19 @@ export default function PaymentRequestFormGeneral() {
 	}, [productsRedux]);
 
 	function onSubmit(data: FormDataProps) {
+		if (watch('isRatiable')) {
+			const apportionments = watch('apportionments');
+
+			if (apportionments.length === 0) {
+				setError('apportionments', { message: 'É necessário adicionar rateio.' });
+				return;
+			}
+		}
+
+		const request = { ...data, userCreatedUid: user.uid };
+
 		const formData = new FormData();
-		const json = JSON.stringify(data);
+		const json = JSON.stringify(request);
 		formData.append('document', json);
 
 		data.uploadedFiles.forEach(file => {
@@ -160,7 +170,7 @@ export default function PaymentRequestFormGeneral() {
 		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
 				clearFormState();
-				navigate('/');
+				navigate('/solicitacoes');
 			}
 		});
 	}
@@ -194,6 +204,7 @@ export default function PaymentRequestFormGeneral() {
 				<Button
 					className="mb-12"
 					variant="text"
+					onClick={() => navigate('/solicitacoes')}
 					startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}
 				>
 					SOLICITAÇÕES
@@ -315,6 +326,7 @@ export default function PaymentRequestFormGeneral() {
 						watch={watch}
 						setValue={setValue}
 						remove={removeCostCenter}
+						errors={errors}
 					/>
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
