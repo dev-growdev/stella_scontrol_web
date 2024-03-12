@@ -23,13 +23,13 @@ const routeConfigs: FuseRouteConfigsType = [
 ];
 
 /**
- * The routes of the application.
- */
+ 
+The routes of the application. */
 const routes: FuseRoutesType = [
 	...FuseUtils.generateRoutesFromConfigs(routeConfigs, settingsConfig.defaultAuth),
 	{
 		path: '/',
-		element: <Navigate to="/solicitar-pagamento-geral" />,
+		element: <Navigate to="/solicitacoes" />,
 		auth: settingsConfig.defaultAuth
 	},
 	{
