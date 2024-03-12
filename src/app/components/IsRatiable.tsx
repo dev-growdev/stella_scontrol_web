@@ -11,7 +11,7 @@ import {
 import { selectedCostCenters } from 'app/store/cost-center/costCenterSlice';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { FieldErrors, UseFieldArrayRemove, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { FormDataProps } from '../main/form-request/FormRequest';
 import RatiableTable from './RatiableTable';
@@ -23,6 +23,7 @@ interface RatiableProps {
 	setValue: UseFormSetValue<FormDataProps>;
 	remove: UseFieldArrayRemove;
 	errors: FieldErrors<FormDataProps>;
+	setError: UseFormSetError<FormDataProps>;
 }
 
 interface AccountingAccountType {
@@ -30,14 +31,15 @@ interface AccountingAccountType {
 	name: string;
 }
 
-interface HandleErrors {
-	costCenter: boolean;
-	accountingAccount: boolean;
-	value: boolean;
-	message: string | null;
-}
-
-export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setValue, remove, errors }: RatiableProps) {
+export default function IsRatiable({
+	setError,
+	isRatiable,
+	setToggleRatiable,
+	watch,
+	setValue,
+	remove,
+	errors
+}: RatiableProps) {
 	const costCentersRedux = useSelector(selectedCostCenters);
 	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
 	const [costCenterId, setCostCenterId] = useState('');
@@ -100,13 +102,27 @@ export default function IsRatiable({ isRatiable, setToggleRatiable, watch, setVa
 	};
 
 	const handleSubmiCostsCenter = () => {
-		const setCostCenter = {
+		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
 			value: valueCostCenter
 		};
 
-		setValue('apportionments', [...watch('apportionments'), setCostCenter]);
+		const apportionments = watch('apportionments');
+		if (apportionments) {
+			const isDuplicated = apportionments.some(
+				ap =>
+					ap.costCenter === setApportionments.costCenter &&
+					ap.accountingAccount === setApportionments.accountingAccount
+			);
+			if (isDuplicated) {
+				return setError('apportionments', {
+					message: 'Este centro de custo e conta contábil já foram adicionados.'
+				});
+			}
+		}
+
+		setValue('apportionments', [...apportionments, setApportionments]);
 		clearStates();
 	};
 

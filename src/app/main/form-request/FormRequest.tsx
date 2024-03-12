@@ -335,6 +335,7 @@ export default function PaymentRequestFormGeneral() {
 						setValue={setValue}
 						remove={removeCostCenter}
 						errors={errors}
+						setError={setError}
 					/>
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
