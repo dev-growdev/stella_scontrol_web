@@ -101,7 +101,14 @@ export default function IsRatiable({
 		setValueCostCenter(value);
 	};
 
-	const handleSubmiCostsCenter = () => {
+	const handleSubmitApportionments = () => {
+		if (costCenterName === '' || accountingAccountName === '') {
+			return setError('apportionments', { message: 'É necessário adicionar todos os campos.' });
+		}
+		if (valueCostCenter === '' || valueCostCenter === '0' || valueCostCenter === ',') {
+			return setError('apportionments', { message: 'É necessário adicionar um valor válido.' });
+		}
+
 		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
@@ -123,7 +130,7 @@ export default function IsRatiable({
 		}
 
 		setValue('apportionments', [...apportionments, setApportionments]);
-		clearStates();
+		return clearStates();
 	};
 
 	const clearStates = () => {
@@ -223,7 +230,7 @@ export default function IsRatiable({
 						/>
 
 						<Button
-							onClick={handleSubmiCostsCenter}
+							onClick={handleSubmitApportionments}
 							variant="contained"
 						>
 							Adicionar
