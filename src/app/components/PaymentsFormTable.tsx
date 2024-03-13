@@ -71,10 +71,11 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 
 	const openMenuStatus = Boolean(anchorStatusMenu);
 
-	const filteredPayments =
+	const filteredPayments: PaymentForm[] | HolderType[] =
 		paymentsFormData.paymentsForm && paymentsFormData.paymentsForm.length > 0
-			? paymentsFormData.paymentsForm.filter((row: PaymentForm) => {
-					const matchSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
+			? paymentsFormData.paymentsForm.filter((row: PaymentForm | HolderType) => {
+					const matchSearch =
+						!searchValue || (row as PaymentForm).name.toLowerCase().includes(searchValue.toLowerCase());
 					const matchStatus =
 						filterByStatus === 'all' ||
 						(filterByStatus === 'active' && row.enable) ||
