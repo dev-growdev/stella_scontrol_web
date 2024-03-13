@@ -27,18 +27,33 @@ const navigationConfig: FuseNavigationType = [
 		url: 'solicitar-pagamento'
 	},
 	{
-		id: 'cube',
-		title: 'Produtos',
-		type: 'item',
-		icon: 'heroicons-outline:cube',
-		url: 'produtos'
-	},
-	{
-		id: 'tag2',
-		title: 'Categorias',
-		type: 'item',
-		icon: 'heroicons-outline:tag',
-		url: 'categorias'
+		id: 'clock',
+		title: 'Cadastros',
+		type: 'collapse',
+		icon: 'heroicons-outline:clock',
+		children: [
+			{
+				id: 'cube2',
+				title: 'Produtos',
+				type: 'collapse',
+				icon: 'heroicons-outline:cube',
+				url: 'cadastrar-produto'
+			},
+			{
+				id: 'tag2',
+				title: 'Categorias',
+				type: 'item',
+				icon: 'heroicons-outline:tag',
+				url: 'categorias'
+			},
+			{
+				id: 'briefcase',
+				title: 'Formas de pagamento',
+				type: 'item',
+				icon: 'heroicons-outline:briefcase',
+				url: 'formas-de-pagamento'
+			}
+		]
 	}
 ];
 
