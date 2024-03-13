@@ -21,6 +21,7 @@ import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from './AccountingAccountSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
+import numeral from '../utils/formated-value';
 
 interface Payments {
 	value: string;
@@ -113,7 +114,7 @@ export default function PaymentRequestFormGeneral() {
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelector(selectAccountingAccount);
-	const [totalValue, setTotalValue] = useState(0);
+	const [totalValue, setTotalValue] = useState('');
 
 	const {
 		control,
@@ -148,7 +149,7 @@ export default function PaymentRequestFormGeneral() {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
 				}, 0);
-				setTotalValue(total);
+				setTotalValue(total.toString());
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -324,7 +325,7 @@ export default function PaymentRequestFormGeneral() {
 							))}
 						</div>
 						<div className="mb-28">
-							<Typography>Valor total: {totalValue}</Typography>
+							<Typography>Valor total: R$ {numeral(totalValue).format('0,0.00')}</Typography>
 						</div>
 						<div className="flex items-center">
 							<Button

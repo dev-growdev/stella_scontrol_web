@@ -112,7 +112,7 @@ export default function IsRatiable({
 		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
-			value: valueCostCenter
+			value: valueCostCenter.replace(',', '.')
 		};
 
 		const apportionments = watch('apportionments');
