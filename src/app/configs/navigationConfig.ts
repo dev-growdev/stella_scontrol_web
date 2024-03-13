@@ -45,15 +45,15 @@ const navigationConfig: FuseNavigationType = [
 				type: 'item',
 				icon: 'heroicons-outline:tag',
 				url: 'categorias'
+			},
+			{
+				id: 'briefcase',
+				title: 'Formas de pagamento',
+				type: 'item',
+				icon: 'heroicons-outline:briefcase',
+				url: 'formas-de-pagamento'
 			}
 		]
-	},
-	{
-		id: 'cube',
-		title: 'Produtos',
-		type: 'collapse',
-		icon: 'heroicons-outline:cube',
-		url: 'produtos'
 	}
 ];
 

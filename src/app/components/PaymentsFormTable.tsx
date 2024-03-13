@@ -120,7 +120,7 @@ export default function PaymentsFormTable({ paymentsFormData, handleStatus }: Pa
 					<TextField
 						onChange={handleSearch}
 						value={searchValue}
-						label="Pesquise por produtos"
+						label="Pesquisar"
 						fullWidth
 						InputProps={{
 							endAdornment: (
