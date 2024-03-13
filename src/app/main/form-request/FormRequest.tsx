@@ -18,8 +18,8 @@ import TableProductsFromRequest from '../../components/TableProductsFromRequest'
 import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
-import { createRequestPaymentGeneral } from './FormRequestSlice';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from './AccountingAccountSlice';
+import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 export interface FormDataProps {
 	paymentMethod: string;
@@ -88,6 +88,7 @@ export default function PaymentRequestFormGeneral() {
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelector(selectAccountingAccount);
+	const [totalValue, setTotalValue] = useState(0);
 
 	const {
 		control,
@@ -110,6 +111,19 @@ export default function PaymentRequestFormGeneral() {
 		control,
 		name: 'payments'
 	});
+
+	useEffect(() => {
+		const subscription = watch((value, { name }) => {
+			if (name.startsWith('payments')) {
+				const total = value.payments.reduce((acc, current) => {
+					const value = parseFloat(current.value) || 0;
+					return acc + value;
+				}, 0);
+				setTotalValue(total);
+			}
+		});
+		return () => subscription.unsubscribe();
+	}, [watch]);
 
 	useEffect(() => {
 		dispatch(getProducts());
@@ -259,6 +273,7 @@ export default function PaymentRequestFormGeneral() {
 								</div>
 							))}
 						</div>
+						<Typography>Valor total: {totalValue}</Typography>
 						<div className="flex items-center ">
 							<Button
 								onClick={() => appendPayments({ value: '', dueDate: null })}
