@@ -33,9 +33,14 @@ export interface Apportionments {
 	value: string;
 }
 
+export interface CardHolderToForm {
+	uid: string;
+	name: string;
+}
+
 export interface FormDataProps {
 	paymentMethod: string;
-	cardHolder?: string;
+	cardHolder?: CardHolderToForm;
 	requiredReceipt: boolean;
 	isRatiable: boolean;
 	products: { product: string }[];
@@ -159,6 +164,7 @@ export default function PaymentRequestFormGeneral() {
 	}, [watch('apportionments')]);
 
 	function onSubmit(data: FormDataProps) {
+		console.log(data);
 		if (watch('isRatiable')) {
 			const apportionments = watch('apportionments');
 

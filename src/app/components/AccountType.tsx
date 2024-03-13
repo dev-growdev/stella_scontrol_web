@@ -37,7 +37,12 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 
 	function handleAutocomplete(event: ChangeEvent<HTMLInputElement>) {
 		const { outerText } = event.target;
-		setValue('cardHolder', outerText);
+		setValue('cardHolder.name', outerText);
+
+		const findHolder = paymentsForm.find(
+			(item: HolderType) => item.name === outerText && item.namePaymentForm === paymentMethod
+		);
+		setValue('cardHolder.uid', findHolder.uid);
 	}
 
 	return (
