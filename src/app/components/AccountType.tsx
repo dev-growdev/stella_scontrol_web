@@ -25,10 +25,12 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 
 	useEffect(() => {
 		if (paymentsForm && paymentsForm.length > 0) {
-			const creditCardHolders = paymentsForm.filter(holder => holder.type === 'credit');
+			const creditCardHolders = paymentsForm.filter(holder => holder.type === 'credit' && holder.enable === true);
 			setCreditCardHolders(creditCardHolders as HolderType[]);
 
-			const corporatedCardHolders = paymentsForm.filter(holder => holder.type === 'corporate');
+			const corporatedCardHolders = paymentsForm.filter(
+				holder => holder.type === 'corporate' && holder.enable === true
+			);
 			setCorporateCardHolders(corporatedCardHolders as HolderType[]);
 		}
 	}, [paymentsForm]);
