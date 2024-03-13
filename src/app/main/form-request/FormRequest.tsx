@@ -21,7 +21,7 @@ import { getProducts, selectProducts } from '../products/productsSlice';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from './AccountingAccountSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
-export interface FormDataProps {
+export interface FormDataType {
 	paymentMethod: string;
 	requiredReceipt: boolean;
 	isRatiable: boolean;
@@ -98,7 +98,7 @@ export default function PaymentRequestFormGeneral() {
 		register,
 		reset,
 		formState: { errors }
-	} = useForm<FormDataProps>({
+	} = useForm<FormDataType>({
 		defaultValues,
 		resolver: yupResolver(schema)
 	});
@@ -113,8 +113,8 @@ export default function PaymentRequestFormGeneral() {
 	});
 
 	useEffect(() => {
-		const subscription = watch((value, { name }) => {
-			if (name.startsWith('payments')) {
+		const subscription = watch(value => {
+			if (Array.isArray(value.payments)) {
 				const total = value.payments.reduce((acc, current) => {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
@@ -146,9 +146,15 @@ export default function PaymentRequestFormGeneral() {
 		}
 	}, [productsRedux, accountingAccountRedux]);
 
-	function onSubmit(data: FormDataProps) {
+	function onSubmit(data: FormDataType) {
 		const formData = new FormData();
-		const json = JSON.stringify(data);
+
+		const updatedData = {
+			...data,
+			totalValue
+		};
+
+		const json = JSON.stringify(updatedData);
 		formData.append('document', json);
 
 		data.uploadedFiles.forEach(file => {
@@ -273,8 +279,10 @@ export default function PaymentRequestFormGeneral() {
 								</div>
 							))}
 						</div>
-						<Typography>Valor total: {totalValue}</Typography>
-						<div className="flex items-center ">
+						<div className="mb-28">
+							<Typography>Valor total: {totalValue}</Typography>
+						</div>
+						<div className="flex items-center">
 							<Button
 								onClick={() => appendPayments({ value: '', dueDate: null })}
 								className="rounded-4"

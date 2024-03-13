@@ -12,6 +12,8 @@ interface RequestsType {
 	description?: string;
 	sendReceipt: boolean;
 	payments: { value: string; dueDate: Date }[];
+	totalValue: number;
+	accountingAccout: string;
 }
 
 interface RequestPaymentGeneralType {
@@ -25,6 +27,8 @@ export interface createRequestGeneral {
 	requiredReceipt: boolean;
 	payments: { value: string; dueDate: Date }[];
 	uploadedFiles: File[];
+	totalValue: number;
+	accountingAccout: string;
 }
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
