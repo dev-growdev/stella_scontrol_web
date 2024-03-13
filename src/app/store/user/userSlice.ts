@@ -1,14 +1,14 @@
 /* eslint import/no-extraneous-dependencies: off */
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import history from '@history';
-import { setInitialSettings } from 'app/store/fuse/settingsSlice';
-import { showMessage } from 'app/store/fuse/messageSlice';
-import settingsConfig from 'app/configs/settingsConfig';
 import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
+import history from '@history';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import settingsConfig from 'app/configs/settingsConfig';
+import { showMessage } from 'app/store/fuse/messageSlice';
+import { setInitialSettings } from 'app/store/fuse/settingsSlice';
 import { AppDispatchType, RootStateType } from 'app/store/types';
 import { UserType } from 'app/store/user';
-import { PartialDeep } from 'type-fest';
 import { AxiosError } from 'axios/index';
+import { PartialDeep } from 'type-fest';
 import jwtService from '../../auth/services/jwtService';
 import createAppAsyncThunk from '../createAppAsyncThunk';
 

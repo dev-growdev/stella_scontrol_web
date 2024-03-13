@@ -15,9 +15,10 @@ export default function CreateProductsPage() {
 	const products = useSelector(selectProducts);
 	const [editMode, setEditMode] = useState(false);
 	const [formDataProduct, setFormDataProduct] = useState<FormProductType>({
-		code: '',
+		code: 0,
 		name: '',
 		category: '',
+		description: '',
 		quantity: '',
 		measurement: ''
 	});
@@ -37,6 +38,7 @@ export default function CreateProductsPage() {
 					name: findProduct.name,
 					enable: findProduct.enable,
 					category: findProduct.category.name,
+					description: findProduct.description,
 					quantity: `${findProduct.quantity}`,
 					measurement: findProduct.measurement
 				});
@@ -51,9 +53,10 @@ export default function CreateProductsPage() {
 	const clearStates = () => {
 		setFormDataProduct({
 			uid: '',
-			code: '',
+			code: 0,
 			name: '',
 			category: '',
+			description: '',
 			quantity: '',
 			measurement: ''
 		});
@@ -66,9 +69,9 @@ export default function CreateProductsPage() {
 		const categoryId = categories.categories.find(category => category.name === formDataProduct.category);
 		const productData = {
 			categoryId: categoryId.uid ?? '',
-			code: formDataProduct.code,
 			name: formDataProduct.name,
 			enable: true,
+			description: formDataProduct.description,
 			measurement: formDataProduct.measurement,
 			quantity: +formDataProduct.quantity
 		};
@@ -95,9 +98,9 @@ export default function CreateProductsPage() {
 		const updateProductForm = {
 			uid: formDataProduct.uid,
 			category: categoryId.uid ?? '',
-			code: formDataProduct.code,
 			name: formDataProduct.name,
 			enable: formDataProduct.enable,
+			description: formDataProduct.description,
 			measurement: formDataProduct.measurement,
 			quantity: +formDataProduct.quantity
 		};
@@ -153,23 +156,26 @@ export default function CreateProductsPage() {
 							container
 							spacing={3}
 						>
+							{editMode ? (
+								<Grid
+									item
+									xs={12}
+									sm={4}
+								>
+									<TextField
+										fullWidth
+										value={formDataProduct.code}
+										onChange={e => handlePropertiesChange('code', e.target.value)}
+										label="Código"
+										disabled
+									/>
+								</Grid>
+							) : null}
+
 							<Grid
 								item
 								xs={12}
-								sm={4}
-							>
-								<TextField
-									fullWidth
-									required
-									value={formDataProduct.code}
-									onChange={e => handlePropertiesChange('code', e.target.value)}
-									label="Código"
-								/>
-							</Grid>
-							<Grid
-								item
-								xs={12}
-								sm={8}
+								sm={editMode ? 4 : 6}
 							>
 								<TextField
 									fullWidth
@@ -179,25 +185,30 @@ export default function CreateProductsPage() {
 									label="Nome"
 								/>
 							</Grid>
+							<Grid
+								item
+								xs={12}
+								sm={editMode ? 4 : 6}
+							>
+								<Autocomplete
+									id="combo-box-demo"
+									className="w-full"
+									options={categories.categories.map(category => category.enable && category.name)}
+									onChange={(e, value) => handlePropertiesChange('category', value as string)}
+									value={formDataProduct.category}
+									renderInput={params => (
+										<TextField
+											{...params}
+											label="Categoria"
+										/>
+									)}
+								/>
+							</Grid>
 						</Grid>
 					</div>
 
 					<div className="flex flex-col w-full gap-24">
 						<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
-							<Autocomplete
-								id="combo-box-demo"
-								className="w-full"
-								options={categories.categories.map(category => category.enable && category.name)}
-								onChange={(e, value) => handlePropertiesChange('category', value as string)}
-								value={formDataProduct.category}
-								renderInput={params => (
-									<TextField
-										{...params}
-										label="Categoria"
-									/>
-								)}
-							/>
-
 							<TextField
 								fullWidth
 								value={formDataProduct.measurement}
@@ -213,6 +224,19 @@ export default function CreateProductsPage() {
 						</div>
 					</div>
 
+					<div className="flex flex-col w-full gap-24">
+						<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
+							<TextField
+								rows={4}
+								value={formDataProduct.description}
+								onChange={e => handlePropertiesChange('description', e.target.value)}
+								label="Descrição"
+								multiline
+								className="w-full"
+							/>
+						</div>
+					</div>
+
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"
@@ -223,7 +247,7 @@ export default function CreateProductsPage() {
 						<Button
 							variant="contained"
 							onClick={editMode ? handleSubmitEdit : handleSubmitCreate}
-							disabled={!formDataProduct.category || !formDataProduct.name || !formDataProduct.code}
+							disabled={!formDataProduct.category || !formDataProduct.name}
 						>
 							ENVIAR
 						</Button>

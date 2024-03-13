@@ -6,29 +6,44 @@ import axios, { AxiosError } from 'axios';
 
 type AppRootStateType = RootStateType<requestPaymentGeneralSliceType>;
 
-interface RequestsType {
+interface Payment {
+	value: string;
+	dueDate: Date;
+}
+
+interface Files {
+	uid: string;
+	name: string;
+	key: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+export interface RequestType {
 	uid: string;
 	supplier: string;
 	description?: string;
 	sendReceipt: boolean;
-	payments: { value: string; dueDate: Date }[];
 	totalValue: number;
 	accountingAccout: string;
+	payments: Payment[];
+	createdAt: Date;
+	files: Files[];
 }
 
 interface RequestPaymentGeneralType {
 	loading: boolean;
-	requests: RequestsType[];
+	requests: RequestType[];
 }
 
-export interface createRequestGeneral {
+export interface CreateRequestGeneral {
 	supplier: string;
 	description: string;
 	requiredReceipt: boolean;
-	payments: { value: string; dueDate: Date }[];
 	uploadedFiles: File[];
 	totalValue: number;
 	accountingAccout: string;
+	payments: Payment[];
 }
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
@@ -38,7 +53,7 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 			const response = await axios.post<{
 				code: number;
 				success: boolean;
-				data: { request: RequestsType };
+				data: { request: RequestType };
 			}>(`${process.env.REACT_APP_API_URL}/payment-request-general`, data, {
 				headers: { 'Content-Type': 'multipart/form-data' }
 			});
@@ -74,15 +89,33 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 	}
 );
 
-export const findSupplierByCPForCNPJ = createAppAsyncThunk('/supplier/', async (cpfOrCnpj: string) => {
-	try {
-		const response = await axios.post(`${process.env.REACT_APP_API_URL}/supplier/${cpfOrCnpj}`);
-
-		return response.data.data;
-	} catch (error) {
-		throw new Error(error.response.data.message);
+export const listRequestsPaymentsByUser = createAppAsyncThunk(
+	'requestPaymentGeneral/get',
+	async (userUid: string, { dispatch }) => {
+		try {
+			const response = await axios.get<{
+				code: number;
+				success: boolean;
+				data: { request: RequestType }[];
+			}>(`${process.env.REACT_APP_API_URL}/${userUid}`);
+			const { data } = response.data;
+			return data;
+		} catch (error) {
+			const axiosError = error as AxiosError<{ message: string }>;
+			dispatch(
+				showMessage({
+					message: `${axiosError.response?.data.message}`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+			throw new Error(axiosError.response?.data.message);
+		}
 	}
-});
+);
 
 const initialState: RequestPaymentGeneralType = {
 	loading: false,
@@ -100,15 +133,18 @@ const requestPaymentGeneralSlice = createSlice({
 			})
 			.addCase(createRequestPaymentGeneral.fulfilled, (state, action) => {
 				state.loading = false;
-
-				action.payload && state.requests.push(action.payload);
+				if (action.payload) {
+					state.requests.push(action.payload);
+				}
 			})
-			.addCase(findSupplierByCPForCNPJ.pending, state => {
+			.addCase(listRequestsPaymentsByUser.pending, state => {
 				state.loading = true;
 			})
-			.addCase(findSupplierByCPForCNPJ.fulfilled, (state, action) => {
+			.addCase(listRequestsPaymentsByUser.fulfilled, (state, action) => {
 				state.loading = false;
-				action.payload && state.requests.push(action.payload);
+				if (action.payload) {
+					state.requests = action.payload;
+				}
 			});
 	}
 });

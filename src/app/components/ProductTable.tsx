@@ -104,7 +104,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Toolbar>
-				<div className="flex flex-col sm:flex-row w-full items-center gap-24 justify-between">
+				<div className="flex flex-col sm:flex-row w-full items-center gap-24 justify-between mb-32 mt-10">
 					<Typography
 						className="text-20 md:text-28"
 						component="h1"
@@ -127,7 +127,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 				</div>
 			</Toolbar>
 			<Toolbar>
-				<div className="flex flex-row sm:flex-row w-full items-center gap-24 justify-end">
+				<div className="flex flex-row sm:flex-row w-full items-center gap-24 justify-end  mb-32">
 					<TextField
 						onChange={handleSearch}
 						value={searchValue}
@@ -167,7 +167,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									key={row.uid}
 								>
 									<StyledTableCell
-										className="min-w-200"
+										className="w-200 break-words"
 										component="th"
 										scope="row"
 									>

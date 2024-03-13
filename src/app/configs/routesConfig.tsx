@@ -8,6 +8,7 @@ import authenticationConfig from '../main/authentication/authenticationConfig';
 import categoriesPageConfig from '../main/categories/CategoriesPageConfig';
 import paymentRequestFormGeneralPageConfig from '../main/form-request/FormRequestConfig';
 import requestPageConfig from '../main/form-request/RequestConfig';
+import PaymentsFormConfig from '../main/payments-form/PaymentsFormConfig';
 import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
 import ProductsPageConfig from '../main/products/ProductsPageConfig';
 
@@ -17,17 +18,18 @@ const routeConfigs: FuseRouteConfigsType = [
 	CreateProductsPageConfig,
 	ProductsPageConfig,
 	categoriesPageConfig,
+	PaymentsFormConfig,
 	...authenticationConfig
 ];
 
 /**
- * The routes of the application.
- */
+ 
+The routes of the application. */
 const routes: FuseRoutesType = [
 	...FuseUtils.generateRoutesFromConfigs(routeConfigs, settingsConfig.defaultAuth),
 	{
 		path: '/',
-		element: <Navigate to="/solicitar-pagamento-geral" />,
+		element: <Navigate to="/solicitacoes" />,
 		auth: settingsConfig.defaultAuth
 	},
 	{

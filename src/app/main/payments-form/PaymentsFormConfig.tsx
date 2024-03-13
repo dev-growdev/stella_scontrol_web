@@ -2,12 +2,12 @@ import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
 import { authRoles } from 'src/app/auth';
 
-const Request = lazy(() => import('./Requests'));
+const PaymentsForm = lazy(() => import('./PaymentsForm'));
 
 /**
  * The sign up pages config.
  */
-const requestPageConfig: FuseRouteConfigType = {
+const PaymentsFormConfig: FuseRouteConfigType = {
 	settings: {
 		layout: {
 			config: {
@@ -18,7 +18,7 @@ const requestPageConfig: FuseRouteConfigType = {
 					display: true
 				},
 				footer: {
-					display: true
+					display: false
 				},
 				leftSidePanel: {
 					display: true
@@ -32,10 +32,10 @@ const requestPageConfig: FuseRouteConfigType = {
 	auth: authRoles.admin,
 	routes: [
 		{
-			path: 'solicitacoes',
-			element: <Request />
+			path: 'formas-de-pagamento',
+			element: <PaymentsForm />
 		}
 	]
 };
 
-export default requestPageConfig;
+export default PaymentsFormConfig;
