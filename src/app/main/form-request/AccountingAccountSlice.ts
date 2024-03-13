@@ -19,7 +19,9 @@ export const getAccountingAccountByCostCenter = createAppAsyncThunk(
 	'accounting-accounts/getAccountingAccountByCostCenter',
 	async (costCenterId: number) => {
 		try {
-			const response = await axios.get(`${process.env.REACT_APP_API_URL}/accounting-accounts/${costCenterId}`);
+			const response = await axios.get(
+				`${process.env.REACT_APP_API_URL}/budget-account/accounting-accounts/${costCenterId}`
+			);
 
 			return response.data.data;
 		} catch (error) {
