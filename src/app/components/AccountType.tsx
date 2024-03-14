@@ -1,23 +1,44 @@
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, FormHelperText, TextField } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Control, Controller, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import {
+	Control,
+	Controller,
+	FieldErrors,
+	UseFormClearErrors,
+	UseFormRegister,
+	UseFormSetError,
+	UseFormSetValue,
+	UseFormUnregister
+} from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { FormDataProps } from '../main/form-request/FormRequest';
+import { FormDataType } from '../main/form-request/FormRequest';
 import { HolderType, selectPaymentsForm } from '../main/payments-form/PaymentsFormSlice';
 
 interface AccountTypeProps {
 	paymentMethod: string;
-	accountType: string;
-	control: Control<FormDataProps>;
-	register: UseFormRegister<FormDataProps>;
-	setValue: UseFormSetValue<FormDataProps>;
+	control: Control<FormDataType>;
+	register: UseFormRegister<FormDataType>;
+	setValue: UseFormSetValue<FormDataType>;
+	unregister: UseFormUnregister<FormDataType>;
+	errors: FieldErrors<FormDataType>;
+	setError: UseFormSetError<FormDataType>;
+	clearErrors: UseFormClearErrors<FormDataType>;
 }
 
-export default function AccountType({ paymentMethod, accountType, control, register, setValue }: AccountTypeProps) {
+export default function AccountType({
+	paymentMethod,
+	control,
+	register,
+	setValue,
+	unregister,
+	errors,
+	setError,
+	clearErrors
+}: AccountTypeProps) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
 	const [creditCardHolders, setCreditCardHolders] = useState<HolderType[]>([]);
@@ -35,7 +56,27 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 		}
 	}, [paymentsForm]);
 
+	useEffect(() => {
+		if (paymentMethod === 'Pix') {
+			unregister('bankTransfer');
+			unregister('cardHolder');
+		}
+		if (paymentMethod.includes('crédito') || paymentMethod.includes('corporativo')) {
+			unregister('bankTransfer');
+			unregister('pix');
+		}
+		if (paymentMethod === 'Transferência bancária') {
+			unregister('cardHolder');
+			unregister('pix');
+		}
+	}, [paymentMethod]);
+
 	function handleAutocomplete(event: ChangeEvent<HTMLInputElement>) {
+		if (!event.target.outerText) {
+			setError('cardHolder.name', { message: 'É necessário adicionar um portador.' });
+			return;
+		}
+		clearErrors('cardHolder');
 		const { outerText } = event.target;
 		setValue('cardHolder.name', outerText);
 
@@ -47,7 +88,14 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 
 	return (
 		<>
-			{paymentMethod === 'Pix' && <TextField label="Informe a chave pix" />}
+			{paymentMethod === 'Pix' && (
+				<TextField
+					label="Informe a chave pix"
+					{...register('pix')}
+					error={!!errors.pix?.message}
+					helperText={errors.pix?.message ?? ''}
+				/>
+			)}
 			{paymentMethod === 'Transferência bancária' && (
 				<div className="flex gap-24 justify-center">
 					<div className="flex flex-col w-full gap-24">
@@ -55,40 +103,60 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 							<TextField
 								fullWidth
 								label="Banco"
+								{...register('bankTransfer.bank')}
+								error={!!errors.bankTransfer?.bank?.message}
+								helperText={errors.bankTransfer?.bank?.message ?? ''}
 							/>
 							<TextField
 								fullWidth
 								label="Numero da conta"
+								{...register('bankTransfer.accountNumber')}
+								error={!!errors.bankTransfer?.accountNumber?.message}
+								helperText={errors.bankTransfer?.accountNumber?.message ?? ''}
 							/>
 							<TextField
 								fullWidth
 								label="Agência"
+								{...register('bankTransfer.agency')}
+								error={!!errors.bankTransfer?.agency?.message}
+								helperText={errors.bankTransfer?.agency?.message ?? ''}
 							/>
 						</div>
 						<div className="flex gap-24">
 							<Controller
-								name="typeAccount"
+								name="bankTransfer.accountType"
 								control={control}
 								render={field => (
 									<FormControl fullWidth>
-										<InputLabel id="demo-simple-select-label">Tipo de conta</InputLabel>
+										<InputLabel
+											error={!!errors.bankTransfer?.accountType?.message}
+											id="demo-simple-select-label"
+										>
+											Tipo de conta
+										</InputLabel>
 										<Select
 											labelId="demo-simple-select-label"
 											id="demo-simple-select"
-											value={accountType}
 											{...field}
-											{...register('typeAccount')}
+											{...register('bankTransfer.accountType')}
+											error={!!errors.bankTransfer?.accountType?.message}
 											label="Age"
 										>
 											<MenuItem value="Conta poupança">Conta poupança</MenuItem>
 											<MenuItem value="Conta corrente">Conta corrente</MenuItem>
 										</Select>
+										<FormHelperText error>
+											{errors.bankTransfer?.accountType?.message ?? ''}
+										</FormHelperText>
 									</FormControl>
 								)}
 							/>
 							<TextField
 								fullWidth
+								error={!!errors.bankTransfer?.cpfOrCnpj?.message}
+								helperText={errors.bankTransfer?.cpfOrCnpj?.message ?? ''}
 								label="CPF ou CNPJ do Beneficiário"
+								{...register('bankTransfer.cpfOrCnpj')}
 							/>
 						</div>
 					</div>
@@ -107,6 +175,8 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 								<TextField
 									{...field}
 									{...params}
+									error={!!errors.cardHolder?.name?.message}
+									helperText={errors.cardHolder?.name?.message ?? ''}
 									label="selecionar ao portador"
 								/>
 							)}
@@ -127,6 +197,8 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 								<TextField
 									{...field}
 									{...params}
+									error={!!errors.cardHolder?.name?.message}
+									helperText={errors.cardHolder?.name?.message ?? ''}
 									label="selecionar ao portador"
 								/>
 							)}

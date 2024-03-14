@@ -50,10 +50,17 @@ export interface FormDataType {
 	description?: string;
 	supplier: string;
 	payments: Payments[];
-	typeAccount: string;
 	uploadedFiles: File[];
 	accountingAccount: string;
 	apportionments?: Apportionments[];
+	pix?: string;
+	bankTransfer?: {
+		bank: string;
+		accountNumber: string;
+		agency: string;
+		accountType: string;
+		cpfOrCnpj: string;
+	};
 }
 
 export interface ProductOptionType {
@@ -79,6 +86,28 @@ const schema = object().shape({
 	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
 	requiredReceipt: boolean(),
 	isRatiable: boolean().required(),
+	cardHolder: object().when('paymentMethod', (paymentMethod, schema) => {
+		return paymentMethod[0].includes('Cartão')
+			? schema.shape({
+					uid: string().required(),
+					name: string().required('É necessário adicionar um portador.')
+			  })
+			: schema;
+	}),
+	bankTransfer: object().when('paymentMethod', (paymentMethod, schema) => {
+		return paymentMethod[0] === 'Transferência bancária'
+			? schema.shape({
+					bank: string().required('É necessário adicionar um banco'),
+					accountNumber: string().required('É necessário adicionar um número de conta'),
+					agency: string().required('É necessário adicionar uma agência'),
+					accountType: string().required('É necessário adicionar um tipo de conta.'),
+					cpfOrCnpj: string().required('É necessário adicionar um CPF ou CNPJ.')
+			  })
+			: schema;
+	}),
+	pix: string().when('paymentMethod', (paymentMethod, schema) => {
+		return paymentMethod[0] === 'Pix' ? schema.required('É necessário adicionar um Pix.') : schema;
+	}),
 	products: array()
 		.of(
 			object()
@@ -134,7 +163,8 @@ export default function PaymentRequestFormGeneral() {
 		reset,
 		formState: { errors },
 		setError,
-		clearErrors
+		clearErrors,
+		unregister
 	} = useForm<FormDataType>({
 		defaultValues,
 		resolver: yupResolver(schema)
@@ -195,6 +225,7 @@ export default function PaymentRequestFormGeneral() {
 	}, [watch('apportionments')]);
 
 	function onSubmit(data: FormDataType) {
+		console.log(data);
 		if (watch('isRatiable')) {
 			setValue('accountingAccount', '');
 			const apportionments = watch('apportionments');
@@ -380,7 +411,7 @@ export default function PaymentRequestFormGeneral() {
 						</div>
 					</div>
 					<PaymentMethod
-						paymentMethod={watch('paymentMethod')}
+						selectedPaymentMethod={watch('paymentMethod')}
 						control={control}
 						register={register}
 						errors={errors}
@@ -389,8 +420,11 @@ export default function PaymentRequestFormGeneral() {
 						paymentMethod={watch('paymentMethod')}
 						control={control}
 						register={register}
-						accountType={watch('typeAccount')}
 						setValue={setValue}
+						errors={errors}
+						setError={setError}
+						unregister={unregister}
+						clearErrors={clearErrors}
 					/>
 					<RequiredReceipt
 						requiredReceipt={watch('requiredReceipt')}
