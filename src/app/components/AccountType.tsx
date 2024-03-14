@@ -1,19 +1,50 @@
-import { TextField } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { Control, Controller, UseFormRegister } from 'react-hook-form';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Control, Controller, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 import { FormDataProps } from '../main/form-request/FormRequest';
+import { HolderType, selectPaymentsForm } from '../main/payments-form/PaymentsFormSlice';
 
 interface AccountTypeProps {
 	paymentMethod: string;
 	accountType: string;
 	control: Control<FormDataProps>;
 	register: UseFormRegister<FormDataProps>;
+	setValue: UseFormSetValue<FormDataProps>;
 }
 
-export default function AccountType({ paymentMethod, accountType, control, register }: AccountTypeProps) {
+export default function AccountType({ paymentMethod, accountType, control, register, setValue }: AccountTypeProps) {
+	const paymentsFormRedux = useSelector(selectPaymentsForm);
+	const { paymentsForm } = paymentsFormRedux;
+	const [creditCardHolders, setCreditCardHolders] = useState<HolderType[]>([]);
+	const [corporateCardHolders, setCorporateCardHolders] = useState<HolderType[]>([]);
+
+	useEffect(() => {
+		if (paymentsForm && paymentsForm.length > 0) {
+			const creditCardHolders = paymentsForm.filter(holder => holder.type === 'credit' && holder.enable === true);
+			setCreditCardHolders(creditCardHolders as HolderType[]);
+
+			const corporateCardHolders = paymentsForm.filter(
+				holder => holder.type === 'corporate' && holder.enable === true
+			);
+			setCorporateCardHolders(corporateCardHolders as HolderType[]);
+		}
+	}, [paymentsForm]);
+
+	function handleAutocomplete(event: ChangeEvent<HTMLInputElement>) {
+		const { outerText } = event.target;
+		setValue('cardHolder.name', outerText);
+
+		const findHolder = paymentsForm.find(
+			(item: HolderType) => item.name === outerText && item.namePaymentForm === paymentMethod
+		);
+		setValue('cardHolder.uid', findHolder.uid);
+	}
+
 	return (
 		<>
 			{paymentMethod === 'Pix' && <TextField label="Informe a chave pix" />}
@@ -63,7 +94,46 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 					</div>
 				</div>
 			)}
-			{paymentMethod.includes('Cartão') && <TextField label="selecionar ao portador" />}
+			{paymentMethod.includes('crédito') && (
+				<Controller
+					control={control}
+					name="cardHolder"
+					render={({ field }) => (
+						<Autocomplete
+							id="credit-card-holder"
+							onChange={handleAutocomplete}
+							options={creditCardHolders.map(holder => holder.name)}
+							renderInput={params => (
+								<TextField
+									{...field}
+									{...params}
+									label="selecionar ao portador"
+								/>
+							)}
+						/>
+					)}
+				/>
+			)}
+			{paymentMethod.includes('corporativo') && (
+				<Controller
+					control={control}
+					name="cardHolder"
+					render={({ field }) => (
+						<Autocomplete
+							id="corporate-card-holder"
+							onChange={handleAutocomplete}
+							options={corporateCardHolders.map(holder => holder.name)}
+							renderInput={params => (
+								<TextField
+									{...field}
+									{...params}
+									label="selecionar ao portador"
+								/>
+							)}
+						/>
+					)}
+				/>
+			)}
 		</>
 	);
 }

@@ -37,7 +37,7 @@ const navigationConfig: FuseNavigationType = [
 				title: 'Produtos',
 				type: 'collapse',
 				icon: 'heroicons-outline:cube',
-				url: 'cadastrar-produto'
+				url: 'produtos'
 			},
 			{
 				id: 'tag2',

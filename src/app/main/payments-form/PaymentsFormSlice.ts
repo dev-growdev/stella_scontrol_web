@@ -13,6 +13,7 @@ export interface PaymentForm {
 	uid: string;
 	name: string;
 	enable: boolean;
+	type: string;
 }
 export interface HolderType {
 	uid: string;
@@ -49,7 +50,7 @@ export const getPaymentsForm = createAsyncThunk('payments-form/getPaymentsForm',
 		const converted =
 			Array.isArray(data) &&
 			data.map(item =>
-				item.type
+				item.paymentForm
 					? {
 							uid: item.uid,
 							name: item.name,
@@ -58,7 +59,7 @@ export const getPaymentsForm = createAsyncThunk('payments-form/getPaymentsForm',
 							namePaymentForm: item.paymentForm.name,
 							uidPaymentForm: item.paymentForm.uid
 					  }
-					: { uid: item.uid, name: item.name, enable: item.enable }
+					: { uid: item.uid, name: item.name, enable: item.enable, type: '' }
 			);
 
 		return converted;
@@ -93,7 +94,8 @@ export const disablePaymentsForm = createAsyncThunk(
 				return {
 					uid: data.uid,
 					name: data.name,
-					enable: data.enable
+					enable: data.enable,
+					type: ''
 				};
 			}
 			throw new Error('Não foi possível desabilitar.');
