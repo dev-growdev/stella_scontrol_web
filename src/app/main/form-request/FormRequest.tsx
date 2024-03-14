@@ -87,7 +87,7 @@ const schema = object().shape({
 				.required('É necessário adicionar um produto.')
 		)
 		.min(1, 'É necessário adicionar um produto.'),
-	description: string().required('É necessário uma descrição.'),
+	description: string(),
 	supplier: string().required('É necessário adicionar um fornecedor.'),
 	payments: array()
 		.of(

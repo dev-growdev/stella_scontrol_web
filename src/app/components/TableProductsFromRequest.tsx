@@ -9,6 +9,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ChangeEvent, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { showMessage } from 'app/store/fuse/messageSlice';
+import { useAppDispatch } from 'app/store';
 import { FormDataProps, ProductOptionType } from '../main/form-request/FormRequest';
 
 interface TableProductsFromRequestProps {
@@ -28,6 +30,7 @@ export default function TableProductsFromRequest({
 }: TableProductsFromRequestProps) {
 	const [value, setValue] = useState<ProductOptionType | null>(null);
 	const products = watch('products');
+	const dispatch = useAppDispatch();
 
 	const handleInputValueAutoComplete = (event: ChangeEvent<HTMLInputElement>) => {
 		setValue({ product: event.target.outerText });
@@ -37,6 +40,20 @@ export default function TableProductsFromRequest({
 	};
 
 	const handleAddProduct = () => {
+		if (!value || !value.product) {
+			dispatch(
+				showMessage({
+					message: 'Adicione um produto para enviar solicitação',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+
+			return;
+		}
 		setValueProducts('products', [...products, { product: value.product }]);
 		setValue(null);
 	};
