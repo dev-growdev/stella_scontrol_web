@@ -1,6 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { getCostCenters } from 'app/store/cost-center/costCenterSlice';
 import { selectUser } from 'app/store/user/userSlice';
@@ -20,6 +20,8 @@ import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getPaymentsForm } from '../payments-form/PaymentsFormSlice';
 import { getProducts, selectProducts } from '../products/productsSlice';
+import { formatedNumeral } from '../utils/formated-value';
+import { getAccountingAccountByCostCenter, selectAccountingAccount } from './AccountingAccountSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
 interface Payments {
@@ -38,7 +40,7 @@ export interface CardHolderToForm {
 	name: string;
 }
 
-export interface FormDataProps {
+export interface FormDataType {
 	paymentMethod: string;
 	cardHolder?: CardHolderToForm;
 	requiredReceipt: boolean;
@@ -49,6 +51,7 @@ export interface FormDataProps {
 	payments: Payments[];
 	typeAccount: string;
 	uploadedFiles: File[];
+	accountingAccount: string;
 	apportionments?: Apportionments[];
 }
 
@@ -67,6 +70,7 @@ const defaultValues = {
 	payments: [{ value: '', dueDate: null }],
 	typeAccount: '',
 	uploadedFiles: [],
+	accountingAccount: '',
 	apportionments: []
 };
 
@@ -95,6 +99,7 @@ const schema = object().shape({
 		.required(),
 	typeAccount: string(),
 	uploadedFiles: array(),
+	accountingAccount: string(),
 	apportionments: array()
 		.of(
 			object().shape({
@@ -115,6 +120,9 @@ export default function PaymentRequestFormGeneral() {
 	const productsRedux = useSelector(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState('');
+	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
+	const accountingAccountRedux = useSelector(selectAccountingAccount);
+	const [totalValue, setTotalValue] = useState('');
 
 	const {
 		control,
@@ -126,7 +134,7 @@ export default function PaymentRequestFormGeneral() {
 		formState: { errors },
 		setError,
 		clearErrors
-	} = useForm<FormDataProps>({
+	} = useForm<FormDataType>({
 		defaultValues,
 		resolver: yupResolver(schema)
 	});
@@ -143,7 +151,21 @@ export default function PaymentRequestFormGeneral() {
 	const { remove: removeCostCenter } = useFieldArray({ control, name: 'apportionments' });
 
 	useEffect(() => {
+		const subscription = watch(value => {
+			if (Array.isArray(value.payments)) {
+				const total = value.payments.reduce((acc, current) => {
+					const value = parseFloat(current.value) || 0;
+					return acc + value;
+				}, 0);
+				setTotalValue(total.toString().replace('.', ','));
+			}
+		});
+		return () => subscription.unsubscribe();
+	}, [watch]);
+
+	useEffect(() => {
 		dispatch(getProducts());
+		dispatch(getAccountingAccountByCostCenter(19));
 		dispatch(getCostCenters());
 		dispatch(getPaymentsForm());
 	}, []);
@@ -155,7 +177,14 @@ export default function PaymentRequestFormGeneral() {
 				.filter(product => product);
 			setProductsToOptionsSelect(refProducts);
 		}
-	}, [productsRedux]);
+
+		if (accountingAccountRedux.accountingAccount.length > 0) {
+			const refAccountingAccount = accountingAccountRedux.accountingAccount
+				.map(accountingAccount => accountingAccount.name)
+				.filter(accountingAccount => accountingAccount);
+			setAccountingAccountToOptionsSelect(refAccountingAccount);
+		}
+	}, [productsRedux, accountingAccountRedux]);
 
 	useEffect(() => {
 		const apportionments = watch('apportionments');
@@ -164,7 +193,7 @@ export default function PaymentRequestFormGeneral() {
 		}
 	}, [watch('apportionments')]);
 
-	function onSubmit(data: FormDataProps) {
+	function onSubmit(data: FormDataType) {
 		if (watch('isRatiable')) {
 			const apportionments = watch('apportionments');
 
@@ -177,9 +206,10 @@ export default function PaymentRequestFormGeneral() {
 			// }
 		}
 
-		const request = { ...data, userCreatedUid: user.uid };
+		const request = { ...data, userCreatedUid: user.uid, totalValue };
 
 		const formData = new FormData();
+
 		const json = JSON.stringify(request);
 		formData.append('document', json);
 
@@ -297,16 +327,19 @@ export default function PaymentRequestFormGeneral() {
 									key={field.id}
 								>
 									<ValueAndDueDate
+										setValue={setValue}
 										errors={errors}
 										index={index}
 										control={control}
-										register={register}
 										remove={removePayments}
 									/>
 								</div>
 							))}
 						</div>
-						<div className="flex items-center ">
+						<div className="mb-28">
+							<Typography>Valor total: R$ {formatedNumeral(totalValue)}</Typography>
+						</div>
+						<div className="flex items-center">
 							<Button
 								onClick={() => appendPayments({ value: '', dueDate: null })}
 								className="rounded-4"
@@ -314,8 +347,8 @@ export default function PaymentRequestFormGeneral() {
 							>
 								<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
 								{watch('payments').length > 0
-									? 'Adicionar mais pagamentos.'
-									: 'Adicionar algum pagamento.'}
+									? 'Adicionar mais pagamentos'
+									: 'Adicionar algum pagamento'}
 							</Button>
 						</div>
 					</div>
@@ -351,6 +384,21 @@ export default function PaymentRequestFormGeneral() {
 						setError={setError}
 						totalApportionmentsValue={setTotalApportionmentsValue}
 					/>
+					{!watch('isRatiable') && (
+						<Autocomplete
+							className="w-full"
+							options={accountingAccountToOptionsSelect}
+							renderInput={params => (
+								<TextField
+									{...params}
+									label="Escolha a Conta Contábil"
+									{...register('accountingAccount')}
+									error={!!errors.accountingAccount}
+									helperText={errors?.accountingAccount?.message}
+								/>
+							)}
+						/>
+					)}
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
 							variant="outlined"

@@ -24,6 +24,8 @@ export interface RequestType {
 	supplier: string;
 	description?: string;
 	sendReceipt: boolean;
+	totalValue: string;
+	accountingAccout: string;
 	payments: Payment[];
 	createdAt: Date;
 	files: Files[];
@@ -38,6 +40,9 @@ export interface CreateRequestGeneral {
 	supplier: string;
 	description: string;
 	requiredReceipt: boolean;
+	uploadedFiles: File[];
+	totalValue: string;
+	accountingAccout: string;
 	payments: Payment[];
 }
 

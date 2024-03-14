@@ -1,28 +1,8 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import numeral from 'numeral';
-import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { CostCenters } from '../main/form-request/FormRequest';
-
-numeral.register('locale', 'br', {
-	delimiters: {
-		thousands: '.',
-		decimal: ','
-	},
-	abbreviations: {
-		thousand: 'k',
-		million: 'm',
-		billion: 'b',
-		trillion: 't'
-	},
-	ordinal(number) {
-		return number === 1 ? 'um' : 'um';
-	},
-	currency: {
-		symbol: 'R$'
-	}
-});
+import { formatedNumeral } from '../main/utils/formated-value';
 
 interface RatiableProps {
 	costCenters: CostCenters[];
@@ -30,17 +10,7 @@ interface RatiableProps {
 	totalApportionmentsValue: (value: string) => void;
 }
 
-export default function RatiableTable({ costCenters, remove, totalApportionmentsValue }: RatiableProps) {
-	numeral.locale('br');
-
-	function formatPrice(value) {
-		return numeral(value).format('0,0.00');
-	}
-
-	useEffect(() => {
-		totalApportionmentsValue(totalValue());
-	}, [totalValue]);
-
+export default function RatiableTable({ costCenters, remove }: RatiableProps) {
 	function totalValue() {
 		let total = 0;
 
@@ -52,7 +22,7 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 			}
 		});
 
-		return numeral(total).format('0,0.00');
+		return formatedNumeral(total);
 	}
 
 	return (
@@ -84,7 +54,7 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${formatPrice(item.value)}</TableCell>
+								<TableCell>R${formatedNumeral(item.value)}</TableCell>
 								<TableCell className="flex justify-end">
 									<FuseSvgIcon
 										color="primary"
