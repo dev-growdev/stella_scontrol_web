@@ -170,7 +170,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									key={row.uid}
 								>
 									<StyledTableCell
-										className="w-256 break-words"
+										className="w-[25rem] break-words"
 										component="th"
 										scope="row"
 									>
@@ -178,7 +178,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									</StyledTableCell>
 
 									<StyledTableCell
-										className="w-224 break-words"
+										className="w-[24rem] break-words"
 										component="th"
 										scope="row"
 									>
@@ -186,7 +186,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									</StyledTableCell>
 
 									<StyledTableCell
-										className="w-224 break-words"
+										className="w-[27rem] break-words"
 										component="th"
 										scope="row"
 									>
@@ -198,7 +198,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 										component="th"
 										scope="row"
 									>
-										{row.measurement}
+										{!row.measurement ? '-' : row.measurement}
 									</StyledTableCell>
 
 									<StyledTableCell
@@ -206,16 +206,16 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 										component="th"
 										scope="row"
 									>
-										{row.quantity}
+										{row.quantity === 0 ? '-' : row.quantity}
 									</StyledTableCell>
 
-									<StyledTableCell className="min-w-200 flex justify-end">
+									<StyledTableCell className="w-112 justify-end">
 										<Stack
 											direction="row"
 											spacing={1}
 										>
 											<Chip
-												className="min-w-64"
+												className="min-w-68 justify-center"
 												color={row.enable ? 'primary' : 'default'}
 												sx={{
 													color: row.enable
