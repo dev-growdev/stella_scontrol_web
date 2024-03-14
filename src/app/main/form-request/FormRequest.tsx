@@ -19,9 +19,9 @@ import TableProductsFromRequest from '../../components/TableProductsFromRequest'
 import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
 import { getProducts, selectProducts } from '../products/productsSlice';
+import { formatedNumeral } from '../utils/formated-value';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from './AccountingAccountSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
-import numeral from '../utils/formated-value';
 
 interface Payments {
 	value: string;
@@ -149,7 +149,7 @@ export default function PaymentRequestFormGeneral() {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
 				}, 0);
-				setTotalValue(total.toString());
+				setTotalValue(total.toString().replace('.', ','));
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -315,17 +315,17 @@ export default function PaymentRequestFormGeneral() {
 									key={field.id}
 								>
 									<ValueAndDueDate
+										setValue={setValue}
 										errors={errors}
 										index={index}
 										control={control}
-										register={register}
 										remove={removePayments}
 									/>
 								</div>
 							))}
 						</div>
 						<div className="mb-28">
-							<Typography>Valor total: R$ {numeral(totalValue).format('0,0.00')}</Typography>
+							<Typography>Valor total: R$ {formatedNumeral(totalValue)}</Typography>
 						</div>
 						<div className="flex items-center">
 							<Button

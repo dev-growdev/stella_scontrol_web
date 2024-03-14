@@ -19,4 +19,7 @@ numeral.register('locale', 'br', {
 	}
 });
 
-export default numeral;
+export function formatedNumeral(value) {
+	numeral.locale('br');
+	return numeral(value).format('0,0.00');
+}

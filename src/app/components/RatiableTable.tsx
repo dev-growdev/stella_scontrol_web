@@ -2,7 +2,7 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { CostCenters } from '../main/form-request/FormRequest';
-import numeral from '../main/utils/formated-value';
+import { formatedNumeral } from '../main/utils/formated-value';
 
 interface RatiableProps {
 	costCenters: CostCenters[];
@@ -21,7 +21,7 @@ export default function RatiableTable({ costCenters, remove }: RatiableProps) {
 			}
 		});
 
-		return numeral(total).format('0,0.00');
+		return formatedNumeral(total);
 	}
 
 	return (
@@ -53,7 +53,7 @@ export default function RatiableTable({ costCenters, remove }: RatiableProps) {
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${numeral(item.value).format('0,0.00')}</TableCell>
+								<TableCell>R${formatedNumeral(item.value)}</TableCell>
 								<TableCell className="flex justify-end">
 									<FuseSvgIcon
 										color="primary"
