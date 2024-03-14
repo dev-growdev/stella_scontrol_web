@@ -28,10 +28,10 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 			const creditCardHolders = paymentsForm.filter(holder => holder.type === 'credit' && holder.enable === true);
 			setCreditCardHolders(creditCardHolders as HolderType[]);
 
-			const corporatedCardHolders = paymentsForm.filter(
+			const corporateCardHolders = paymentsForm.filter(
 				holder => holder.type === 'corporate' && holder.enable === true
 			);
-			setCorporateCardHolders(corporatedCardHolders as HolderType[]);
+			setCorporateCardHolders(corporateCardHolders as HolderType[]);
 		}
 	}, [paymentsForm]);
 
@@ -100,7 +100,7 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 					name="cardHolder"
 					render={({ field }) => (
 						<Autocomplete
-							id="combo-box-demo"
+							id="credit-card-holder"
 							onChange={handleAutocomplete}
 							options={creditCardHolders.map(holder => holder.name)}
 							renderInput={params => (
@@ -120,7 +120,7 @@ export default function AccountType({ paymentMethod, accountType, control, regis
 					name="cardHolder"
 					render={({ field }) => (
 						<Autocomplete
-							id="combo-box-demo"
+							id="corporate-card-holder"
 							onChange={handleAutocomplete}
 							options={corporateCardHolders.map(holder => holder.name)}
 							renderInput={params => (
