@@ -164,7 +164,6 @@ export default function PaymentRequestFormGeneral() {
 	}, [watch('apportionments')]);
 
 	function onSubmit(data: FormDataProps) {
-		console.log(data);
 		if (watch('isRatiable')) {
 			const apportionments = watch('apportionments');
 
