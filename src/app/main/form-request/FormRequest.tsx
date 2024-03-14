@@ -78,7 +78,7 @@ const defaultValues = {
 const schema = object().shape({
 	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
 	requiredReceipt: boolean(),
-	isRatiable: boolean(),
+	isRatiable: boolean().required(),
 	products: array()
 		.of(
 			object()
@@ -196,12 +196,14 @@ export default function PaymentRequestFormGeneral() {
 
 	function onSubmit(data: FormDataType) {
 		if (watch('isRatiable')) {
+			setValue('accountingAccount', '');
 			const apportionments = watch('apportionments');
 
 			if (apportionments.length === 0) {
 				setError('apportionments', { message: 'É necessário adicionar rateio.' });
 				return;
 			}
+
 			if (totalApportionmentsValue !== totalValue) {
 				dispatch(
 					showMessage({
@@ -215,6 +217,20 @@ export default function PaymentRequestFormGeneral() {
 				);
 				return;
 			}
+		}
+
+		if (watch('isRatiable') === false && watch('accountingAccount') === '') {
+			dispatch(
+				showMessage({
+					message: `É necessário adicionar uma conta contábil.`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+			return;
 		}
 
 		const request = { ...data, userCreatedUid: user.uid, totalValue };
