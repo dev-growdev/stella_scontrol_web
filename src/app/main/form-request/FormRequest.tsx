@@ -18,6 +18,7 @@ import RequiredReceipt from '../../components/RequiredReceipt';
 import TableProductsFromRequest from '../../components/TableProductsFromRequest';
 import UploadFiles from '../../components/UploadFiles';
 import ValueAndDueDate from '../../components/ValueAndDueDate';
+import { getPaymentsForm } from '../payments-form/PaymentsFormSlice';
 import { getProducts, selectProducts } from '../products/productsSlice';
 import { createRequestPaymentGeneral } from './FormRequestSlice';
 
@@ -32,8 +33,14 @@ export interface Apportionments {
 	value: string;
 }
 
+export interface CardHolderToForm {
+	uid: string;
+	name: string;
+}
+
 export interface FormDataProps {
 	paymentMethod: string;
+	cardHolder?: CardHolderToForm;
 	requiredReceipt: boolean;
 	isRatiable: boolean;
 	products: { product: string }[];
@@ -137,6 +144,7 @@ export default function PaymentRequestFormGeneral() {
 	useEffect(() => {
 		dispatch(getProducts());
 		dispatch(getCostCenters());
+		dispatch(getPaymentsForm());
 	}, []);
 
 	useEffect(() => {
@@ -318,6 +326,7 @@ export default function PaymentRequestFormGeneral() {
 						control={control}
 						register={register}
 						accountType={watch('typeAccount')}
+						setValue={setValue}
 					/>
 					<RequiredReceipt
 						requiredReceipt={watch('requiredReceipt')}
