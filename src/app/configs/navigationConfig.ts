@@ -29,7 +29,7 @@ const navigationConfig: FuseNavigationType = [
 	{
 		id: 'clock',
 		title: 'Cadastros',
-		type: 'collapse',
+		type: 'item',
 		icon: 'heroicons-outline:clock',
 		children: [
 			{
