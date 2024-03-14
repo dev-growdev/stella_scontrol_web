@@ -3,6 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { getCostCenters } from 'app/store/cost-center/costCenterSlice';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -157,7 +158,7 @@ export default function PaymentRequestFormGeneral() {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
 				}, 0);
-				setTotalValue(total.toString().replace('.', ','));
+				setTotalValue(formatedNumeral(total.toString().replace('.', ',')));
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -201,9 +202,19 @@ export default function PaymentRequestFormGeneral() {
 				setError('apportionments', { message: 'É necessário adicionar rateio.' });
 				return;
 			}
-			// if(totalApportionmentsValue !== watch('')){
-
-			// }
+			if (totalApportionmentsValue !== totalValue) {
+				dispatch(
+					showMessage({
+						message: `O rateio deve ser igual ao valor total da solicitação.`,
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'error'
+					})
+				);
+				return;
+			}
 		}
 
 		const request = { ...data, userCreatedUid: user.uid, totalValue };

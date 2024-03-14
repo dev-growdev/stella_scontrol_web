@@ -1,5 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { CostCenters } from '../main/form-request/FormRequest';
 import { formatedNumeral } from '../main/utils/formated-value';
@@ -10,7 +11,11 @@ interface RatiableProps {
 	totalApportionmentsValue: (value: string) => void;
 }
 
-export default function RatiableTable({ costCenters, remove }: RatiableProps) {
+export default function RatiableTable({ costCenters, remove, totalApportionmentsValue }: RatiableProps) {
+	useEffect(() => {
+		totalApportionmentsValue(totalValue());
+	}, [totalValue]);
+
 	function totalValue() {
 		let total = 0;
 
