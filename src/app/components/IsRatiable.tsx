@@ -24,6 +24,7 @@ interface RatiableProps {
 	remove: UseFieldArrayRemove;
 	errors: FieldErrors<FormDataProps>;
 	setError: UseFormSetError<FormDataProps>;
+	totalApportionmentsValue: (value: string) => void;
 }
 
 interface AccountingAccountType {
@@ -38,7 +39,8 @@ export default function IsRatiable({
 	watch,
 	setValue,
 	remove,
-	errors
+	errors,
+	totalApportionmentsValue
 }: RatiableProps) {
 	const costCentersRedux = useSelector(selectedCostCenters);
 	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
@@ -239,6 +241,7 @@ export default function IsRatiable({
 					<RatiableTable
 						remove={remove}
 						costCenters={formCostCenters}
+						totalApportionmentsValue={totalApportionmentsValue}
 					/>
 				</>
 			)}
