@@ -150,8 +150,11 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 						className="flex justify-between font-600"
 						sx={{ backgroundColor: theme => theme.palette.action.hover }}
 					>
+						<StyledTableCell>Código</StyledTableCell>
 						<StyledTableCell>Nome</StyledTableCell>
 						<StyledTableCell>Categoria</StyledTableCell>
+						<StyledTableCell>UN</StyledTableCell>
+						<StyledTableCell>Qtde</StyledTableCell>
 						<StyledTableCell>Status</StyledTableCell>
 						<StyledTableCell>Ações</StyledTableCell>
 					</TableHead>
@@ -167,16 +170,45 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									key={row.uid}
 								>
 									<StyledTableCell
-										className="w-200 break-words"
+										className="w-256 break-words"
+										component="th"
+										scope="row"
+									>
+										{row.code}
+									</StyledTableCell>
+
+									<StyledTableCell
+										className="w-224 break-words"
 										component="th"
 										scope="row"
 									>
 										{row.name}
 									</StyledTableCell>
 
-									<StyledTableCell className="min-w-200 flex justify-center">
+									<StyledTableCell
+										className="w-224 break-words"
+										component="th"
+										scope="row"
+									>
 										{row.category.name}
 									</StyledTableCell>
+
+									<StyledTableCell
+										className="w-224 break-words"
+										component="th"
+										scope="row"
+									>
+										{row.measurement}
+									</StyledTableCell>
+
+									<StyledTableCell
+										className="w-224 break-words"
+										component="th"
+										scope="row"
+									>
+										{row.quantity}
+									</StyledTableCell>
+
 									<StyledTableCell className="min-w-200 flex justify-end">
 										<Stack
 											direction="row"
