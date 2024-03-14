@@ -97,7 +97,6 @@ export default function IsRatiable({
 	const handleValueCostCenter = (event: ChangeEvent<HTMLInputElement>) => {
 		let { value } = event.target;
 		value = value.replace(/[^\d,]/g, '');
-
 		setValueCostCenter(value);
 	};
 
