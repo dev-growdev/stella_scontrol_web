@@ -43,7 +43,7 @@ export default function TableProductsFromRequest({
 		if (!value || !value.product) {
 			dispatch(
 				showMessage({
-					message: 'Adicione um produto para enviar solicitação.',
+					message: 'Adicione um produto para enviar solicitação',
 					anchorOrigin: {
 						vertical: 'top',
 						horizontal: 'center'
