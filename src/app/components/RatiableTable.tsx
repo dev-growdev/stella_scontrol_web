@@ -1,6 +1,7 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import numeral from 'numeral';
+import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { CostCenters } from '../main/form-request/FormRequest';
 
@@ -26,14 +27,19 @@ numeral.register('locale', 'br', {
 interface RatiableProps {
 	costCenters: CostCenters[];
 	remove: UseFieldArrayRemove;
+	totalApportionmentsValue: (value: string) => void;
 }
 
-export default function RatiableTable({ costCenters, remove }: RatiableProps) {
+export default function RatiableTable({ costCenters, remove, totalApportionmentsValue }: RatiableProps) {
 	numeral.locale('br');
 
 	function formatPrice(value) {
 		return numeral(value).format('0,0.00');
 	}
+
+	useEffect(() => {
+		totalApportionmentsValue(totalValue());
+	}, [totalValue]);
 
 	function totalValue() {
 		let total = 0;

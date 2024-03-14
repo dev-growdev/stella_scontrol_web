@@ -114,6 +114,7 @@ export default function PaymentRequestFormGeneral() {
 	const user = useSelector(selectUser);
 	const productsRedux = useSelector(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState('');
 
 	const {
 		control,
@@ -171,6 +172,9 @@ export default function PaymentRequestFormGeneral() {
 				setError('apportionments', { message: 'É necessário adicionar rateio.' });
 				return;
 			}
+			// if(totalApportionmentsValue !== watch('')){
+
+			// }
 		}
 
 		const request = { ...data, userCreatedUid: user.uid };
@@ -345,6 +349,7 @@ export default function PaymentRequestFormGeneral() {
 						remove={removeCostCenter}
 						errors={errors}
 						setError={setError}
+						totalApportionmentsValue={setTotalApportionmentsValue}
 					/>
 					<div className="flex justify-end gap-10 flex-col sm:flex-row">
 						<Button
