@@ -29,13 +29,13 @@ const navigationConfig: FuseNavigationType = [
 	{
 		id: 'clock',
 		title: 'Cadastros',
-		type: 'item',
+		type: 'collapse',
 		icon: 'heroicons-outline:clock',
 		children: [
 			{
 				id: 'cube2',
 				title: 'Produtos',
-				type: 'collapse',
+				type: 'item',
 				icon: 'heroicons-outline:cube',
 				url: 'produtos'
 			},
