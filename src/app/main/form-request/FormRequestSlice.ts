@@ -97,7 +97,7 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk(
 				code: number;
 				success: boolean;
 				data: { request: RequestType }[];
-			}>(`${process.env.REACT_APP_API_URL}/${userUid}`);
+			}>(`${process.env.REACT_APP_API_URL}/payment-request-general/${userUid}`);
 			const { data } = response.data;
 			return data;
 		} catch (error) {
