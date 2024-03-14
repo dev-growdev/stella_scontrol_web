@@ -3,6 +3,7 @@ import categories from '../main/categories/categoriesSlice';
 import requestPaymentGeneral from '../main/form-request/FormRequestSlice';
 import paymentsForm from '../main/payments-form/PaymentsFormSlice';
 import products from '../main/products/productsSlice';
+import accountingAcoount from '../main/form-request/AccountingAccountSlice';
 import costCenter from './cost-center/costCenterSlice';
 import fuse from './fuse';
 import i18n from './i18nSlice';
@@ -19,6 +20,7 @@ const createReducer = (asyncReducers: ReducersMapObject) =>
 		categories,
 		requestPaymentGeneral,
 		products,
+		accountingAcoount,
 		paymentsForm,
 		i18n,
 		...asyncReducers

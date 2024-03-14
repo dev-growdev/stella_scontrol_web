@@ -24,7 +24,7 @@ export default function RequestUser({ user }: RequestUserProps) {
 				fullWidth
 				disabled
 				label="Centro de custo"
-				value={user.role}
+				value="3.1.1.2.08.1 CUSTO MERCADORIAS IMPORTADAS"
 			/>
 		</div>
 	);
