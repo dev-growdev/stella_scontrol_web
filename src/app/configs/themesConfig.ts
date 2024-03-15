@@ -34,6 +34,7 @@ export const themesConfig: FuseThemesType = {
 				white: 'rgb(255, 255, 255)'
 			},
 			primary: {
+				// @ts-expect-error - ignore
 				background: '#e5f7fa',
 				light: '#00d3f6',
 				main: '#00abc8',
@@ -41,6 +42,7 @@ export const themesConfig: FuseThemesType = {
 				contrastText: darkPaletteText.primary
 			},
 			secondary: {
+				// @ts-expect-error - ignore
 				background: '#f3f3f3',
 				light: '#acacac',
 				main: '#565656',

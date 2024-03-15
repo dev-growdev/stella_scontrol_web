@@ -8,7 +8,7 @@
 			"@mock-api": ["./src/@mock-api"],
 			"app/store": ["./src/app/store/index"],
 			"app/store/*": ["./src/app/store/*"],
-			"app/components/*": ["src/app/components/*"],
+			"app/components/*": ["src/app/main/modules/s-control/components/*"],
 			"app/configs/*": ["./src/app/configs/*"],
 			"app/theme-layouts/*": ["./src/app/theme-layouts/*"],
 			"app/AppContext": ["./src/app/AppContext"]

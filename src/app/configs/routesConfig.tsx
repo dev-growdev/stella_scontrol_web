@@ -5,31 +5,19 @@ import settingsConfig from 'app/configs/settingsConfig';
 import { Navigate } from 'react-router-dom';
 import Error404Page from '../main/404/Error404Page';
 import authenticationConfig from '../main/authentication/authenticationConfig';
-import categoriesPageConfig from '../main/categories/CategoriesPageConfig';
-import paymentRequestFormGeneralPageConfig from '../main/form-request/FormRequestConfig';
-import requestPageConfig from '../main/form-request/RequestConfig';
-import PaymentsFormConfig from '../main/payments-form/PaymentsFormConfig';
-import CreateProductsPageConfig from '../main/products/CreateProductsPageConfig';
-import ProductsPageConfig from '../main/products/ProductsPageConfig';
+import { scontrolRoutes } from '../main/modules/s-control/routes.config';
 
-const routeConfigs: FuseRouteConfigsType = [
-	paymentRequestFormGeneralPageConfig,
-	requestPageConfig,
-	CreateProductsPageConfig,
-	ProductsPageConfig,
-	categoriesPageConfig,
-	PaymentsFormConfig,
-	...authenticationConfig
-];
+// const scontrolRoutesPrefixed = addPrefixToRoutes('scontrol', scontrolRoutes);
+const routeConfigs: FuseRouteConfigsType = [...authenticationConfig, scontrolRoutes];
 
 /**
- 
+
 The routes of the application. */
 const routes: FuseRoutesType = [
 	...FuseUtils.generateRoutesFromConfigs(routeConfigs, settingsConfig.defaultAuth),
 	{
 		path: '/',
-		element: <Navigate to="/solicitacoes" />,
+		element: <Navigate to="/scontrol/solicitacoes" />,
 		auth: settingsConfig.defaultAuth
 	},
 	{

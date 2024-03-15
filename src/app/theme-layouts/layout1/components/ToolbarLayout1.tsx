@@ -23,8 +23,7 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 	const navbar = useSelector(selectFuseNavbar);
 	const toolbarTheme = useSelector(selectToolbarTheme);
 
-	const theme = useTheme()
-
+	const theme = useTheme();
 
 	return (
 		<ThemeProvider theme={toolbarTheme}>
@@ -50,47 +49,59 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 									)} */}
 
 									{config.navbar.style === 'style-1' && !navbar.open && (
-										<NavbarToggleButton textColor={theme.palette.common.white} className="mx-0 h-40 w-40 p-0 justify-center" />
+										<NavbarToggleButton
+											textColor={theme.palette.common.white}
+											className="mx-0 h-40 w-40 p-0 justify-center"
+										/>
 									)}
 								</Hidden>
 
 								<Hidden lgUp>
-									<NavbarToggleButton textColor={theme.palette.common.white} className="mx-0 h-40 w-40 p-0 sm:mx-8 justify-center " />
+									<NavbarToggleButton
+										textColor={theme.palette.common.white}
+										className="mx-0 h-40 w-40 p-0 sm:mx-8 justify-center "
+									/>
 								</Hidden>
 							</>
 						)}
 
-						<div className='w-2/3 flex justify-center items-center'>
-							<TextField fullWidth sx={{
-								backgroundColor: theme =>
-									theme.palette.mode === 'light'
-										? theme.palette.primary.light
-										: toolbarTheme.palette.background.default,
-								borderRadius: '10px',
-								height: '70%',
-								'& .MuiOutlinedInput-root': {
-									'& fieldset': {
-										border: 'none',
+						<div className="w-2/3 flex justify-center items-center">
+							<TextField
+								fullWidth
+								sx={{
+									backgroundColor: theme =>
+										theme.palette.mode === 'light'
+											? theme.palette.primary.light
+											: toolbarTheme.palette.background.default,
+									borderRadius: '10px',
+									height: '70%',
+									'& .MuiOutlinedInput-root': {
+										'& fieldset': {
+											border: 'none'
+										}
+									}
+								}}
+								InputProps={{
+									sx: {
+										color: theme => theme.palette.common.white,
+										borderColor: 'none'
 									},
-								},
-							}} InputProps={{
-								sx: {
-									color: theme => theme.palette.common.white,
-									borderColor: 'none',
-
-								},
-								startAdornment: (
-									<FuseSvgIcon sx={{ marginRight: '10px', color: theme => theme.palette.common.white, }} >
-										heroicons-outline:search
-									</FuseSvgIcon>
-								)
-							}} />
-
+									startAdornment: (
+										<FuseSvgIcon
+											sx={{ marginRight: '10px', color: theme => theme.palette.common.white }}
+										>
+											heroicons-outline:search
+										</FuseSvgIcon>
+									)
+								}}
+							/>
 						</div>
 					</div>
 
 					<div className="flex h-full items-center overflow-x-auto px-8">
-						<FuseSvgIcon sx={{ color: theme => theme.palette.common.white }}>heroicons-outline:bell</FuseSvgIcon>
+						<FuseSvgIcon sx={{ color: theme => theme.palette.common.white }}>
+							heroicons-outline:bell
+						</FuseSvgIcon>
 					</div>
 
 					<div className="flex h-full items-center overflow-x-auto px-8">
@@ -100,11 +111,19 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 					{config.navbar.display && config.navbar.position === 'right' && (
 						<>
 							<Hidden lgDown>
-								{!navbar.open && <NavbarToggleButton textColor={theme.palette.common.white} className="mx-0 h-40 w-40 p-0" />}
+								{!navbar.open && (
+									<NavbarToggleButton
+										textColor={theme.palette.common.white}
+										className="mx-0 h-40 w-40 p-0"
+									/>
+								)}
 							</Hidden>
 
 							<Hidden lgUp>
-								<NavbarToggleButton textColor={theme.palette.primary.main} className="mx-0 h-40 w-40 p-0 sm:mx-8" />
+								<NavbarToggleButton
+									textColor={theme.palette.primary.main}
+									className="mx-0 h-40 w-40 p-0 sm:mx-8"
+								/>
 							</Hidden>
 						</>
 					)}

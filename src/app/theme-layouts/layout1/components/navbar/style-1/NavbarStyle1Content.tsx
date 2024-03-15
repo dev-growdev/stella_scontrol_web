@@ -1,8 +1,9 @@
 import FuseScrollbars from '@fuse/core/FuseScrollbars';
-import { useTheme } from "@mui/material";
+import { useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { memo } from 'react';
+import { useLocation } from 'react-router';
 import Logo from '../../../../shared-components/Logo';
 import NavbarToggleButton from '../../../../shared-components/NavbarToggleButton';
 import Navigation from '../../../../shared-components/Navigation';
@@ -11,12 +12,14 @@ const Root = styled('div')(({ theme }) => ({
 	backgroundColor: theme.palette.grey[50],
 	color: theme.palette.text.primary,
 	'& ::-webkit-scrollbar-thumb': {
-		boxShadow: `inset 0 0 0 20px ${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.24)' : 'rgba(255, 255, 255, 0.24)'
-			}`
+		boxShadow: `inset 0 0 0 20px ${
+			theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.24)' : 'rgba(255, 255, 255, 0.24)'
+		}`
 	},
 	'& ::-webkit-scrollbar-thumb:active': {
-		boxShadow: `inset 0 0 0 20px ${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.37)' : 'rgba(255, 255, 255, 0.37)'
-			}`
+		boxShadow: `inset 0 0 0 20px ${
+			theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.37)' : 'rgba(255, 255, 255, 0.37)'
+		}`
 	}
 }));
 
@@ -39,16 +42,24 @@ type NavbarStyle1ContentProps = {
  */
 function NavbarStyle1Content(props: NavbarStyle1ContentProps) {
 	const { className = '' } = props;
-	const theme = useTheme()
+	const theme = useTheme();
+	const location = useLocation();
 
 	return (
 		<Root className={clsx('flex h-full flex-auto flex-col overflow-hidden', className)}>
 			<div className="flex h-48 shrink-0 flex-row items-center px-20 md:h-72">
 				<div className="mx-4 flex flex-1">
-					<Logo />
+					{location.pathname.includes('scontrol') ? (
+						<Logo />
+					) : (
+						<h1 className="font-extrabold text-4xl text-blue-600">Squality</h1>
+					)}
 				</div>
 
-				<NavbarToggleButton textColor="#00abc8" className="h-40 w-40 p-0" />
+				<NavbarToggleButton
+					textColor="#00abc8"
+					className="h-40 w-40 p-0"
+				/>
 			</div>
 
 			<StyledContent
@@ -58,8 +69,6 @@ function NavbarStyle1Content(props: NavbarStyle1ContentProps) {
 				{/* <UserNavbarHeader /> */}
 
 				<Navigation layout="vertical" />
-
-
 			</StyledContent>
 		</Root>
 	);
