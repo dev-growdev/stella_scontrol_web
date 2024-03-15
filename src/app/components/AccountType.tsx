@@ -177,7 +177,7 @@ export default function AccountType({
 									{...params}
 									error={!!errors.cardHolder?.name?.message}
 									helperText={errors.cardHolder?.name?.message ?? ''}
-									label="selecionar ao portador"
+									label="Selecionar portador"
 								/>
 							)}
 						/>
@@ -199,7 +199,7 @@ export default function AccountType({
 									{...params}
 									error={!!errors.cardHolder?.name?.message}
 									helperText={errors.cardHolder?.name?.message ?? ''}
-									label="selecionar ao portador"
+									label="Selecionar portador"
 								/>
 							)}
 						/>
