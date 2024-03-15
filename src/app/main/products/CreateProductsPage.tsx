@@ -193,7 +193,9 @@ export default function CreateProductsPage() {
 								<Autocomplete
 									id="combo-box-demo"
 									className="w-full"
-									options={categories.categories.map(category => category.enable && category.name)}
+									options={categories.categories
+										.filter(category => category.enable)
+										.map(category => category.name)}
 									onChange={(e, value) => handlePropertiesChange('category', value as string)}
 									value={formDataProduct.category}
 									renderInput={params => (

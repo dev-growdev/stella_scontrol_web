@@ -35,7 +35,7 @@ const navigationConfig: FuseNavigationType = [
 			{
 				id: 'cube2',
 				title: 'Produtos',
-				type: 'collapse',
+				type: 'item',
 				icon: 'heroicons-outline:cube',
 				url: 'produtos'
 			},
