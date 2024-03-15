@@ -86,7 +86,7 @@ const schema = object().shape({
 	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
 	requiredReceipt: boolean(),
 	isRatiable: boolean().required(),
-	cardHolder: object().when('paymentMethod', (paymentMethod, schema) => {
+	cardHolder: object().when('paymentMethod', (paymentMethod: string[], schema) => {
 		return paymentMethod[0].includes('Cartão')
 			? schema.shape({
 					uid: string().required(),
@@ -149,7 +149,7 @@ export default function PaymentRequestFormGeneral() {
 	const user = useSelector(selectUser);
 	const productsRedux = useSelector(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
-	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState('');
+	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState(0);
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelector(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
@@ -234,7 +234,7 @@ export default function PaymentRequestFormGeneral() {
 				return;
 			}
 
-			if (totalApportionmentsValue !== totalValue) {
+			if (totalApportionmentsValue.toString() !== totalValue) {
 				dispatch(
 					showMessage({
 						message: `O rateio deve ser igual ao valor total da solicitação.`,
