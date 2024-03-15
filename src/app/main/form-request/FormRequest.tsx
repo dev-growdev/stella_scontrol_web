@@ -188,7 +188,7 @@ export default function PaymentRequestFormGeneral() {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
 				}, 0);
-				setTotalValue(formatedNumeral(total.toString().replace('.', ',')));
+				setTotalValue(total.toString());
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -225,7 +225,6 @@ export default function PaymentRequestFormGeneral() {
 	}, [watch('apportionments')]);
 
 	function onSubmit(data: FormDataType) {
-		console.log(data);
 		if (watch('isRatiable')) {
 			setValue('accountingAccount', '');
 			const apportionments = watch('apportionments');
@@ -395,7 +394,7 @@ export default function PaymentRequestFormGeneral() {
 							))}
 						</div>
 						<div className="mb-28">
-							<Typography>Valor total: R$ {formatedNumeral(totalValue)}</Typography>
+							<Typography>Valor total: R$ {formatedNumeral(parseFloat(totalValue))}</Typography>
 						</div>
 						<div className="flex items-center">
 							<Button
