@@ -13,18 +13,18 @@ import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { FormDataProps } from '../main/form-request/FormRequest';
+import { FormDataType } from '../main/form-request/FormRequest';
 import RatiableTable from './RatiableTable';
 
 interface RatiableProps {
 	isRatiable: boolean;
 	setToggleRatiable: (arg: boolean) => void;
-	watch: UseFormWatch<FormDataProps>;
-	setValue: UseFormSetValue<FormDataProps>;
+	watch: UseFormWatch<FormDataType>;
+	setValue: UseFormSetValue<FormDataType>;
 	remove: UseFieldArrayRemove;
-	errors: FieldErrors<FormDataProps>;
-	setError: UseFormSetError<FormDataProps>;
-	totalApportionmentsValue: (value: string) => void;
+	errors: FieldErrors<FormDataType>;
+	setError: UseFormSetError<FormDataType>;
+	totalApportionmentsValue: (value: number) => void;
 }
 
 interface AccountingAccountType {
@@ -113,7 +113,7 @@ export default function IsRatiable({
 		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
-			value: valueCostCenter
+			value: valueCostCenter.replace(',', '.')
 		};
 
 		const apportionments = watch('apportionments');
@@ -240,7 +240,7 @@ export default function IsRatiable({
 
 					<RatiableTable
 						remove={remove}
-						costCenters={formCostCenters}
+						apportionments={formCostCenters}
 						totalApportionmentsValue={totalApportionmentsValue}
 					/>
 				</>
