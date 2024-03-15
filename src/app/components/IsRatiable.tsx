@@ -13,18 +13,20 @@ import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { FormDataProps } from '../main/form-request/FormRequest';
+import { FormDataType } from '../main/form-request/FormRequest';
+import { formatedNumeral } from '../main/utils/formated-value';
 import RatiableTable from './RatiableTable';
 
 interface RatiableProps {
 	isRatiable: boolean;
 	setToggleRatiable: (arg: boolean) => void;
-	watch: UseFormWatch<FormDataProps>;
-	setValue: UseFormSetValue<FormDataProps>;
+	watch: UseFormWatch<FormDataType>;
+	setValue: UseFormSetValue<FormDataType>;
 	remove: UseFieldArrayRemove;
-	errors: FieldErrors<FormDataProps>;
-	setError: UseFormSetError<FormDataProps>;
+	errors: FieldErrors<FormDataType>;
+	setError: UseFormSetError<FormDataType>;
 	totalApportionmentsValue: (value: string) => void;
+	totalValue: number;
 }
 
 interface AccountingAccountType {
@@ -40,7 +42,8 @@ export default function IsRatiable({
 	setValue,
 	remove,
 	errors,
-	totalApportionmentsValue
+	totalApportionmentsValue,
+	totalValue
 }: RatiableProps) {
 	const costCentersRedux = useSelector(selectedCostCenters);
 	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
@@ -48,8 +51,24 @@ export default function IsRatiable({
 	const [costCenterName, setCostCenterName] = useState<string | null>('');
 	const [accountingAccountName, setAccountingAccountName] = useState<string | null>('');
 	const [valueCostCenter, setValueCostCenter] = useState('');
+	const [remainingValue, setRemainingValue] = useState(0);
+	const [totalApportionmentsValueState, setTotalApportionmentsValueState] = useState(0);
 
 	const formCostCenters = watch('apportionments');
+
+	useEffect(() => {
+		const remaining = totalValue - totalApportionmentsValueState;
+
+		if (Number.isNaN(totalApportionmentsValueState)) {
+			setRemainingValue(totalValue);
+		}
+
+		setRemainingValue(remaining);
+	}, [totalValue, totalApportionmentsValueState]);
+
+	useEffect(() => {
+		totalApportionmentsValue(formatedNumeral(totalApportionmentsValueState).toString());
+	}, [totalApportionmentsValueState]);
 
 	useEffect(() => {
 		async function getAccountingAccounts() {
@@ -241,7 +260,7 @@ export default function IsRatiable({
 					<RatiableTable
 						remove={remove}
 						costCenters={formCostCenters}
-						totalApportionmentsValue={totalApportionmentsValue}
+						totalApportionmentsValue={setTotalApportionmentsValueState}
 					/>
 				</>
 			)}

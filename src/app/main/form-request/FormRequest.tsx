@@ -153,6 +153,7 @@ export default function PaymentRequestFormGeneral() {
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelector(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
+	const [totalValueUnformated, setTotalValueUnformated] = useState(0);
 
 	const {
 		control,
@@ -189,6 +190,7 @@ export default function PaymentRequestFormGeneral() {
 					return acc + value;
 				}, 0);
 				setTotalValue(formatedNumeral(total.toString().replace('.', ',')));
+				setTotalValueUnformated(total);
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -225,7 +227,6 @@ export default function PaymentRequestFormGeneral() {
 	}, [watch('apportionments')]);
 
 	function onSubmit(data: FormDataType) {
-		console.log(data);
 		if (watch('isRatiable')) {
 			setValue('accountingAccount', '');
 			const apportionments = watch('apportionments');
@@ -277,8 +278,8 @@ export default function PaymentRequestFormGeneral() {
 
 		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
-				clearFormState();
-				navigate('/solicitacoes');
+				// clearFormState();
+				// navigate('/solicitacoes');
 			}
 		});
 	}
@@ -444,6 +445,7 @@ export default function PaymentRequestFormGeneral() {
 						errors={errors}
 						setError={setError}
 						totalApportionmentsValue={setTotalApportionmentsValue}
+						totalValue={totalValueUnformated}
 					/>
 					{!watch('isRatiable') && (
 						<Autocomplete

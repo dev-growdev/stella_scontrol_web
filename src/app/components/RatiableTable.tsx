@@ -2,13 +2,13 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
-import { CostCenters } from '../main/form-request/FormRequest';
+import { Apportionments } from '../main/form-request/FormRequest';
 import { formatedNumeral } from '../main/utils/formated-value';
 
 interface RatiableProps {
-	costCenters: CostCenters[];
+	costCenters: Apportionments[];
 	remove: UseFieldArrayRemove;
-	totalApportionmentsValue: (value: string) => void;
+	totalApportionmentsValue: (value: number) => void;
 }
 
 export default function RatiableTable({ costCenters, remove, totalApportionmentsValue }: RatiableProps) {
@@ -27,7 +27,7 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 			}
 		});
 
-		return formatedNumeral(total);
+		return total;
 	}
 
 	return (
@@ -73,7 +73,7 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<Typography className="text-right">Valor total: R${totalValue()}</Typography>
+			<Typography className="text-right">Valor total: R${formatedNumeral(totalValue())}</Typography>
 		</div>
 	);
 }
