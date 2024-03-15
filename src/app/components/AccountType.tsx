@@ -170,7 +170,8 @@ export default function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
-							options={creditCardHolders.map(holder => holder.name)}
+							options={creditCardHolders}
+							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
@@ -192,7 +193,8 @@ export default function AccountType({
 						<Autocomplete
 							id="corporate-card-holder"
 							onChange={handleAutocomplete}
-							options={corporateCardHolders.map(holder => holder.name)}
+							options={corporateCardHolders}
+							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
