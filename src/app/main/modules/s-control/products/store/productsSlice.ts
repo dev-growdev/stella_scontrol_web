@@ -2,48 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
-import { Category } from '../../categories/store/categoriesSlice';
 import { ReduxStateScontrol } from '../../store';
-
-export interface FormProductType {
-	uid?: string;
-	code?: number;
-	name: string;
-	enable?: boolean;
-	category: Category | string;
-	description?: string;
-	quantity: string | number;
-	measurement: string;
-}
-
-export interface Product {
-	uid?: string;
-	code?: number;
-	name: string;
-	enable: boolean;
-	measurement?: string;
-	description?: string;
-	quantity?: number;
-	category?: Category;
-}
-
-export interface ProductsType {
-	products: Product[];
-	loading: boolean;
-}
-
-export interface CreateProduct {
-	categoryId: string;
-	name: string;
-	enable: boolean;
-	description?: string;
-	measurement?: string;
-	quantity?: number;
-}
+import { CreateProductType, FormProductType, ProductsType } from '../entities/product';
 
 export const createProduct = createAppAsyncThunk(
 	'products/createProduct',
-	async (data: CreateProduct, { dispatch }) => {
+	async (data: CreateProductType, { dispatch }) => {
 		try {
 			const response = await axios.post(`${process.env.REACT_APP_API_URL}/products`, data);
 
@@ -186,8 +150,6 @@ const productsSlice = createSlice({
 			});
 	}
 });
-
-export type productSliceType = typeof productsSlice;
 
 export const selectProducts = (state: ReduxStateScontrol) => state.products;
 

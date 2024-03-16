@@ -27,7 +27,7 @@ export const squalityRoutes: FuseRouteConfigType = {
 				}
 			},
 			path: '/squality',
-			auth: authRoles.admin,
+			auth: authRoles.squality,
 			children: [...HomeRoutesConfig]
 		}
 	]

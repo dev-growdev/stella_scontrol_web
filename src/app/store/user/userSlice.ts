@@ -17,7 +17,7 @@ type AppRootStateType = RootStateType<userSliceType>;
 /**
  * Sets the user data in the Redux store and updates the login redirect URL if provided.
  */
-export const setUser = createAsyncThunk('user/setUser', (user: UserType) => {
+export const setUser = createAsyncThunk('user/setUser', async (user: UserType) => {
 	/*
     You can redirect the logged-in user to a specific route depending on his role
     */
@@ -25,7 +25,9 @@ export const setUser = createAsyncThunk('user/setUser', (user: UserType) => {
 		settingsConfig.loginRedirectUrl = user.loginRedirectUrl; // for example 'apps/academy'
 	}
 
-	return Promise.resolve(user);
+	user.role = ['squality', 'scontrol', 'squality.novo']; // admin
+
+	return user;
 });
 
 /**
@@ -151,12 +153,12 @@ export const updateUserData = createAppAsyncThunk<UserType, PartialDeep<UserType
  * The initial state of the user slice.
  */
 const initialState: UserType = {
+	uid: '',
 	role: [], // guest
 	data: {
-		displayName: 'John Doe',
-		photoURL: 'assets/images/avatars/brian-hughes.jpg',
-		email: 'johndoe@withinpixels.com',
-		shortcuts: ['apps.calendar', 'apps.mailbox', 'apps.contacts', 'apps.tasks']
+		displayName: '',
+		photoURL: '',
+		email: ''
 	}
 };
 

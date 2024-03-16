@@ -31,7 +31,7 @@ export const scontrolRoutes: FuseRouteConfigType = {
 				}
 			},
 			path: '/scontrol',
-			auth: authRoles.admin,
+			auth: authRoles.scontrol,
 			element: <LayoutSControl />,
 			children: [paymentsFormRoutes, productsRoutes, categoriesRoutes, formRequestRoutes]
 		}

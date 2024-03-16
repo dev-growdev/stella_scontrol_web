@@ -15,8 +15,8 @@ import {
 	UseFormUnregister
 } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { HolderType, selectPaymentsForm } from '../payments-form/store/PaymentsFormSlice';
-import { FormDataType } from '../form-request/pages/FormRequest';
+import { HolderType, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { FormDataType } from '../entities/formData';
 
 interface AccountTypeProps {
 	paymentMethod: string;
@@ -29,7 +29,7 @@ interface AccountTypeProps {
 	clearErrors: UseFormClearErrors<FormDataType>;
 }
 
-export default function AccountType({
+export function AccountType({
 	paymentMethod,
 	control,
 	register,

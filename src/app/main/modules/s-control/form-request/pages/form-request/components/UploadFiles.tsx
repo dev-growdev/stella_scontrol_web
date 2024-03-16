@@ -7,7 +7,7 @@ interface UploadFilesProps {
 	handleFileRemove: (index: number) => void;
 }
 
-export default function UploadFiles({ handleFileChange, uploadedFiles, handleFileRemove }: UploadFilesProps) {
+export function UploadFiles({ handleFileChange, uploadedFiles, handleFileRemove }: UploadFilesProps) {
 	const theme = useTheme();
 	return (
 		<>

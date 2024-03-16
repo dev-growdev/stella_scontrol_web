@@ -15,7 +15,8 @@ import { ChangeEvent, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { useAppDispatch } from 'app/store';
-import { FormDataType, ProductOptionType } from '../form-request/pages/FormRequest';
+import { FormDataType } from '../entities/formData';
+import { ProductOptionType } from '../entities/productOptions';
 
 interface TableProductsFromRequestProps {
 	control: Control<FormDataType>;
@@ -25,7 +26,7 @@ interface TableProductsFromRequestProps {
 	watch: UseFormWatch<FormDataType>;
 }
 
-export default function TableProductsFromRequest({
+export function TableProductsFromRequest({
 	control,
 	errors,
 	productsToOptions,

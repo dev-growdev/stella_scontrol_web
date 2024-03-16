@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
-import { ReduxStateScontrol } from '../..';
+import { ReduxStateScontrol } from '..';
 
 interface CostCenter {
 	id: number;

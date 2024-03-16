@@ -1,8 +1,7 @@
 import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
-import { authRoles } from 'src/app/auth';
 
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const ProductsPage = lazy(() => import('./pages/Products'));
 
 /**
  * The sign up pages config.
@@ -18,7 +17,7 @@ const ProductsPageConfig: FuseRouteConfigType = {
 					display: true
 				},
 				footer: {
-					display: false
+					display: true
 				},
 				leftSidePanel: {
 					display: false
@@ -29,7 +28,7 @@ const ProductsPageConfig: FuseRouteConfigType = {
 			}
 		}
 	},
-	auth: authRoles.admin,
+	// auth: authRoles.admin,
 	routes: [
 		{
 			path: 'produtos',

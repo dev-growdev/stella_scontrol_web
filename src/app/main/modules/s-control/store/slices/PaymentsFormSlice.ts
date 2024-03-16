@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
-import { ReduxStateScontrol } from '../../store';
+import { ReduxStateScontrol } from '..';
 
 export interface PaymentsFormType {
 	loading: boolean;

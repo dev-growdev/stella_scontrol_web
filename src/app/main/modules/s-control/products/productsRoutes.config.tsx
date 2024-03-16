@@ -1,6 +1,5 @@
 import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
-import { authRoles } from 'src/app/auth';
 
 const CreateProductsPage = lazy(() => import('./pages/CreateProducts'));
 const ProductsPage = lazy(() => import('./pages/Products'));
@@ -16,7 +15,7 @@ export const productsRoutes: FuseRouteItemType = {
 					display: true
 				},
 				footer: {
-					display: false
+					display: true
 				},
 				leftSidePanel: {
 					display: false
@@ -27,16 +26,16 @@ export const productsRoutes: FuseRouteItemType = {
 			}
 		}
 	},
-	auth: authRoles.admin,
+	// auth: authRoles.admin,
 	path: 'produtos',
 	children: [
 		{
-			path: 'cadastrar-produto/:productUid?',
-			element: <CreateProductsPage />
+			path: '',
+			element: <ProductsPage />
 		},
 		{
-			path: 'produtos',
-			element: <ProductsPage />
+			path: 'cadastrar-produto/:productUid?',
+			element: <CreateProductsPage />
 		}
 	]
 };

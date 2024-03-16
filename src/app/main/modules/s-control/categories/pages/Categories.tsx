@@ -1,9 +1,8 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import DataTable from '../../components/DataTable';
+import { DataTable } from '../../components/data-table/DataTable';
 import {
-	Category,
 	createCategory,
 	disableCategory,
 	getCategories,
@@ -11,10 +10,11 @@ import {
 	updateCategory
 } from '../store/categoriesSlice';
 import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { CategoryType } from '../entities/category';
 
 export default function Categories() {
 	const [editMode, setEditMode] = useState(false);
-	const [editCategory, setEditCategory] = useState<Category | null>(null);
+	const [editCategory, setEditCategory] = useState<CategoryType | null>(null);
 	const [newItem, setNewItem] = useState('');
 	const dispatch = useDispatchSControl();
 	const categoriesRedux = useSelectorSControl(selectCategories);
@@ -23,7 +23,7 @@ export default function Categories() {
 		dispatch(getCategories());
 	}, []);
 
-	function handleGetEditCategory(selectedData: Category) {
+	function handleGetEditCategory(selectedData: CategoryType) {
 		if (selectedData) {
 			setEditCategory(selectedData);
 			setEditMode(true);
@@ -32,7 +32,7 @@ export default function Categories() {
 		}
 	}
 
-	async function handleGetStatus(item: Category) {
+	async function handleGetStatus(item: CategoryType) {
 		const itemToggleEnable = {
 			uid: item.uid,
 			name: item.name,

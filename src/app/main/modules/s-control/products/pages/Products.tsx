@@ -2,8 +2,9 @@ import { Box, Paper } from '@mui/material';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import ProductTable from '../../components/ProductTable';
-import { Product, disableProduct, getProducts, selectProducts } from '../store/productsSlice';
+import { disableProduct, getProducts, selectProducts } from '../store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { ProductType } from '../entities/product';
 
 export default function Products() {
 	const dispatch = useDispatchSControl();
@@ -14,11 +15,11 @@ export default function Products() {
 		dispatch(getProducts());
 	}, []);
 
-	function handleEditProduct(product: Product) {
+	function handleEditProduct(product: ProductType) {
 		return navigate(`/cadastrar-produto/${product.uid}`);
 	}
 
-	async function handleGetStatus(item: Product) {
+	async function handleGetStatus(item: ProductType) {
 		const itemToggleEnable = {
 			uid: item.uid,
 			category: item.category.uid,

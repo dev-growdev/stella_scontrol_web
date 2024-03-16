@@ -24,12 +24,12 @@ import {
 import { tableCellClasses } from '@mui/material/TableCell';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Product, ProductsType } from '../products/store/productsSlice';
+import { ProductType, ProductsType } from '../products/entities/product';
 
 interface ProductTableProps {
-	selectItem: (item: Product | null) => void;
+	selectItem: (item: ProductType | null) => void;
 	productsData: ProductsType | { products: []; loading: false };
-	handleStatus: (item: Product) => void;
+	handleStatus: (item: ProductType) => void;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -87,9 +87,9 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 		setSelectedItemId(itemId === selectedItemId ? null : itemId);
 	};
 
-	const filteredProducts: Product[] =
+	const filteredProducts: ProductType[] =
 		productsData.products && productsData.products.length > 0
-			? productsData.products.filter((row: Product) => {
+			? productsData.products.filter((row: ProductType) => {
 					const matchesSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
 					return matchesSearch;
 			  })

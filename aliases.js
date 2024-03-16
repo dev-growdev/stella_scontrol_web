@@ -6,6 +6,7 @@ const aliases = (prefix = `src`) => ({
 	'@history': `${prefix}/@history`,
 	'@lodash': `${prefix}/@lodash`,
 	'@mock-api': `${prefix}/@mock-api`,
+	'~': `${prefix}/app/main`,
 	'app/store': `${prefix}/app/store`,
 	'app/shared-components': `${prefix}/app/shared-components`,
 	'app/configs': `${prefix}/app/configs`,

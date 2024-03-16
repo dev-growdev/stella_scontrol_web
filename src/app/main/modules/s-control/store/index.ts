@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { scontrolReducers } from './modules/rootReducer';
+import { scontrolReducers } from './rootReducer';
 
 export const scontrolStore = configureStore({
 	reducer: scontrolReducers,

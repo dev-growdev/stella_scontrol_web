@@ -1,70 +1,33 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { array, boolean, date, object, string } from 'yup';
 import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { useAppSelector } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
-import AccountType from '../../components/AccountType';
-import IsRateable from '../../components/IsRateable';
-import PaymentMethod from '../../components/PaymentMethod';
-import RequestUser from '../../components/RequestUser';
-import RequiredReceipt from '../../components/RequiredReceipt';
-import TableProductsFromRequest from '../../components/TableProductsFromRequest';
-import UploadFiles from '../../components/UploadFiles';
-import ValueAndDueDate from '../../components/ValueAndDueDate';
-import { getPaymentsForm } from '../../payments-form/store/PaymentsFormSlice';
-import { getProducts, selectProducts } from '../../products/store/productsSlice';
-import { formattedNumeral } from '../../utils/formatted-value';
-import { getAccountingAccountByCostCenter, selectAccountingAccount } from '../store/AccountingAccountSlice';
-import { createRequestPaymentGeneral } from '../store/FormRequestSlice';
-import { getCostCenters } from '../../store/modules/cost-center/costCenterSlice';
-import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { IsRateable } from './components/rateable/IsRateable';
 
-interface Payments {
-	value: string;
-	dueDate: Date | null;
-}
-
-export interface Apportionments {
-	costCenter: string;
-	accountingAccount: string;
-	value: string;
-}
-
-export interface CardHolderToForm {
-	uid: string;
-	name: string;
-}
-
-export interface FormDataType {
-	paymentMethod: string;
-	cardHolder?: CardHolderToForm;
-	requiredReceipt: boolean;
-	isRateable: boolean;
-	products: { product: string }[];
-	description?: string;
-	supplier: string;
-	payments: Payments[];
-	uploadedFiles: File[];
-	accountingAccount: string;
-	apportionments?: Apportionments[];
-	pix?: string;
-	bankTransfer?: {
-		bank: string;
-		accountNumber: string;
-		agency: string;
-		accountType: string;
-		cpfOrCnpj: string;
-	};
-}
-
-export interface ProductOptionType {
-	product: string;
-}
+import { formattedNumeral } from '~/modules/s-control/utils/formatted-value';
+import { getAccountingAccountByCostCenter, selectAccountingAccount } from '../../store/AccountingAccountSlice';
+import { createRequestPaymentGeneral } from '../../store/FormRequestSlice';
+import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
+import {
+	RequestUser,
+	RequiredReceipt,
+	UploadFiles,
+	ValueAndDueDate,
+	AccountType,
+	PaymentMethod,
+	TableProductsFromRequest
+} from './components';
+import { getPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { getCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
+import { getProducts, selectProducts } from '~/modules/s-control/products/store/productsSlice';
+import { paymentRequestFormSchema } from './validations/paymentRequestForm.schema';
+import { FormDataType } from './entities/formData';
+import { ProductOptionType } from './entities/productOptions';
 
 const defaultValues = {
 	paymentMethod: '',
@@ -80,67 +43,6 @@ const defaultValues = {
 	accountingAccount: '',
 	apportionments: []
 };
-
-const schema = object().shape({
-	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
-	requiredReceipt: boolean(),
-	isRateable: boolean().required(),
-	cardHolder: object().when('paymentMethod', (paymentMethod, schema) => {
-		return paymentMethod[0].includes('Cartão')
-			? schema.shape({
-					uid: string().required(),
-					name: string().required('É necessário adicionar um portador.')
-			  })
-			: schema;
-	}),
-	bankTransfer: object().when('paymentMethod', (paymentMethod, schema) => {
-		return paymentMethod[0] === 'Transferência bancária'
-			? schema.shape({
-					bank: string().required('É necessário adicionar um banco'),
-					accountNumber: string().required('É necessário adicionar um número de conta'),
-					agency: string().required('É necessário adicionar uma agência'),
-					accountType: string().required('É necessário adicionar um tipo de conta.'),
-					cpfOrCnpj: string().required('É necessário adicionar um CPF ou CNPJ.')
-			  })
-			: schema;
-	}),
-	pix: string().when('paymentMethod', (paymentMethod, schema) => {
-		return paymentMethod[0] === 'Pix' ? schema.required('É necessário adicionar um Pix.') : schema;
-	}),
-	products: array()
-		.of(
-			object()
-				.shape({
-					product: string().required()
-				})
-				.required('É necessário adicionar um produto.')
-		)
-		.min(1, 'É necessário adicionar um produto.'),
-	description: string(),
-	supplier: string().required('É necessário adicionar um fornecedor.'),
-	payments: array()
-		.of(
-			object().shape({
-				value: string().required('É necessário um valor.'),
-				dueDate: date().nullable().required('É necessário adicionar uma data de vencimento.')
-			})
-		)
-		.required(),
-	typeAccount: string(),
-	uploadedFiles: array(),
-	accountingAccount: string(),
-	apportionments: array()
-		.of(
-			object().shape({
-				costCenter: string().required('É necessário adicionar Centro de Custo.'),
-
-				accountingAccount: string().required('É necessário adicionar Conta Contábil'),
-
-				value: string().required()
-			})
-		)
-		.notRequired()
-});
 
 export default function PaymentRequestFormGeneral() {
 	const dispatch = useDispatchSControl();
@@ -166,7 +68,7 @@ export default function PaymentRequestFormGeneral() {
 		unregister
 	} = useForm<FormDataType>({
 		defaultValues,
-		resolver: yupResolver(schema)
+		resolver: yupResolver(paymentRequestFormSchema)
 	});
 
 	const {

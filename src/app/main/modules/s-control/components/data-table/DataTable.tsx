@@ -13,49 +13,23 @@ import {
 	Switch,
 	Table,
 	TableBody,
-	TableCell,
 	TableContainer,
 	TableHead,
 	TablePagination,
-	TableRow,
 	TextField,
-	Toolbar,
-	styled,
-	tableCellClasses
+	Toolbar
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { CategoriesType, Category } from '../categories/store/categoriesSlice';
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-	[`&.${tableCellClasses.head}`]: {
-		color: theme.palette.secondary.dark
-	},
-	[`&.${tableCellClasses.body}`]: {
-		fontSize: 14,
-		color: theme.palette.secondary.dark
-	}
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-	'&:nth-of-type(odd)': {
-		backgroundColor: theme.palette.common.white
-	},
-	'&:nth-of-type(even)': {
-		backgroundColor: theme.palette.action.hover
-	},
-	// hide last border
-	'&:last-child td, &:last-child th': {
-		border: 0
-	}
-}));
+import { CategoriesType, CategoryType } from '../../categories/entities/category';
+import { StyledTableCell, StyledTableRow } from './styles';
 
 interface DataTableProps {
-	selectItem: (item: Category | null) => void;
-	categoriesData: CategoriesType | { categories: []; loading: false };
-	handleStatus?: (item: Category) => void;
+	selectItem: (item: CategoryType | null) => void;
+	categoriesData: CategoriesType;
+	handleStatus?: (item: CategoryType) => void;
 }
 
-export default function DataTable({ selectItem, categoriesData, handleStatus }: DataTableProps) {
+export function DataTable({ selectItem, categoriesData, handleStatus }: DataTableProps) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [searchValue, setSearchValue] = useState('');
@@ -74,7 +48,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		}
 	}, [selectedItemId, categoriesData.categories]);
 
-	const handleChangePage = (event: unknown, newPage: number) => {
+	const handleChangePage = (_: unknown, newPage: number) => {
 		setPage(newPage);
 	};
 
@@ -91,9 +65,9 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		setSelectedItemId(itemId === selectedItemId ? null : itemId);
 	};
 
-	const filteredCategories: Category[] =
+	const filteredCategories: CategoryType[] =
 		categoriesData.categories && categoriesData.categories.length > 0
-			? categoriesData.categories.filter((row: Category) => {
+			? categoriesData.categories.filter((row: CategoryType) => {
 					const matchesSearch = !searchValue || row.name.toLowerCase().includes(searchValue.toLowerCase());
 					const matchesStatus =
 						filterByStatus === 'all' ||
@@ -118,7 +92,7 @@ export default function DataTable({ selectItem, categoriesData, handleStatus }: 
 		setAnchorStatusMenu(null);
 	};
 
-	function handleToggleStatusCategory(category: Category) {
+	function handleToggleStatusCategory(category: CategoryType) {
 		handleStatus(category);
 	}
 

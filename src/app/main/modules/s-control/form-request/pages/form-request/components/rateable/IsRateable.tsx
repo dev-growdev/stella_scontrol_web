@@ -11,10 +11,10 @@ import {
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
-import { useSelector } from 'react-redux';
-import { FormDataType } from '../form-request/pages/FormRequest';
-import RateableTable from './RateableTable';
-import { selectedCostCenters } from '../store/modules/cost-center/costCenterSlice';
+import { FormDataType } from '../../entities/formData';
+import { RateableTable } from './components';
+import { selectedCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
+import { useSelectorSControl } from '~/modules/s-control/store/hooks';
 
 interface RateableProps {
 	isRateable: boolean;
@@ -32,7 +32,7 @@ interface AccountingAccountType {
 	name: string;
 }
 
-export default function IsRateable({
+export function IsRateable({
 	setError,
 	isRateable,
 	setToggleRateable,
@@ -42,7 +42,7 @@ export default function IsRateable({
 	errors,
 	totalApportionmentsValue
 }: RateableProps) {
-	const costCentersRedux = useSelector(selectedCostCenters);
+	const costCentersRedux = useSelectorSControl(selectedCostCenters);
 	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
 	const [costCenterId, setCostCenterId] = useState('');
 	const [costCenterName, setCostCenterName] = useState<string | null>('');

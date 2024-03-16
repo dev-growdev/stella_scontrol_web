@@ -2,8 +2,13 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
-import { CostCenters } from '../form-request/pages/FormRequest';
-import { formattedNumeral } from '../utils/formatted-value';
+import { formattedNumeral } from '~/modules/s-control/utils/formatted-value';
+
+interface CostCenters {
+	costCenter: string;
+	accountingAccount: string;
+	value: string;
+}
 
 interface RateableProps {
 	costCenters: CostCenters[];
@@ -11,7 +16,7 @@ interface RateableProps {
 	totalApportionmentsValue: (value: string) => void;
 }
 
-export default function RateableTable({ costCenters, remove, totalApportionmentsValue }: RateableProps) {
+export function RateableTable({ costCenters, remove, totalApportionmentsValue }: RateableProps) {
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);

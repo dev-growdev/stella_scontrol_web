@@ -5,10 +5,11 @@ import settingsConfig from 'app/configs/settingsConfig';
 import { Navigate } from 'react-router-dom';
 import Error404Page from '../main/404/Error404Page';
 import authenticationConfig from '../main/authentication/authenticationConfig';
-import { scontrolRoutes } from '../main/modules/s-control/routes.config';
+import { scontrolRoutes } from '../main/modules/s-control/routesConfig';
+import { squalityRoutes } from '../main/modules/s-quality/routes.config';
 
 // const scontrolRoutesPrefixed = addPrefixToRoutes('scontrol', scontrolRoutes);
-const routeConfigs: FuseRouteConfigsType = [...authenticationConfig, scontrolRoutes];
+const routeConfigs: FuseRouteConfigsType = [...authenticationConfig, scontrolRoutes, squalityRoutes];
 
 /**
 

@@ -5,7 +5,7 @@ interface RequestUserProps {
 	user: UserType;
 }
 
-export default function RequestUser({ user }: RequestUserProps) {
+export function RequestUser({ user }: RequestUserProps) {
 	return (
 		<div className="flex flex-col gap-24 sm:flex-row">
 			<TextField

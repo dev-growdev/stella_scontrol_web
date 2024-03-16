@@ -5,8 +5,8 @@ import Select from '@mui/material/Select';
 import { useEffect, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { FormDataType } from '../form-request/pages/FormRequest';
-import { PaymentForm, selectPaymentsForm } from '../payments-form/store/PaymentsFormSlice';
+import { FormDataType } from '../entities/formData';
+import { PaymentForm, selectPaymentsForm } from '../../../../store/slices/PaymentsFormSlice';
 
 const itemHeight = 48;
 const itemPaddingTop = 8;
@@ -27,7 +27,7 @@ interface PaymentMethod {
 	errors: FieldErrors<FormDataType>;
 }
 
-export default function PaymentMethod({ selectedPaymentMethod, register, control, errors }: PaymentMethod) {
+export function PaymentMethod({ selectedPaymentMethod, register, control, errors }: PaymentMethod) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
 

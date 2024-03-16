@@ -5,7 +5,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFieldArrayRemove, UseFormSetValue } from 'react-hook-form';
-import { FormDataType } from '../form-request/pages/FormRequest';
+import { FormDataType } from '../entities/formData';
 
 interface ValueAndDueDateProps {
 	control: Control<FormDataType>;
@@ -15,7 +15,7 @@ interface ValueAndDueDateProps {
 	setValue: UseFormSetValue<FormDataType>;
 }
 
-export default function ValueAndDueDate({ control, index, errors, remove, setValue }: ValueAndDueDateProps) {
+export function ValueAndDueDate({ control, index, errors, remove, setValue }: ValueAndDueDateProps) {
 	const currentDate = new Date();
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);

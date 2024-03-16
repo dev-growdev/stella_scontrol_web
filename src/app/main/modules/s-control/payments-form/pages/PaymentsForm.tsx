@@ -7,7 +7,7 @@ import {
 	disablePaymentsForm,
 	getPaymentsForm,
 	selectPaymentsForm
-} from '../store/PaymentsFormSlice';
+} from '../../store/slices/PaymentsFormSlice';
 import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
 
 export default function PaymentsForm() {

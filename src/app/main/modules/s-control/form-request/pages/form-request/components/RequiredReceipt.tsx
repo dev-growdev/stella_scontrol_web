@@ -5,7 +5,7 @@ interface RequiredReceiptProps {
 	setToggleCheck: (arg: boolean) => void;
 }
 
-export default function RequiredReceipt({ requiredReceipt, setToggleCheck }: RequiredReceiptProps) {
+export function RequiredReceipt({ requiredReceipt, setToggleCheck }: RequiredReceiptProps) {
 	return (
 		<div className="flex flex-row items-center">
 			<Typography

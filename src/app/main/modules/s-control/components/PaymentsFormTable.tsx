@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import { HolderType, PaymentForm, PaymentsFormType } from '../payments-form/store/PaymentsFormSlice';
+import { HolderType, PaymentForm, PaymentsFormType } from '../store/slices/PaymentsFormSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {

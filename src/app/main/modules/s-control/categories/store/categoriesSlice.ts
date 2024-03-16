@@ -3,18 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
 import { ReduxStateScontrol } from '../../store';
-
-export interface Category {
-	uid: string;
-	name: string;
-	enable: boolean;
-	action?: string;
-}
-
-export interface CategoriesType {
-	categories: Category[];
-	loading: boolean;
-}
+import { CategoriesType, CategoryType } from '../entities/category';
 
 interface createCategory {
 	name: string;
@@ -37,7 +26,10 @@ export const createCategory = createAppAsyncThunk(
 					})
 				);
 			}
-			const response = await axios.post<{ data: Category }>(`${process.env.REACT_APP_API_URL}/categories`, data);
+			const response = await axios.post<{ data: CategoryType }>(
+				`${process.env.REACT_APP_API_URL}/categories`,
+				data
+			);
 
 			dispatch(
 				showMessage({
@@ -73,55 +65,58 @@ export const createCategory = createAppAsyncThunk(
 );
 
 export const getCategories = createAsyncThunk('categories/getCategories', async () => {
-	const response = await axios.get<{ data: Category[] }>(`${process.env.REACT_APP_API_URL}/categories`);
+	const response = await axios.get<{ data: CategoryType[] }>(`${process.env.REACT_APP_API_URL}/categories`);
 
 	return response.data.data;
 });
 
-export const updateCategory = createAppAsyncThunk('categories/updateCategory', async (data: Category, { dispatch }) => {
-	try {
-		const body = {
-			name: data.name,
-			enable: data.enable
-		};
-		const response = await axios.put<{ data: Category }>(
-			`${process.env.REACT_APP_API_URL}/categories/${data.uid}`,
-			body
-		);
+export const updateCategory = createAppAsyncThunk(
+	'categories/updateCategory',
+	async (data: CategoryType, { dispatch }) => {
+		try {
+			const body = {
+				name: data.name,
+				enable: data.enable
+			};
+			const response = await axios.put<{ data: CategoryType }>(
+				`${process.env.REACT_APP_API_URL}/categories/${data.uid}`,
+				body
+			);
 
-		dispatch(
-			showMessage({
-				message: `Categoria atualizada com sucesso.`,
-				anchorOrigin: {
-					vertical: 'top',
-					horizontal: 'center'
-				},
-				variant: 'success'
-			})
-		);
+			dispatch(
+				showMessage({
+					message: `Categoria atualizada com sucesso.`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'success'
+				})
+			);
 
-		return response.data.data;
-	} catch (error) {
-		dispatch(
-			showMessage({
-				message: `${error.response.data.message}`,
-				anchorOrigin: {
-					vertical: 'top',
-					horizontal: 'center'
-				},
-				variant: 'error'
-			})
-		);
-		throw error;
+			return response.data.data;
+		} catch (error) {
+			dispatch(
+				showMessage({
+					message: `${error.response.data.message}`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+			throw error;
+		}
 	}
-});
+);
 
-export const disableCategory = createAsyncThunk('categories/disableCategory', async (data: Category) => {
+export const disableCategory = createAsyncThunk('categories/disableCategory', async (data: CategoryType) => {
 	const body = {
 		name: data.name,
 		enable: data.enable
 	};
-	const response = await axios.put<{ data: Category }>(
+	const response = await axios.put<{ data: CategoryType }>(
 		`${process.env.REACT_APP_API_URL}/categories/${data.uid}/disable`,
 		body
 	);

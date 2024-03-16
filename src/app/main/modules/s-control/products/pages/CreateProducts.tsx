@@ -5,8 +5,9 @@ import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from '@
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { useAppDispatch } from 'app/store';
 import { getCategories, selectCategories } from '../../categories/store/categoriesSlice';
-import { FormProductType, createProduct, selectProducts, updateProduct } from '../store/productsSlice';
+import { createProduct, selectProducts, updateProduct } from '../store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { FormProductType } from '../entities/product';
 
 export default function CreateProducts() {
 	const dispatch = useAppDispatch();
