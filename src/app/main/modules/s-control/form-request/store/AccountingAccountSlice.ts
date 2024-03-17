@@ -3,12 +3,12 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import axios from 'axios';
 import { ReduxStateScontrol } from '../../store';
 
-export interface AccountingAccount {
+interface AccountingAccount {
 	uid: string;
 	name: string;
 }
 
-export interface AccountingAccountType {
+interface AccountingAccountType {
 	accountingAccount: AccountingAccount[];
 	loading: boolean;
 }
@@ -51,6 +51,6 @@ const accountingAccountSlice = createSlice({
 
 export default accountingAccountSlice.reducer;
 
-export const selectAccountingAccount = (state: ReduxStateScontrol) => state.accountingAccount;
+export const selectAccountingAccount = ({ scontrol }: ReduxStateScontrol) => scontrol.accountingAccount;
 
 export type accountingAccountSliceType = typeof accountingAccountSlice;

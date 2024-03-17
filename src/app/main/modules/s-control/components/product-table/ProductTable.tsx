@@ -11,20 +11,17 @@ import {
 	Switch,
 	Table,
 	TableBody,
-	TableCell,
 	TableContainer,
 	TableHead,
 	TablePagination,
-	TableRow,
 	TextField,
 	Toolbar,
-	Typography,
-	styled
+	Typography
 } from '@mui/material';
-import { tableCellClasses } from '@mui/material/TableCell';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ProductType, ProductsType } from '../products/entities/product';
+import { ProductType, ProductsType } from '../../products/entities/product';
+import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface ProductTableProps {
 	selectItem: (item: ProductType | null) => void;
@@ -32,30 +29,7 @@ interface ProductTableProps {
 	handleStatus: (item: ProductType) => void;
 }
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-	[`&.${tableCellClasses.head}`]: {
-		color: theme.palette.secondary.dark
-	},
-	[`&.${tableCellClasses.body}`]: {
-		fontSize: 14,
-		color: theme.palette.secondary.dark
-	}
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-	'&:nth-of-type(odd)': {
-		backgroundColor: theme.palette.common.white
-	},
-	'&:nth-of-type(even)': {
-		backgroundColor: theme.palette.action.hover
-	},
-
-	'&:last-child td, &:last-child th': {
-		border: 0
-	}
-}));
-
-export default function ProductTable({ selectItem, productsData, handleStatus }: ProductTableProps) {
+export function ProductTable({ selectItem, productsData, handleStatus }: ProductTableProps) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [searchValue, setSearchValue] = useState('');
@@ -98,7 +72,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 	const sortedProducts = filteredProducts.slice().reverse();
 
 	const handleNavigateCreateProduct = () => {
-		navigate('/cadastrar-produto');
+		navigate('cadastro');
 	};
 
 	return (
@@ -117,10 +91,10 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 					<Button
 						id="basic-button"
 						aria-haspopup="true"
-						onClick={handleNavigateCreateProduct}
 						className="w-full sm:w-256 shadow-lg py-24"
 						variant="contained"
 						startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
+						onClick={handleNavigateCreateProduct}
 					>
 						Cadastro de novo produto
 					</Button>

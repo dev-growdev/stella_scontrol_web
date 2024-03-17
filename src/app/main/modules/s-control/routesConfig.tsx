@@ -1,6 +1,6 @@
 import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
 import { authRoles } from 'src/app/auth';
-import { LayoutSControl } from './layout';
+import { SControlModule } from '.';
 import { paymentsFormRoutes } from './payments-form/paymentsFormRoutes.config';
 import { productsRoutes } from './products/productsRoutes.config';
 import { categoriesRoutes } from './categories/CategoriesRoutes.config';
@@ -32,7 +32,7 @@ export const scontrolRoutes: FuseRouteConfigType = {
 			},
 			path: '/scontrol',
 			auth: authRoles.scontrol,
-			element: <LayoutSControl />,
+			element: <SControlModule />,
 			children: [paymentsFormRoutes, productsRoutes, categoriesRoutes, formRequestRoutes]
 		}
 	]

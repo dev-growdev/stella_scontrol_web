@@ -1,9 +1,9 @@
 import { Box, Paper } from '@mui/material';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import ProductTable from '../../components/ProductTable';
+import { ProductTable } from '../../components/product-table/ProductTable';
 import { disableProduct, getProducts, selectProducts } from '../store/productsSlice';
-import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { ProductType } from '../entities/product';
 
 export default function Products() {

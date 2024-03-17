@@ -3,46 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios, { AxiosError } from 'axios';
 import { ReduxStateScontrol } from '../../store';
-
-interface Payment {
-	value: string;
-	dueDate: Date;
-}
-
-interface Files {
-	uid: string;
-	name: string;
-	key: string;
-	createdAt: Date;
-	updatedAt: Date;
-}
-
-export interface RequestType {
-	uid: string;
-	supplier: string;
-	description?: string;
-	sendReceipt: boolean;
-	totalValue: string;
-	accountingAccout: string;
-	payments: Payment[];
-	createdAt: Date;
-	files: Files[];
-}
-
-interface RequestPaymentGeneralType {
-	loading: boolean;
-	requests: RequestType[];
-}
-
-export interface CreateRequestGeneral {
-	supplier: string;
-	description: string;
-	requiredReceipt: boolean;
-	uploadedFiles: File[];
-	totalValue: string;
-	accountingAccout: string;
-	payments: Payment[];
-}
+import { RequestPaymentGeneralType, RequestType } from '../entities/request';
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',
@@ -135,6 +96,4 @@ const requestPaymentGeneralSlice = createSlice({
 });
 
 export default requestPaymentGeneralSlice.reducer;
-export const selectedRequestPaymentGeneral = (state: ReduxStateScontrol) => state.requestPaymentGeneral;
-
-export type requestPaymentGeneralSliceType = typeof requestPaymentGeneralSlice;
+export const selectedRequestPaymentGeneral = (state: ReduxStateScontrol) => state.scontrol.requestPaymentGeneral;

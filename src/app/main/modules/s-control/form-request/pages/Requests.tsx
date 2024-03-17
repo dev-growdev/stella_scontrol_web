@@ -1,16 +1,16 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Box, Button, Paper, Typography } from '@mui/material';
-import { useAppDispatch, useAppSelector } from 'app/store';
+import { useAppSelector } from 'app/store';
 import { selectUser } from 'app/store/user/userSlice';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import RequestsTable from '../../components/RequestsTable';
+import RequestsTable from '../../components/requests-table/RequestsTable';
 import { listRequestsPaymentsByUser, selectedRequestPaymentGeneral } from '../store/FormRequestSlice';
-import { useSelectorSControl } from '../../store/hooks';
+import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
 
 export default function Requests() {
 	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
+	const dispatch = useDispatchSControl();
 	const user = useAppSelector(selectUser);
 	const requests = useSelectorSControl(selectedRequestPaymentGeneral);
 

@@ -9,46 +9,24 @@ export const SQualityNavigationConfig: FuseNavigationType = [
 		auth: ['squality'],
 		children: [
 			{
-				id: 'home',
+				id: 'squality.home',
 				title: 'Inicio',
 				type: 'item',
 				icon: 'heroicons-outline:clipboard-list',
 				url: 'squality'
 			},
 			{
-				id: 'document-add',
-				title: 'Nova Solicitação',
-				type: 'item',
-				icon: 'heroicons-outline:document-add',
-				url: 'solicitar-pagamento',
-				auth: ['squality.novo']
-			},
-			{
-				id: 'clock',
-				title: 'Cadastros',
+				id: 'squality.exemplo',
+				title: 'Exemplo',
 				type: 'collapse',
 				icon: 'heroicons-outline:clock',
 				children: [
 					{
-						id: 'cube2',
-						title: 'Produtos',
+						id: 'squality.exemplo.counter',
+						title: 'Contador',
 						type: 'item',
 						icon: 'heroicons-outline:cube',
-						url: 'produtos'
-					},
-					{
-						id: 'tag2',
-						title: 'Categorias',
-						type: 'item',
-						icon: 'heroicons-outline:tag',
-						url: 'categorias'
-					},
-					{
-						id: 'briefcase',
-						title: 'Formas de pagamento',
-						type: 'item',
-						icon: 'heroicons-outline:briefcase',
-						url: 'formas-de-pagamento'
+						url: 'squality/counter'
 					}
 				]
 			}

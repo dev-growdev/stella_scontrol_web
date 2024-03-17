@@ -138,8 +138,6 @@ const paymentsFormSlice = createSlice({
 	}
 });
 
-export const selectPaymentsForm = (state: ReduxStateScontrol) => state.paymentsForm;
-
-export type paymentsFormSliceType = typeof paymentsFormSlice;
+export const selectPaymentsForm = ({ scontrol }: ReduxStateScontrol) => scontrol.paymentsForm;
 
 export default paymentsFormSlice.reducer;

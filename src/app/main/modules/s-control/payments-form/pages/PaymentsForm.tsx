@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { useEffect } from 'react';
-import PaymentsFormTable from '../../components/PaymentsFormTable';
+import { PaymentsFormTable } from '../../components/payment-form-table/PaymentsFormTable';
 import {
 	HolderType,
 	PaymentForm,

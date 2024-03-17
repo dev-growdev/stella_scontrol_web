@@ -151,6 +151,6 @@ const productsSlice = createSlice({
 	}
 });
 
-export const selectProducts = (state: ReduxStateScontrol) => state.products;
+export const selectProducts = ({ scontrol }: ReduxStateScontrol) => scontrol.products;
 
 export default productsSlice.reducer;

@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CategoriesType, CategoryType } from '../../categories/entities/category';
-import { StyledTableCell, StyledTableRow } from './styles';
+import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface DataTableProps {
 	selectItem: (item: CategoryType | null) => void;

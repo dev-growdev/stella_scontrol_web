@@ -13,48 +13,23 @@ import {
 	Switch,
 	Table,
 	TableBody,
-	TableCell,
 	TableContainer,
 	TableHead,
 	TablePagination,
-	TableRow,
 	TextField,
-	Toolbar,
-	styled
+	Toolbar
 } from '@mui/material';
-import { tableCellClasses } from '@mui/material/TableCell';
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import { HolderType, PaymentForm, PaymentsFormType } from '../store/slices/PaymentsFormSlice';
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-	[`&.${tableCellClasses.head}`]: {
-		color: theme.palette.secondary.dark
-	},
-	[`&.${tableCellClasses.body}`]: {
-		fontSize: 14,
-		color: theme.palette.secondary.dark
-	}
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-	'&:nth-of-type(odd)': {
-		backgroundColor: theme.palette.common.white
-	},
-	'&:nth-of-type(even)': {
-		backgroundColor: theme.palette.action.hover
-	},
-
-	'&:last-child td, &:last-child th': {
-		border: 0
-	}
-}));
+import { HolderType, PaymentForm, PaymentsFormType } from '../../store/slices/PaymentsFormSlice';
+import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface PaymentFormTable {
 	paymentsFormData: PaymentsFormType | { paymentsForm: []; loading: false };
 	handleStatus: (item: PaymentForm | HolderType) => void;
 }
 
-export interface formatedPaymentsArray {
+// export interface FormattedPaymentsArray {
+interface FormattedPayment {
 	uid: string;
 	formaDePagamento: string;
 	portador: string;
@@ -62,7 +37,7 @@ export interface formatedPaymentsArray {
 	enable: boolean;
 }
 
-export default function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFormTable) {
+export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFormTable) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [searchValue, setSearchValue] = useState('');

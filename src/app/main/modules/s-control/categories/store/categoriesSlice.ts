@@ -178,6 +178,6 @@ const categoriesSlice = createSlice({
 });
 
 export default categoriesSlice.reducer;
-export const selectCategories = (state: ReduxStateScontrol) => state.categories;
+export const selectCategories = ({ scontrol }: ReduxStateScontrol) => scontrol.categories;
 
 export type categorySliceType = typeof categoriesSlice;

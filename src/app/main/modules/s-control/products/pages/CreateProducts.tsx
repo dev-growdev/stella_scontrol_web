@@ -4,9 +4,9 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { useAppDispatch } from 'app/store';
-import { getCategories, selectCategories } from '../../categories/store/categoriesSlice';
+import { getCategories, selectCategories } from '~/modules/s-control/categories/store/categoriesSlice';
 import { createProduct, selectProducts, updateProduct } from '../store/productsSlice';
-import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { FormProductType } from '../entities/product';
 
 export default function CreateProducts() {
@@ -118,7 +118,7 @@ export default function CreateProducts() {
 	};
 
 	function handleRedirectToProducts() {
-		navigate('/produtos');
+		navigate('/scontrol/produtos');
 	}
 
 	return (

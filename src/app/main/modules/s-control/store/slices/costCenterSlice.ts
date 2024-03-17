@@ -52,6 +52,6 @@ const costCentersSlice = createSlice({
 });
 
 export default costCentersSlice.reducer;
-export const selectedCostCenters = (state: ReduxStateScontrol) => state.costCenter;
+export const selectedCostCenters = ({ scontrol }: ReduxStateScontrol) => scontrol.costCenter;
 
 export type costCenterSliceType = typeof costCentersSlice;

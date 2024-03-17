@@ -1,38 +1,9 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Chip, Stack, styled, TableCell, tableCellClasses } from '@mui/material';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
+import { Chip, Stack, Paper, Table, TableBody, TableContainer, TableHead, TablePagination } from '@mui/material';
+
 import { ChangeEvent, useState } from 'react';
-import { RequestType } from '../form-request/store/FormRequestSlice';
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-	[`&.${tableCellClasses.head}`]: {
-		color: theme.palette.secondary.dark,
-		backgroundColor: theme.palette.action.hover
-	},
-	[`&.${tableCellClasses.body}`]: {
-		fontSize: 14,
-		color: theme.palette.secondary.dark
-	}
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-	'&:nth-of-type(odd)': {
-		backgroundColor: theme.palette.common.white
-	},
-	'&:nth-of-type(even)': {
-		backgroundColor: theme.palette.action.hover
-	},
-
-	'&:last-child td, &:last-child th': {
-		border: 0
-	}
-}));
+import { StyledTableCell, StyledTableRow } from './styles';
+import { RequestType } from '../../form-request/entities/request';
 
 interface RequestTableProps {
 	rows: RequestType[];

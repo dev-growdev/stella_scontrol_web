@@ -7,5 +7,5 @@ export const scontrolStore = configureStore({
 	devTools: process.env.NODE_ENV !== 'production'
 });
 
-export type ReduxStateScontrol = ReturnType<typeof scontrolStore.getState>;
+export type ReduxStateScontrol = { scontrol: ReturnType<typeof scontrolStore.getState> };
 export type AppDispatchScontrol = typeof scontrolStore.dispatch;
