@@ -25,7 +25,7 @@ export const setUser = createAsyncThunk('user/setUser', async (user: UserType) =
 		settingsConfig.loginRedirectUrl = user.loginRedirectUrl; // for example 'apps/academy'
 	}
 
-	user.role = ['squality', 'scontrol', 'squality.novo']; // admin
+	user.role = ['squality', 'scontrol']; // admin
 
 	return user;
 });

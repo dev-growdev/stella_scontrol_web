@@ -29,6 +29,22 @@ export const SQualityNavigationConfig: FuseNavigationType = [
 						url: 'squality/counter'
 					}
 				]
+			},
+			{
+				id: 'squality.unauthorized',
+				title: 'Exemplo não autorizado',
+				type: 'collapse',
+				icon: 'heroicons-outline:clock',
+				auth: ['squality.superuser'],
+				children: [
+					{
+						id: 'squality.exemplo.unauthorized',
+						title: 'Contador',
+						type: 'item',
+						icon: 'heroicons-outline:cube',
+						url: 'squality/any'
+					}
+				]
 			}
 		]
 	}
