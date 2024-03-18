@@ -26,7 +26,7 @@ export const setUser = createAsyncThunk('user/setUser', async (user: UserType) =
 	}
 
 	user.role = ['squality', 'scontrol']; // admin
-
+	user.modules = ['squality', 'scontrol'];
 	return user;
 });
 

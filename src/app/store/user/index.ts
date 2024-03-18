@@ -6,6 +6,7 @@ import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
 export type UserType = {
 	uid: string;
 	role: string[];
+	modules: string[];
 	data: {
 		displayName: string;
 		photoURL?: string;

@@ -7,20 +7,16 @@ import Error404Page from '../main/404/Error404Page';
 import authenticationConfig from '../main/authentication/authenticationConfig';
 import { scontrolRoutes } from '../main/modules/s-control/SControlRoutesConfig';
 import { squalityRoutes } from '../main/modules/s-quality/routes.config';
+import { shomeRoutes } from '~/modules/s-home/SHomeRoutesConfig';
 
 // const scontrolRoutesPrefixed = addPrefixToRoutes('scontrol', scontrolRoutes);
-const routeConfigs: FuseRouteConfigsType = [...authenticationConfig, scontrolRoutes, squalityRoutes];
+const routeConfigs: FuseRouteConfigsType = [...authenticationConfig, scontrolRoutes, squalityRoutes, shomeRoutes];
 
 /**
 
 The routes of the application. */
 const routes: FuseRoutesType = [
 	...FuseUtils.generateRoutesFromConfigs(routeConfigs, settingsConfig.defaultAuth),
-	{
-		path: '/',
-		element: <Navigate to="/scontrol/solicitacoes" />,
-		auth: settingsConfig.defaultAuth
-	},
 	{
 		path: 'loading',
 		element: <FuseLoading />
