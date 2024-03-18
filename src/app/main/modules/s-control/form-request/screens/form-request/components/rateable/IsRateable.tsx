@@ -12,7 +12,7 @@ import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { FormDataType } from '../../entities/formData';
+import { FormDataType } from '../../types/formData';
 import { RateableTable } from './components';
 import { selectedCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
@@ -25,7 +25,7 @@ interface RateableProps {
 	remove: UseFieldArrayRemove;
 	errors: FieldErrors<FormDataType>;
 	setError: UseFormSetError<FormDataType>;
-	totalApportionmentsValue: (value: string) => void;
+	totalApportionmentsValue: (value: number) => void;
 }
 
 interface AccountingAccountType {

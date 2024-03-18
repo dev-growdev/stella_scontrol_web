@@ -3,7 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios, { AxiosError } from 'axios';
 import { ReduxStateScontrol } from '../../store';
-import { RequestPaymentGeneralType, RequestType } from '../entities/request';
+import { RequestPaymentGeneralType, RequestType } from '../types/request';
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',

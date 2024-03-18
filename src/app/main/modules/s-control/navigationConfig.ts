@@ -20,30 +20,30 @@ export const SControlNavigationConfig: FuseNavigationType = [
 				title: 'Nova Solicitação',
 				type: 'item',
 				icon: 'heroicons-outline:document-add',
-				url: 'scontrol/solicitar-pagamento'
+				url: 'scontrol/solicitacoes/cadastro'
 			},
 			{
-				id: 'scontrol.cadastros',
+				id: 'scontrol.create.list',
 				title: 'Cadastros',
 				type: 'collapse',
 				icon: 'heroicons-outline:clock',
 				children: [
 					{
-						id: 'cube2',
+						id: 'scontrol.create.products',
 						title: 'Produtos',
 						type: 'item',
 						icon: 'heroicons-outline:cube',
 						url: 'scontrol/produtos'
 					},
 					{
-						id: 'tag2',
+						id: 'scontrol.create.categories',
 						title: 'Categorias',
 						type: 'item',
 						icon: 'heroicons-outline:tag',
 						url: 'scontrol/categorias'
 					},
 					{
-						id: 'briefcase',
+						id: 'scontrol.create.payment-methods',
 						title: 'Formas de pagamento',
 						type: 'item',
 						icon: 'heroicons-outline:briefcase',

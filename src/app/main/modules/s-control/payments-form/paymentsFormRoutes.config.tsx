@@ -1,7 +1,7 @@
 import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
 
-const PaymentsForm = lazy(() => import('./pages/PaymentsForm'));
+const PaymentsForm = lazy(() => import('./screens/PaymentsForm'));
 
 /**
  * The sign up pages config.
@@ -30,5 +30,10 @@ export const paymentsFormRoutes: FuseRouteItemType = {
 	},
 	// auth: authRoles.admin,
 	path: 'formas-de-pagamento',
-	element: <PaymentsForm />
+	children: [
+		{
+			path: '',
+			element: <PaymentsForm />
+		}
+	]
 };

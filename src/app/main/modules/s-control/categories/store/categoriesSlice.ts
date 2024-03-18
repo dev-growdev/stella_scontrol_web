@@ -3,7 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
 import { ReduxStateScontrol } from '../../store';
-import { CategoriesType, CategoryType } from '../entities/category';
+import { CategoriesType, CategoryType } from '../types/category';
 
 interface createCategory {
 	name: string;

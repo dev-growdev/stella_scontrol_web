@@ -1,8 +1,8 @@
 import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
 
-const CreateProductsPage = lazy(() => import('./pages/CreateProducts'));
-const ProductsPage = lazy(() => import('./pages/Products'));
+const CreateProductsPage = lazy(() => import('./screens/CreateProducts'));
+const ProductsPage = lazy(() => import('./screens/Products'));
 
 export const productsRoutes: FuseRouteItemType = {
 	// auth: authRoles.admin,

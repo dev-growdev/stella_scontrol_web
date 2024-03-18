@@ -1,7 +1,7 @@
 import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
 
-const CategoriesPage = lazy(() => import('./pages/Categories'));
+const CategoriesPage = lazy(() => import('./screens/Categories'));
 
 /**
  * The sign up pages config.

@@ -20,7 +20,7 @@ import {
 	Toolbar
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { CategoriesType, CategoryType } from '../../categories/entities/category';
+import { CategoriesType, CategoryType } from '../../categories/types/category';
 import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface DataTableProps {

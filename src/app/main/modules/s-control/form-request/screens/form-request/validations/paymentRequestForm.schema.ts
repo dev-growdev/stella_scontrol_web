@@ -45,7 +45,7 @@ export const paymentRequestFormSchema = object().shape({
 			})
 		)
 		.required(),
-	typeAccount: string(),
+	typeAccount: string().required('É necessário adicionar um tipo de conta.'),
 	uploadedFiles: array(),
 	accountingAccount: string(),
 	apportionments: array()

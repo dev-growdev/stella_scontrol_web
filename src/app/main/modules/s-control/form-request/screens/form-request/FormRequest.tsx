@@ -1,33 +1,34 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
-import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
-import { yupResolver } from '@hookform/resolvers/yup';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppSelector } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+
 import { IsRateable } from './components/rateable/IsRateable';
 
+import { getProducts, selectProducts } from '~/modules/s-control/products/store/productsSlice';
+import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
+import { getPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { getCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from '../../store/AccountingAccountSlice';
 import { createRequestPaymentGeneral } from '../../store/FormRequestSlice';
-import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
 import {
-	RequestUser,
-	RequiredReceipt,
-	UploadFiles,
-	ValueAndDueDate,
 	AccountType,
 	PaymentMethod,
-	TableProductsFromRequest
+	RequestUser,
+	RequiredReceipt,
+	TableProductsFromRequest,
+	UploadFiles,
+	ValueAndDueDate
 } from './components';
-import { getPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
-import { getCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
-import { getProducts, selectProducts } from '~/modules/s-control/products/store/productsSlice';
+import { FormDataType } from './types/formData';
+import { ProductOptionType } from './types/productOptions';
 import { paymentRequestFormSchema } from './validations/paymentRequestForm.schema';
-import { FormDataType } from './entities/formData';
-import { ProductOptionType } from './entities/productOptions';
 
 const defaultValues = {
 	paymentMethod: '',

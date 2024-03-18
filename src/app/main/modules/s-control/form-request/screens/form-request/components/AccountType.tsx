@@ -16,7 +16,7 @@ import {
 } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { HolderType, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
-import { FormDataType } from '../entities/formData';
+import { FormDataType } from '../types/formData';
 
 interface AccountTypeProps {
 	paymentMethod: string;

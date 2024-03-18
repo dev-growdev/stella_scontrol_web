@@ -1,12 +1,10 @@
-import { FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
-import FormControl from '@mui/material/FormControl';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import { FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { FormDataType } from '../entities/formData';
-import { PaymentForm, selectPaymentsForm } from '../../../../store/slices/PaymentsFormSlice';
+
+import { PaymentForm, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { FormDataType } from '../types/formData';
 
 const itemHeight = 48;
 const itemPaddingTop = 8;

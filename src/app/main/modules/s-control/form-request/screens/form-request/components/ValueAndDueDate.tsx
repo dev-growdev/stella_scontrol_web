@@ -5,7 +5,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFieldArrayRemove, UseFormSetValue } from 'react-hook-form';
-import { FormDataType } from '../entities/formData';
+import { FormDataType } from '../types/formData';
 
 interface ValueAndDueDateProps {
 	control: Control<FormDataType>;

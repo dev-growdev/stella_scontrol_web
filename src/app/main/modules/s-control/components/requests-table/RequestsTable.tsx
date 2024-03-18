@@ -3,7 +3,7 @@ import { Chip, Stack, Paper, Table, TableBody, TableContainer, TableHead, TableP
 
 import { ChangeEvent, useState } from 'react';
 import { StyledTableCell, StyledTableRow } from './styles';
-import { RequestType } from '../../form-request/entities/request';
+import { RequestType } from '../../form-request/types/request';
 import { formattedNumeral } from '../../utils/formatters/formatted-value';
 
 interface RequestTableProps {

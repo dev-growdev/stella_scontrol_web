@@ -20,12 +20,12 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ProductType, ProductsType } from '../../products/entities/product';
+import { ProductType, ProductsType } from '../../products/types/product';
 import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface ProductTableProps {
 	selectItem: (item: ProductType | null) => void;
-	productsData: ProductsType | { products: []; loading: false };
+	productsData: ProductsType;
 	handleStatus: (item: ProductType) => void;
 }
 

@@ -15,8 +15,8 @@ import { ChangeEvent, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { useAppDispatch } from 'app/store';
-import { FormDataType } from '../entities/formData';
-import { ProductOptionType } from '../entities/productOptions';
+import { FormDataType } from '../types/formData';
+import { ProductOptionType } from '../types/productOptions';
 
 interface TableProductsFromRequestProps {
 	control: Control<FormDataType>;

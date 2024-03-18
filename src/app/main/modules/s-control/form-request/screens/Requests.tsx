@@ -25,7 +25,7 @@ export default function Requests() {
 					className="mb-12"
 					variant="text"
 					color="primary"
-					onClick={() => navigate('/scontrol/solicitar-pagamento')}
+					onClick={() => navigate('cadastro')}
 					startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}
 				>
 					ABRIR NOVA SOLICITAÇÃO

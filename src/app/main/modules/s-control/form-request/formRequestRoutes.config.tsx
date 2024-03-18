@@ -1,21 +1,22 @@
 import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
 import { lazy } from 'react';
 
-const Request = lazy(() => import('./pages/Requests'));
-const PaymentRequestFormGeneral = lazy(() => import('./pages/form-request/FormRequest'));
+const Request = lazy(() => import('./screens/Requests'));
+const PaymentRequestFormGeneral = lazy(() => import('./screens/form-request/FormRequest'));
 
 /**
  * The sign up pages config.
  */
 export const formRequestRoutes: FuseRouteItemType = {
 	// auth: authRoles.admin,
+	path: 'solicitacoes',
 	children: [
 		{
-			path: 'solicitacoes',
+			path: '',
 			element: <Request />
 		},
 		{
-			path: 'solicitar-pagamento',
+			path: 'cadastro',
 			element: <PaymentRequestFormGeneral />
 		}
 	]

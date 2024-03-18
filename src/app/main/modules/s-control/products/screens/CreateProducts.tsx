@@ -7,7 +7,7 @@ import { useAppDispatch } from 'app/store';
 import { getCategories, selectCategories } from '~/modules/s-control/categories/store/categoriesSlice';
 import { createProduct, selectProducts, updateProduct } from '../store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
-import { FormProductType } from '../entities/product';
+import { FormProductType } from '../types/product';
 
 export default function CreateProducts() {
 	const dispatch = useAppDispatch();

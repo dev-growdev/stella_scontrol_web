@@ -1,6 +1,6 @@
 import { FuseRouteItemType } from '@fuse/utils/FuseUtils';
-import { Home } from './pages/Home';
-import { Counter } from '../counter/pages/Counter';
+import { Home } from './screens/Home';
+import { Counter } from '../counter/screens/Counter';
 
 /**
  * The sign up pages config.

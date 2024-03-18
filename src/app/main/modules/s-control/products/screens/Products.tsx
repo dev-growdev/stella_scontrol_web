@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { ProductTable } from '../../components/product-table/ProductTable';
 import { disableProduct, getProducts, selectProducts } from '../store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
-import { ProductType } from '../entities/product';
+import { ProductType } from '../types/product';
 
 export default function Products() {
 	const dispatchSControl = useDispatchSControl();
@@ -16,7 +16,7 @@ export default function Products() {
 	}, []);
 
 	function handleEditProduct(product: ProductType) {
-		return navigate(`/cadastrar-produto/${product.uid}`);
+		return navigate(`cadastro/${product.uid}`);
 	}
 
 	async function handleGetStatus(item: ProductType) {

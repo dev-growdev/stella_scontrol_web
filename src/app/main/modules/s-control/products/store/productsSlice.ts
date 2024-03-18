@@ -3,7 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
 import { ReduxStateScontrol } from '../../store';
-import { CreateProductType, FormProductType, ProductsType } from '../entities/product';
+import { CreateProductType, FormProductType, ProductsType } from '../types/product';
 
 export const createProduct = createAppAsyncThunk(
 	'products/createProduct',

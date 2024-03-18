@@ -11,7 +11,7 @@ import {
 	updateCategory
 } from '../store/categoriesSlice';
 import { useSelectorSControl } from '../../store/hooks';
-import { CategoryType } from '../entities/category';
+import { CategoryType } from '../types/category';
 
 export default function Categories() {
 	const [editMode, setEditMode] = useState(false);

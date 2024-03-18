@@ -1,4 +1,4 @@
-import { CategoryType } from '../../categories/entities/category';
+import { CategoryType } from '../../categories/types/category';
 
 export interface FormProductType {
 	uid?: string;
