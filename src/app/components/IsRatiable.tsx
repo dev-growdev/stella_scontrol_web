@@ -53,8 +53,21 @@ export default function IsRatiable({
 	const [valueCostCenter, setValueCostCenter] = useState('');
 	const [remainingValue, setRemainingValue] = useState(0);
 	const [totalApportionmentsValueState, setTotalApportionmentsValueState] = useState(0);
-
+	const [valueInputValue, setValueInputValue] = useState('');
 	const formCostCenters = watch('apportionments');
+	const [disableButtonAdd, setDisableButtonAdd] = useState(false);
+
+	useEffect(() => {
+		if (shouldDisableButtonAdd(totalApportionmentsValueState, totalValue)) {
+			setDisableButtonAdd(true);
+		} else {
+			setDisableButtonAdd(false);
+		}
+	}, [totalApportionmentsValueState]);
+
+	const shouldDisableButtonAdd = (totalApportionmentsValueState: number, totalValue: number) => {
+		return totalApportionmentsValueState === totalValue && totalApportionmentsValueState !== 0 && totalValue !== 0;
+	};
 
 	useEffect(() => {
 		const remaining = totalValue - totalApportionmentsValueState;
@@ -65,6 +78,16 @@ export default function IsRatiable({
 
 		setRemainingValue(remaining);
 	}, [totalValue, totalApportionmentsValueState]);
+
+	useEffect(() => {
+		if (remainingValue > 0 && formCostCenters.length > 0) {
+			setValueInputValue(formatedNumeral(remainingValue));
+			setValueCostCenter(formatedNumeral(remainingValue));
+		}
+		if (remainingValue === 0) {
+			setValueInputValue('');
+		}
+	}, [remainingValue]);
 
 	useEffect(() => {
 		totalApportionmentsValue(formatedNumeral(totalApportionmentsValueState).toString());
@@ -119,6 +142,7 @@ export default function IsRatiable({
 		let { value } = event.target;
 		value = value.replace(/[^\d,]/g, '');
 		setValueCostCenter(value);
+		setValueInputValue(value);
 	};
 
 	const handleSubmitApportionments = () => {
@@ -159,7 +183,9 @@ export default function IsRatiable({
 		setCostCenterName('');
 		setAccountingAccountName('');
 		setAccountingAccounts([]);
+		setRemainingValue(0);
 	};
+
 	return (
 		<div className="flex flex-col">
 			<div className="flex items-center">
@@ -237,7 +263,7 @@ export default function IsRatiable({
 							className="sm:w-1/3"
 							label="Valor"
 							type="text"
-							value={valueCostCenter}
+							value={valueInputValue}
 							onChange={handleValueCostCenter}
 							error={!!errors?.apportionments?.message}
 							helperText={errors?.apportionments?.message}
@@ -252,6 +278,7 @@ export default function IsRatiable({
 						<Button
 							onClick={handleSubmitApportionments}
 							variant="contained"
+							disabled={disableButtonAdd}
 						>
 							Adicionar
 						</Button>

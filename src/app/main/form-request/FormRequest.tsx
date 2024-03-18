@@ -278,8 +278,8 @@ export default function PaymentRequestFormGeneral() {
 
 		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
-				// clearFormState();
-				// navigate('/solicitacoes');
+				clearFormState();
+				navigate('/solicitacoes');
 			}
 		});
 	}
