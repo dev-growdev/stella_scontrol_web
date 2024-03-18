@@ -47,16 +47,16 @@ export default function AccountType({
 
 	useEffect(() => {
 		if (paymentsForm && paymentsForm.length > 0) {
-			const BBcreditCardHolders = paymentsForm.filter(
+			const bbCreditCardHolders = paymentsForm.filter(
 				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BB')
 			);
 
-			setCreditCardHoldersBB(BBcreditCardHolders as HolderType[]);
+			setCreditCardHoldersBB(bbCreditCardHolders as HolderType[]);
 
-			const BRADcreditCardHolders = paymentsForm.filter(
+			const bradCreditCardHolders = paymentsForm.filter(
 				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BRAD')
 			);
-			setCreditCardHoldersBRAD(BRADcreditCardHolders as HolderType[]);
+			setCreditCardHoldersBRAD(bradCreditCardHolders as HolderType[]);
 
 			const corporateCardHolders = paymentsForm.filter(
 				holder => holder.type === 'corporate' && holder.enable === true
