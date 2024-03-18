@@ -4,19 +4,19 @@ import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 
-interface CostCenters {
+interface Apportionments {
 	costCenter: string;
 	accountingAccount: string;
 	value: string;
 }
 
 interface RateableProps {
-	costCenters: CostCenters[];
+	apportionments: Apportionments[];
 	remove: UseFieldArrayRemove;
-	totalApportionmentsValue: (value: string) => void;
+	totalApportionmentsValue: (value: number) => void;
 }
 
-export function RateableTable({ costCenters, remove, totalApportionmentsValue }: RateableProps) {
+export function RateableTable({ apportionments, remove, totalApportionmentsValue }: RateableProps) {
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);
@@ -24,15 +24,15 @@ export function RateableTable({ costCenters, remove, totalApportionmentsValue }:
 	function totalValue() {
 		let total = 0;
 
-		costCenters.forEach(costCenter => {
-			const value = parseFloat(costCenter.value.replace(',', '.'));
+		apportionments.forEach(apportionment => {
+			const value = parseFloat(apportionment.value.replace(',', '.'));
 
-			if (Number(value)) {
+			if (value) {
 				total += value;
 			}
 		});
 
-		return formattedNumeral(total);
+		return total;
 	}
 
 	return (
@@ -60,11 +60,11 @@ export function RateableTable({ costCenters, remove, totalApportionmentsValue }:
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{costCenters.map((item, index) => (
+						{apportionments.map((item, index) => (
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${formattedNumeral(item.value)}</TableCell>
+								<TableCell>R${formattedNumeral(parseFloat(item.value))}</TableCell>
 								<TableCell className="flex justify-end">
 									<FuseSvgIcon
 										color="primary"
@@ -78,7 +78,7 @@ export function RateableTable({ costCenters, remove, totalApportionmentsValue }:
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<Typography className="text-right">Valor total: R${totalValue()}</Typography>
+			<Typography className="text-right">Valor total: R${formattedNumeral(totalValue())}</Typography>
 		</div>
 	);
 }

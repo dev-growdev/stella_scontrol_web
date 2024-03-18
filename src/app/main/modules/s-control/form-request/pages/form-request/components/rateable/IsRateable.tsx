@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+
 import { FormDataType } from '../../entities/formData';
 import { RateableTable } from './components';
 import { selectedCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
@@ -113,7 +114,7 @@ export function IsRateable({
 		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
-			value: valueCostCenter
+			value: valueCostCenter.replace(',', '.')
 		};
 
 		const apportionments = watch('apportionments');
@@ -240,7 +241,7 @@ export function IsRateable({
 
 					<RateableTable
 						remove={remove}
-						costCenters={formCostCenters}
+						apportionments={formCostCenters}
 						totalApportionmentsValue={totalApportionmentsValue}
 					/>
 				</>

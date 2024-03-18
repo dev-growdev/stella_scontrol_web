@@ -9,12 +9,15 @@ export interface PaymentsFormType {
 
 export interface PaymentForm {
 	uid: string;
+	code: number;
 	name: string;
+	namePaymentForm?: string;
 	enable: boolean;
 	type: string;
 }
 export interface HolderType {
 	uid: string;
+	code: number;
 	name: string;
 	enable: boolean;
 	type: string;
@@ -25,6 +28,7 @@ export interface HolderType {
 interface DataType {
 	uid: string;
 	name: string;
+	code: number;
 	enable: boolean;
 	type: string;
 	paymentForm?: {
@@ -51,13 +55,14 @@ export const getPaymentsForm = createAsyncThunk('payments-form/getPaymentsForm',
 				item.paymentForm
 					? {
 							uid: item.uid,
+							code: item.code,
 							name: item.name,
 							enable: item.enable,
 							type: item.type,
 							namePaymentForm: item.paymentForm.name,
 							uidPaymentForm: item.paymentForm.uid
 					  }
-					: { uid: item.uid, name: item.name, enable: item.enable, type: '' }
+					: { uid: item.uid, code: item.code, name: item.name, enable: item.enable, type: '' }
 			);
 
 		return converted;
@@ -82,6 +87,7 @@ export const disablePaymentsForm = createAsyncThunk(
 					return {
 						uid: data.uid,
 						name: data.name,
+						code: data.code,
 						enable: data.enable,
 						type: data.type,
 						namePaymentForm: data.paymentForm.name,
@@ -91,6 +97,7 @@ export const disablePaymentsForm = createAsyncThunk(
 
 				return {
 					uid: data.uid,
+					code: data.code,
 					name: data.name,
 					enable: data.enable,
 					type: ''

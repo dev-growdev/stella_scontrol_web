@@ -31,6 +31,7 @@ interface PaymentFormTable {
 // export interface FormattedPaymentsArray {
 interface FormattedPayment {
 	uid: string;
+	code: number;
 	formaDePagamento: string;
 	portador: string;
 	uidPortador: string;
@@ -146,6 +147,7 @@ export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFor
 						className="flex justify-between font-600"
 						sx={{ backgroundColor: theme => theme.palette.action.hover }}
 					>
+						<StyledTableCell>Código</StyledTableCell>
 						<StyledTableCell>Forma de Pagamento</StyledTableCell>
 						<StyledTableCell>Portador</StyledTableCell>
 						<StyledTableCell>Status</StyledTableCell>
@@ -164,11 +166,17 @@ export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFor
 										className="flex justify-between"
 										key={row.uid}
 									>
-										<StyledTableCell className="min-w-200">
+										<StyledTableCell className="w-[24.5rem]">
+											{(row as HolderType).code || row.code
+												? (row as HolderType).code ?? row.code
+												: '-'}
+										</StyledTableCell>
+
+										<StyledTableCell className="w-[34rem]">
 											{(row as HolderType).namePaymentForm ?? row.name}
 										</StyledTableCell>
 
-										<StyledTableCell className="min-w-216 flex justify-end">
+										<StyledTableCell className="w-88 flex justify-center">
 											{(row as HolderType).type ? row.name : ''}
 										</StyledTableCell>
 

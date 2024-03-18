@@ -50,7 +50,7 @@ export default function PaymentRequestFormGeneral() {
 	const user = useAppSelector(selectUser);
 	const productsRedux = useSelectorSControl(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
-	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState('');
+	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState(0);
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelectorSControl(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
@@ -89,7 +89,7 @@ export default function PaymentRequestFormGeneral() {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
 				}, 0);
-				setTotalValue(formattedNumeral(total.toString().replace('.', ',')));
+				setTotalValue(total.toString());
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -126,7 +126,6 @@ export default function PaymentRequestFormGeneral() {
 	}, [watch('apportionments')]);
 
 	function onSubmit(data: FormDataType) {
-		console.log(data);
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
 			const apportionments = watch('apportionments');
@@ -136,7 +135,7 @@ export default function PaymentRequestFormGeneral() {
 				return;
 			}
 
-			if (totalApportionmentsValue !== totalValue) {
+			if (totalApportionmentsValue.toString() !== totalValue) {
 				dispatch(
 					showMessage({
 						message: `O rateio deve ser igual ao valor total da solicitação.`,
@@ -296,7 +295,7 @@ export default function PaymentRequestFormGeneral() {
 							))}
 						</div>
 						<div className="mb-28">
-							<Typography>Valor total: R$ {formattedNumeral(totalValue)}</Typography>
+							<Typography>Valor total: R$ {formattedNumeral(parseFloat(totalValue))}</Typography>
 						</div>
 						<div className="flex items-center">
 							<Button
