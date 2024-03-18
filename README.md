@@ -32,7 +32,7 @@ npm run dev
 
 - Exemplo: help-center
 
-#### Nome de arquivos:
+#### Nome de arquivos
 
 ##### Padrão PascalCase para arquivos .tsx
 
@@ -58,6 +58,8 @@ npm run dev
 - Exemplo: T[User] para type
 - Exemplo: Props[List] para props
 
+---
+
 #### Uso de Dispatch e Selectors
 
 Para buscas e ações de estados globais utilizar o AppDispatch e AppSelector. E estados pertencentes ao modulo utilizar o dispatch e selector do módulo.
@@ -66,7 +68,7 @@ Exemplo:
 
 > Global
 
-```tsx
+```ts
 export function ListProduct(){
   const dispatch = useAppDispatch();
   const products = useAppSelector((state) => state.products);
@@ -75,10 +77,28 @@ export function ListProduct(){
 
 > Módulo
 
-```tsx
+```ts
 export function ListProduct(){
   const dispatchSControl = useDispatchSControl();
   const products = useSelectorSControl((state) => state.products);
+}
+```
+
+---
+
+#### Padrão de Handlers
+
+Para handlers utilizar `function`.
+
+Exemplo:
+
+```ts
+function handleSave(event: React.FormEvent<HTMLFormElement>){
+  // Código
+}
+
+function handleAction(_: unknown, value: string){
+  // Código
 }
 ```
 
