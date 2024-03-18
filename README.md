@@ -1,44 +1,127 @@
-eThis project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Stella Admin
 
-## Available Scripts
+Repositório do sistema Stella - Painel de gerenciamento da aplicação.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+### Informações gerais quanto ao projeto
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+O projeto utiliza o FUSE React framework (https://react-material.fusetheme.com/sign-in)
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+O framework de UI é o Mui Material (https://mui.com/material-ui/getting-started/overview/)
 
-### `npm run test`
+E para estilizações é utilizado o TailwindCSS (https://tailwindcss.com/docs/installation)
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Para instalar as dependências rode o seguinte comando:
 
-### `npm run run build`
+```sh
+npm install
+```
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Para rodar o projeto:
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+```sh
+npm run dev
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### Padronização de nomenclaturas do projeto
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### Nome de pastas: Padrão kebab-case
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Exemplo: help-center
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+#### Nome de arquivos:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+##### Padrão PascalCase para arquivos .tsx
 
-## Learn More
+- Exemplo: UserConfig.tsx
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+##### Padrão camelCase para arquivos de slices
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Exemplo: userSlice.ts
+
+#### Padrão de nomenclatura de variáveis e componentes
+
+##### Nome de componentes: Padrão PascalCase
+
+- Exemplo: User
+
+##### Nome de variáveis e funções: Padrão camelCase
+
+- Exemplo: dataProfile
+
+##### Nome de Tipagem: Padrão camelCase com prefixo de tipo
+
+- Exemplo: I[User] para interface
+- Exemplo: T[User] para type
+- Exemplo: Props[List] para props
+
+#### Uso de Dispatch e Selectors
+
+Para buscas e ações de estados globais utilizar o AppDispatch e AppSelector. E estados pertencentes ao modulo utilizar o dispatch e selector do módulo.
+
+Exemplo:
+
+> Global
+
+```tsx
+export function ListProduct(){
+  const dispatch = useAppDispatch();
+  const products = useAppSelector((state) => state.products);
+}
+```
+
+> Módulo
+
+```tsx
+export function ListProduct(){
+  const dispatchSControl = useDispatchSControl();
+  const products = useSelectorSControl((state) => state.products);
+}
+```
+
+---
+
+### Definição de estados Redux
+
+```ts
+type InitialState = {
+  loading: boolean;
+  payload: Type;
+}
+```
+
+### Arquitetura para novas features
+
+A organização de diretórios deve ser seguida conforme padrão do framework.
+
+Exemplo:
+
+```sh
+├── components (components compartilhados entre módulos)
+├── modules
+   ├── s-module
+      ├── components (componentes compartilhados entre páginas)
+      ├── pages
+        ├── [page]
+          ├── components
+          ├── screens
+            ├── [screen]
+              ├── components
+              ├── [screen].tsx
+            ├── [screen].tsx
+          ├── store
+            ├── [slice].ts
+          ├── types
+            ├── [type].ts
+          ├── [Page]RoutesConfig.tsx
+      ├── store
+        ├── [slice].ts
+      ├── utils
+        ├── formatters
+          ├── formatter.ts
+      ├── index.tsx
+      └── [module]RoutesConfig.tsx
+```
