@@ -13,6 +13,7 @@ export interface PaymentForm {
 	uid: string;
 	code: number;
 	name: string;
+	namePaymentForm?: string;
 	enable: boolean;
 	type: string;
 }

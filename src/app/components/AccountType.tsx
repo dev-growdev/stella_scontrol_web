@@ -41,13 +41,22 @@ export default function AccountType({
 }: AccountTypeProps) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
-	const [creditCardHolders, setCreditCardHolders] = useState<HolderType[]>([]);
+	const [creditCardHoldersBB, setCreditCardHoldersBB] = useState<HolderType[]>([]);
+	const [creditCardHoldersBRAD, setCreditCardHoldersBRAD] = useState<HolderType[]>([]);
 	const [corporateCardHolders, setCorporateCardHolders] = useState<HolderType[]>([]);
 
 	useEffect(() => {
 		if (paymentsForm && paymentsForm.length > 0) {
-			const creditCardHolders = paymentsForm.filter(holder => holder.type === 'credit' && holder.enable === true);
-			setCreditCardHolders(creditCardHolders as HolderType[]);
+			const BBcreditCardHolders = paymentsForm.filter(
+				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BB')
+			);
+
+			setCreditCardHoldersBB(BBcreditCardHolders as HolderType[]);
+
+			const BRADcreditCardHolders = paymentsForm.filter(
+				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BRAD')
+			);
+			setCreditCardHoldersBRAD(BRADcreditCardHolders as HolderType[]);
 
 			const corporateCardHolders = paymentsForm.filter(
 				holder => holder.type === 'corporate' && holder.enable === true
@@ -163,7 +172,7 @@ export default function AccountType({
 					</div>
 				</div>
 			)}
-			{paymentMethod.includes('crédito') && (
+			{paymentMethod === 'Cartão de crédito BB' && (
 				<Controller
 					control={control}
 					name="cardHolder"
@@ -171,7 +180,30 @@ export default function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
-							options={creditCardHolders}
+							options={creditCardHoldersBB}
+							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
+							renderInput={params => (
+								<TextField
+									{...field}
+									{...params}
+									error={!!errors.cardHolder?.name?.message}
+									helperText={errors.cardHolder?.name?.message ?? ''}
+									label="Selecionar portador"
+								/>
+							)}
+						/>
+					)}
+				/>
+			)}
+			{paymentMethod === 'Cartão de crédito BRAD' && (
+				<Controller
+					control={control}
+					name="cardHolder"
+					render={({ field }) => (
+						<Autocomplete
+							id="credit-card-holder"
+							onChange={handleAutocomplete}
+							options={creditCardHoldersBRAD}
 							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
