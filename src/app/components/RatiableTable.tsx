@@ -6,12 +6,12 @@ import { Apportionments } from '../main/form-request/FormRequest';
 import { formatedNumeral } from '../main/utils/formated-value';
 
 interface RatiableProps {
-	costCenters: Apportionments[];
+	apportionments: Apportionments[];
 	remove: UseFieldArrayRemove;
 	totalApportionmentsValue: (value: number) => void;
 }
 
-export default function RatiableTable({ costCenters, remove, totalApportionmentsValue }: RatiableProps) {
+export default function RatiableTable({ apportionments, remove, totalApportionmentsValue }: RatiableProps) {
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);
@@ -19,10 +19,10 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 	function totalValue() {
 		let total = 0;
 
-		costCenters.forEach(costCenter => {
-			const value = parseFloat(costCenter.value.replace(',', '.'));
+		apportionments.forEach(apportionment => {
+			const value = parseFloat(apportionment.value.replace(',', '.'));
 
-			if (Number(value)) {
+			if (value) {
 				total += value;
 			}
 		});
@@ -55,11 +55,11 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{costCenters.map((item, index) => (
+						{apportionments.map((item, index) => (
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${formatedNumeral(item.value)}</TableCell>
+								<TableCell>R${formatedNumeral(parseFloat(item.value))}</TableCell>
 								<TableCell className="flex justify-end">
 									<FuseSvgIcon
 										color="primary"

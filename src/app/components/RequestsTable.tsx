@@ -9,6 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { ChangeEvent, useState } from 'react';
 import { RequestType } from '../main/form-request/FormRequestSlice';
+import { formatedNumeral } from '../main/utils/formated-value';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -73,41 +74,54 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 					<TableHead>
 						<StyledTableCell>Tipo</StyledTableCell>
 						<StyledTableCell>Status</StyledTableCell>
+						<StyledTableCell>Fornecedor</StyledTableCell>
+						<StyledTableCell>Valor</StyledTableCell>
 						<StyledTableCell>Data de cadastro</StyledTableCell>
+						<StyledTableCell>Data de vencimento</StyledTableCell>
 						<StyledTableCell align="right">Ações</StyledTableCell>
 					</TableHead>
 					<TableBody>
 						{Array.isArray(rows) &&
-							rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-								return (
-									<StyledTableRow
-										hover
-										role="checkbox"
-										tabIndex={-1}
-										key={row.uid}
-									>
-										<StyledTableCell>
-											{index % 2 === 0 ? 'Pagamento geral' : 'Compras'}
-										</StyledTableCell>
-										<StyledTableCell>
-											<Stack
-												direction="row"
-												spacing={1}
-											>
-												<Chip
-													color={index % 2 === 0 ? 'success' : 'primary'}
-													label={index % 2 === 0 ? 'Concluído' : 'Em andamento'}
-												/>
-											</Stack>
-										</StyledTableCell>
-										<StyledTableCell>{formatDate(row.createdAt)}</StyledTableCell>
-										<StyledTableCell className="flex gap-28 justify-end">
-											<FuseSvgIcon color="primary">heroicons-outline:pencil</FuseSvgIcon>
-											<FuseSvgIcon color="primary">heroicons-outline:eye</FuseSvgIcon>
-										</StyledTableCell>
-									</StyledTableRow>
-								);
-							})}
+							rows
+								.slice()
+								.reverse()
+								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+								.map((row, index) => {
+									return (
+										<StyledTableRow
+											hover
+											role="checkbox"
+											tabIndex={-1}
+											key={row.uid}
+										>
+											<StyledTableCell>
+												{index % 2 === 0 ? 'Pagamento geral' : 'Compras'}
+											</StyledTableCell>
+											<StyledTableCell>
+												<Stack
+													direction="row"
+													spacing={1}
+												>
+													<Chip
+														color={index % 2 === 0 ? 'success' : 'primary'}
+														label={index % 2 === 0 ? 'Concluído' : 'Em andamento'}
+													/>
+												</Stack>
+											</StyledTableCell>
+											<StyledTableCell>{row.supplier}</StyledTableCell>
+											<StyledTableCell>
+												R${formatedNumeral(parseFloat(row.totalValue))}
+											</StyledTableCell>
+											<StyledTableCell>{formatDate(row.createdAt)}</StyledTableCell>
+											<StyledTableCell>{formatDate(row.payments[0].dueDate)}</StyledTableCell>
+
+											<StyledTableCell className="flex gap-28 justify-end">
+												<FuseSvgIcon color="primary">heroicons-outline:pencil</FuseSvgIcon>
+												<FuseSvgIcon color="primary">heroicons-outline:eye</FuseSvgIcon>
+											</StyledTableCell>
+										</StyledTableRow>
+									);
+								})}
 					</TableBody>
 				</Table>
 			</TableContainer>

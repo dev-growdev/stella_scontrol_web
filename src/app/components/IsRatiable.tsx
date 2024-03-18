@@ -63,7 +63,7 @@ export default function IsRatiable({
 		} else {
 			setDisableButtonAdd(false);
 		}
-	}, [totalApportionmentsValueState]);
+	}, [totalApportionmentsValueState, totalValue]);
 
 	const shouldDisableButtonAdd = (totalApportionmentsValueState: number, totalValue: number) => {
 		return totalApportionmentsValueState === totalValue && totalApportionmentsValueState !== 0 && totalValue !== 0;
@@ -162,7 +162,7 @@ export default function IsRatiable({
 		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
-			value: valueCostCenter
+			value: valueCostCenter.replace(',', '.')
 		};
 
 		const apportionments = watch('apportionments');
@@ -292,8 +292,8 @@ export default function IsRatiable({
 
 					<RatiableTable
 						remove={remove}
-						costCenters={formCostCenters}
 						totalApportionmentsValue={setTotalApportionmentsValueState}
+						apportionments={formCostCenters}
 					/>
 				</>
 			)}

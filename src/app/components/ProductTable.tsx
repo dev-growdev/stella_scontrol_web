@@ -154,7 +154,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 						<StyledTableCell>Nome</StyledTableCell>
 						<StyledTableCell>Categoria</StyledTableCell>
 						<StyledTableCell>UN</StyledTableCell>
-						<StyledTableCell>Qtde</StyledTableCell>
+						<StyledTableCell>Qtde Embalagem</StyledTableCell>
 						<StyledTableCell>Status</StyledTableCell>
 						<StyledTableCell>Ações</StyledTableCell>
 					</TableHead>
@@ -194,7 +194,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									</StyledTableCell>
 
 									<StyledTableCell
-										className="w-224 break-words"
+										className="w-[22rem] break-words"
 										component="th"
 										scope="row"
 									>
@@ -202,14 +202,14 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 									</StyledTableCell>
 
 									<StyledTableCell
-										className="w-224 break-words"
+										className="w-[31rem] break-words"
 										component="th"
 										scope="row"
 									>
 										{row.quantity === 0 ? '-' : row.quantity}
 									</StyledTableCell>
 
-									<StyledTableCell className="w-112 justify-end">
+									<StyledTableCell className="w-[12rem] justify-end">
 										<Stack
 											direction="row"
 											spacing={1}
@@ -226,7 +226,7 @@ export default function ProductTable({ selectItem, productsData, handleStatus }:
 											/>
 										</Stack>
 									</StyledTableCell>
-									<StyledTableCell className="min-w-224 flex justify-end">
+									<StyledTableCell className="min-w-208 flex justify-end">
 										<div className="flex w-full justify-between">
 											<FuseSvgIcon
 												color="primary"
