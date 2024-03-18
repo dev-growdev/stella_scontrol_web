@@ -94,9 +94,10 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk('requestPaymentGen
 		const response = await axios.get<{
 			code: number;
 			success: boolean;
-			data: { request: RequestType }[];
+			data: RequestType[];
 		}>(`${process.env.REACT_APP_API_URL}/payment-request-general/${userUid}`);
 		const { data } = response.data;
+
 		return data;
 	} catch (error) {
 		const axiosError = error as AxiosError<{ message: string }>;

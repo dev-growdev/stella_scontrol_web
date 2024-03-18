@@ -2,16 +2,16 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
-import { CostCenters } from '../main/form-request/FormRequest';
+import { Apportionments } from '../main/form-request/FormRequest';
 import { formatedNumeral } from '../main/utils/formated-value';
 
 interface RatiableProps {
-	costCenters: CostCenters[];
+	apportionments: Apportionments[];
 	remove: UseFieldArrayRemove;
-	totalApportionmentsValue: (value: string) => void;
+	totalApportionmentsValue: (value: number) => void;
 }
 
-export default function RatiableTable({ costCenters, remove, totalApportionmentsValue }: RatiableProps) {
+export default function RatiableTable({ apportionments, remove, totalApportionmentsValue }: RatiableProps) {
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);
@@ -19,15 +19,15 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 	function totalValue() {
 		let total = 0;
 
-		costCenters.forEach(costCenter => {
-			const value = parseFloat(costCenter.value.replace(',', '.'));
+		apportionments.forEach(apportionment => {
+			const value = parseFloat(apportionment.value.replace(',', '.'));
 
-			if (Number(value)) {
+			if (value) {
 				total += value;
 			}
 		});
 
-		return formatedNumeral(total);
+		return total;
 	}
 
 	return (
@@ -55,11 +55,11 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{costCenters.map((item, index) => (
+						{apportionments.map((item, index) => (
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${formatedNumeral(item.value)}</TableCell>
+								<TableCell>R${formatedNumeral(parseFloat(item.value))}</TableCell>
 								<TableCell className="flex justify-end">
 									<FuseSvgIcon
 										color="primary"
@@ -73,7 +73,7 @@ export default function RatiableTable({ costCenters, remove, totalApportionments
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<Typography className="text-right">Valor total: R${totalValue()}</Typography>
+			<Typography className="text-right">Valor total: R${formatedNumeral(totalValue())}</Typography>
 		</div>
 	);
 }
