@@ -11,19 +11,19 @@ import {
 	TableRow,
 	TextField
 } from '@mui/material';
+import { useAppDispatch } from 'app/store';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { ChangeEvent, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
-import { showMessage } from 'app/store/fuse/messageSlice';
-import { useAppDispatch } from 'app/store';
-import { FormDataType } from '../types/formData';
 import { ProductOptionType } from '../types/productOptions';
+import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface TableProductsFromRequestProps {
-	control: Control<FormDataType>;
-	errors: FieldErrors<FormDataType>;
+	control: Control<TPaymentRequestForm>;
+	errors: FieldErrors<TPaymentRequestForm>;
 	productsToOptions: ProductOptionType[];
-	setValueProducts: UseFormSetValue<FormDataType>;
-	watch: UseFormWatch<FormDataType>;
+	setValueProducts: UseFormSetValue<TPaymentRequestForm>;
+	watch: UseFormWatch<TPaymentRequestForm>;
 }
 
 export function TableProductsFromRequest({

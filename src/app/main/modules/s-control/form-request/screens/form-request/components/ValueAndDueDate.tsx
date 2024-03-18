@@ -5,14 +5,14 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFieldArrayRemove, UseFormSetValue } from 'react-hook-form';
-import { FormDataType } from '../types/formData';
+import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface ValueAndDueDateProps {
-	control: Control<FormDataType>;
+	control: Control<TPaymentRequestForm>;
 	index: number;
-	errors?: FieldErrors<FormDataType>;
+	errors?: FieldErrors<TPaymentRequestForm>;
 	remove: UseFieldArrayRemove;
-	setValue: UseFormSetValue<FormDataType>;
+	setValue: UseFormSetValue<TPaymentRequestForm>;
 }
 
 export function ValueAndDueDate({ control, index, errors, remove, setValue }: ValueAndDueDateProps) {

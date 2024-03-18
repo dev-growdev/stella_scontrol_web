@@ -4,7 +4,7 @@ import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-fo
 import { useSelector } from 'react-redux';
 
 import { PaymentForm, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
-import { FormDataType } from '../types/formData';
+import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 const itemHeight = 48;
 const itemPaddingTop = 8;
@@ -20,9 +20,9 @@ const MenuProps = {
 
 interface PaymentMethod {
 	selectedPaymentMethod: string;
-	register: UseFormRegister<FormDataType>;
-	control: Control<FormDataType>;
-	errors: FieldErrors<FormDataType>;
+	register: UseFormRegister<TPaymentRequestForm>;
+	control: Control<TPaymentRequestForm>;
+	errors: FieldErrors<TPaymentRequestForm>;
 }
 
 export function PaymentMethod({ selectedPaymentMethod, register, control, errors }: PaymentMethod) {

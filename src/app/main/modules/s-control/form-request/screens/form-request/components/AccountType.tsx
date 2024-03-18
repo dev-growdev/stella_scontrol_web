@@ -16,17 +16,17 @@ import {
 } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { HolderType, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
-import { FormDataType } from '../types/formData';
+import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface AccountTypeProps {
 	paymentMethod: string;
-	control: Control<FormDataType>;
-	register: UseFormRegister<FormDataType>;
-	setValue: UseFormSetValue<FormDataType>;
-	unregister: UseFormUnregister<FormDataType>;
-	errors: FieldErrors<FormDataType>;
-	setError: UseFormSetError<FormDataType>;
-	clearErrors: UseFormClearErrors<FormDataType>;
+	control: Control<TPaymentRequestForm>;
+	register: UseFormRegister<TPaymentRequestForm>;
+	setValue: UseFormSetValue<TPaymentRequestForm>;
+	unregister: UseFormUnregister<TPaymentRequestForm>;
+	errors: FieldErrors<TPaymentRequestForm>;
+	setError: UseFormSetError<TPaymentRequestForm>;
+	clearErrors: UseFormClearErrors<TPaymentRequestForm>;
 }
 
 export function AccountType({
