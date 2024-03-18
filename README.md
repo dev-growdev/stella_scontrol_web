@@ -6,11 +6,11 @@ Repositório do sistema Stella - Painel de gerenciamento da aplicação.
 
 ### Informações gerais quanto ao projeto
 
-O projeto utiliza o FUSE React framework (https://react-material.fusetheme.com/sign-in)
+O projeto utiliza o FUSE React framework (<https://react-material.fusetheme.com/sign-in>)
 
-O framework de UI é o Mui Material (https://mui.com/material-ui/getting-started/overview/)
+O framework de UI é o Mui Material (<https://mui.com/material-ui/getting-started/overview/>)
 
-E para estilizações é utilizado o TailwindCSS (https://tailwindcss.com/docs/installation)
+E para estilizações é utilizado o TailwindCSS (<https://tailwindcss.com/docs/installation>)
 
 Para instalar as dependências rode o seguinte comando:
 
@@ -99,29 +99,30 @@ A organização de diretórios deve ser seguida conforme padrão do framework.
 
 Exemplo:
 
-```sh
+```tree
 ├── components (components compartilhados entre módulos)
-├── modules
-   ├── s-module
-      ├── components (componentes compartilhados entre páginas)
-      ├── pages
-        ├── [page]
-          ├── components
-          ├── screens
-            ├── [screen]
-              ├── components
-              ├── [screen].tsx
-            ├── [screen].tsx
-          ├── store
-            ├── [slice].ts
-          ├── types
-            ├── [type].ts
-          ├── [Page]RoutesConfig.tsx
-      ├── store
-        ├── [slice].ts
-      ├── utils
-        ├── formatters
-          ├── formatter.ts
-      ├── index.tsx
-      └── [module]RoutesConfig.tsx
+└── modules
+    └── s-module
+        ├── components (componentes compartilhados entre páginas)
+        ├── pages
+        │   ├── [page]
+        │   │ ├── components
+        │   │ │   └── [component].tsx
+        │   │ ├── screens
+        │   │ │   ├── [screen]
+        │   │ │   │   ├── components
+        │   │ │   │   └── [screen].tsx
+        │   │ │   └── [screen].tsx
+        │   │ ├── store
+        │   │ │   └── [slice].ts
+        │   │ └── types
+        │   │     └── [type].ts
+        │   └── [Page]RoutesConfig.tsx
+        ├── store
+        │   └── [slice].ts
+        ├── utils
+        │   └── formatters
+        │     └── formatter.ts
+        ├── index.tsx
+        └── [module]RoutesConfig.tsx
 ```
