@@ -81,8 +81,9 @@ export default function AccountType({
 		setValue('cardHolder.name', outerText);
 
 		const findHolder = paymentsForm.find(
-			(item: HolderType) => item.name === outerText && item.namePaymentForm === paymentMethod
+			(item: HolderType) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod
 		);
+
 		setValue('cardHolder.uid', findHolder.uid);
 	}
 
