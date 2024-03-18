@@ -153,6 +153,12 @@ export default function IsRatiable({
 			return setError('apportionments', { message: 'É necessário adicionar um valor válido.' });
 		}
 
+		const validateIfValueExceeded = parseFloat(valueCostCenter.replace(',', '.')) + totalApportionmentsValueState;
+
+		if (validateIfValueExceeded > totalValue) {
+			return setError('apportionments', { message: 'O valor adicionado excedeu o valor total.' });
+		}
+
 		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
