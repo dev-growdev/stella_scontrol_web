@@ -9,7 +9,7 @@ import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { IsRateable } from './components/rateable/IsRateable';
 
-import { formattedNumeral } from '~/modules/s-control/utils/formatted-value';
+import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from '../../store/AccountingAccountSlice';
 import { createRequestPaymentGeneral } from '../../store/FormRequestSlice';
 import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';

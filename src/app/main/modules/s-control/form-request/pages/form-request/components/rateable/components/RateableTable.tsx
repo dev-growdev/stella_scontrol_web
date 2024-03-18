@@ -2,7 +2,7 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
-import { formattedNumeral } from '~/modules/s-control/utils/formatted-value';
+import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 
 interface CostCenters {
 	costCenter: string;

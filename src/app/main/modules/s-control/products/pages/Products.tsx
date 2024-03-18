@@ -7,12 +7,12 @@ import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/st
 import { ProductType } from '../entities/product';
 
 export default function Products() {
-	const dispatch = useDispatchSControl();
+	const dispatchSControl = useDispatchSControl();
 	const productsRedux = useSelectorSControl(selectProducts);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		dispatch(getProducts());
+		dispatchSControl(getProducts());
 	}, []);
 
 	function handleEditProduct(product: ProductType) {
@@ -30,7 +30,7 @@ export default function Products() {
 			quantity: item.quantity,
 			action: ''
 		};
-		dispatch(disableProduct(itemToggleEnable));
+		dispatchSControl(disableProduct(itemToggleEnable));
 	}
 
 	return (

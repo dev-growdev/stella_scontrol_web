@@ -8,27 +8,6 @@ const PaymentRequestFormGeneral = lazy(() => import('./pages/form-request/FormRe
  * The sign up pages config.
  */
 export const formRequestRoutes: FuseRouteItemType = {
-	settings: {
-		layout: {
-			config: {
-				navbar: {
-					display: true
-				},
-				toolbar: {
-					display: true
-				},
-				footer: {
-					display: false
-				},
-				leftSidePanel: {
-					display: true
-				},
-				rightSidePanel: {
-					display: true
-				}
-			}
-		}
-	},
 	// auth: authRoles.admin,
 	children: [
 		{

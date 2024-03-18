@@ -1,6 +1,7 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useAppDispatch } from 'app/store';
 import { DataTable } from '../../components/data-table/DataTable';
 import {
 	createCategory,
@@ -9,14 +10,14 @@ import {
 	selectCategories,
 	updateCategory
 } from '../store/categoriesSlice';
-import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { useSelectorSControl } from '../../store/hooks';
 import { CategoryType } from '../entities/category';
 
 export default function Categories() {
 	const [editMode, setEditMode] = useState(false);
 	const [editCategory, setEditCategory] = useState<CategoryType | null>(null);
 	const [newItem, setNewItem] = useState('');
-	const dispatch = useDispatchSControl();
+	const dispatch = useAppDispatch();
 	const categoriesRedux = useSelectorSControl(selectCategories);
 
 	useEffect(() => {
