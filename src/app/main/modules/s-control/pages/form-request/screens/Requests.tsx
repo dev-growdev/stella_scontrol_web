@@ -4,9 +4,9 @@ import { useAppSelector } from 'app/store';
 import { selectUser } from 'app/store/user/userSlice';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import RequestsTable from '../../components/requests-table/RequestsTable';
+import RequestsTable from '../../../components/requests-table/RequestsTable';
 import { listRequestsPaymentsByUser, selectedRequestPaymentGeneral } from '../store/FormRequestSlice';
-import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+import { useDispatchSControl, useSelectorSControl } from '../../../store/hooks';
 
 export default function Requests() {
 	const navigate = useNavigate();

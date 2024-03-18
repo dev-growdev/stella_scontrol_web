@@ -20,8 +20,8 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ProductType, ProductsType } from '../../products/types/product';
 import { StyledTableCell, StyledTableRow } from '../tableStyles';
+import { ProductType, ProductsType } from '../../pages/products/types/product';
 
 interface ProductTableProps {
 	selectItem: (item: ProductType | null) => void;

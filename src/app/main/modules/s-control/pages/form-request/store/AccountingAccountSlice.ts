@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import axios from 'axios';
-import { ReduxStateScontrol } from '../../store';
+import { ReduxStateScontrol } from '../../../store';
 
 interface AccountingAccount {
 	uid: string;
