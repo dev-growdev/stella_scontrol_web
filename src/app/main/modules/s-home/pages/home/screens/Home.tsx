@@ -9,6 +9,17 @@ export default function Home() {
 		window.location.href = `/${module}`;
 	}
 
+	function formattedModuleName(module: string): string {
+		switch (module) {
+			case 'scontrol':
+				return 'S.Control';
+			case 'squality':
+				return 'S.Quality';
+			default:
+				return module;
+		}
+	}
+
 	return (
 		<Grid
 			container
@@ -20,11 +31,18 @@ export default function Home() {
 					<Grid
 						item
 						xs={12}
-						className="bg-grey-400 cursor-pointer hover:bg-grey-600"
+						sx={{ backgroundColor: '#00B2D01A' }}
+						className="cursor-pointer flex justify-center items-center"
 						key={module}
 						onClick={() => handleNavigate(module)}
 					>
-						<Typography variant="h4">{module}</Typography>
+						<Typography
+							variant="h4"
+							color="white"
+							sx={{ color: '#565656' }}
+						>
+							{formattedModuleName(module)}
+						</Typography>
 					</Grid>
 				))}
 		</Grid>
