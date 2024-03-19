@@ -1,6 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import { useAppSelector } from 'app/store';
 import { selectUser } from 'app/store/user/userSlice';
+import BG from './bg.svg';
 
 export default function Home() {
 	const user = useAppSelector(selectUser);
@@ -25,14 +26,17 @@ export default function Home() {
 			container
 			xs={12}
 			className="h-full w-full justify-evenly"
+			sx={{ background: `url(${BG})`, backgroundSize: 'cover' }}
+			alignItems="center"
+			justifyContent="center"
 		>
 			{user &&
 				user.modules.map(module => (
 					<Grid
 						item
-						xs={12}
-						sx={{ backgroundColor: '#00B2D01A' }}
-						className="cursor-pointer flex justify-center items-center"
+						xs={3}
+						height={200}
+						className="cursor-pointer flex justify-center items-center bg-grey-600/70 hover:bg-grey-400/80 rounded-lg"
 						key={module}
 						onClick={() => handleNavigate(module)}
 					>
