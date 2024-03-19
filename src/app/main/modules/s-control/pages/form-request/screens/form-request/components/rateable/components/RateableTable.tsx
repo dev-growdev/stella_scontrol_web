@@ -25,10 +25,12 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 		let total = 0;
 
 		apportionments.forEach(apportionment => {
-			const value = parseFloat(apportionment.value.replace(',', '.'));
+			let stringValue = apportionment.value;
+			stringValue = stringValue.replace(/\./g, '');
+			stringValue = stringValue.replace(',', '.');
 
-			if (value) {
-				total += value;
+			if (stringValue) {
+				total += parseFloat(stringValue);
 			}
 		});
 
@@ -64,7 +66,7 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${formattedNumeral(parseFloat(item.value))}</TableCell>
+								<TableCell>R${item.value}</TableCell>
 								<TableCell className="flex justify-end">
 									<FuseSvgIcon
 										color="primary"
