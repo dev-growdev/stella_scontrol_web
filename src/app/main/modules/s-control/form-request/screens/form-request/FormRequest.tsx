@@ -85,6 +85,15 @@ export default function PaymentRequestFormGeneral() {
 		name: 'apportionments'
 	});
 
+	async function validatePixAndCardHolder() {
+		const formData = {
+			...watch(),
+			userCreatedUid: user.uid,
+			totalValue
+		};
+		await paymentRequestFormSchema.parseAsync(formData);
+	}
+
 	useEffect(() => {
 		const subscription = watch(value => {
 			if (Array.isArray(value.payments)) {
@@ -128,7 +137,8 @@ export default function PaymentRequestFormGeneral() {
 		}
 	}, [watch('apportionments')]);
 
-	function onSubmit(data: FormDataType) {
+	async function onSubmit(data: FormDataType) {
+		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
 			const apportionments = watch('apportionments');

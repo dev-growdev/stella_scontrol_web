@@ -81,12 +81,14 @@ export function AccountType({
 	}, [paymentMethod]);
 
 	function handleAutocomplete(event: ChangeEvent<HTMLInputElement>) {
-		if (!event.target.outerText) {
+		const { outerText } = event.target;
+		if (!outerText) {
 			setError('cardHolder.name', { message: 'É necessário adicionar um portador.' });
 			return;
 		}
+
 		clearErrors('cardHolder');
-		const { outerText } = event.target;
+
 		setValue('cardHolder.name', outerText);
 
 		const findHolder = paymentsForm.find(
@@ -102,8 +104,8 @@ export function AccountType({
 				<TextField
 					label="Informe a chave pix"
 					{...register('pix')}
-					error={!!errors.paymentMethod?.pix?.message}
-					helperText={errors.paymentMethod?.pix?.message ?? ''}
+					error={!!errors.pix?.message}
+					helperText={errors.pix?.message ?? ''}
 				/>
 			)}
 			{paymentMethod === 'Transferência bancária' && (
@@ -186,8 +188,8 @@ export function AccountType({
 								<TextField
 									{...field}
 									{...params}
-									error={!!errors.cardHolder?.name?.message}
-									helperText={errors.cardHolder?.name?.message ?? ''}
+									error={!!errors.cardHolder?.message}
+									helperText={errors.cardHolder?.message ?? ''}
 									label="Selecionar portador"
 								/>
 							)}
@@ -209,8 +211,8 @@ export function AccountType({
 								<TextField
 									{...field}
 									{...params}
-									error={!!errors.cardHolder?.name?.message}
-									helperText={errors.cardHolder?.name?.message ?? ''}
+									error={!!errors.cardHolder?.message}
+									helperText={errors.cardHolder?.message ?? ''}
 									label="Selecionar portador"
 								/>
 							)}
@@ -232,8 +234,8 @@ export function AccountType({
 								<TextField
 									{...field}
 									{...params}
-									error={!!errors.cardHolder?.name?.message}
-									helperText={errors.cardHolder?.name?.message ?? ''}
+									error={!!errors.cardHolder?.message}
+									helperText={errors.cardHolder?.message ?? ''}
 									label="Selecionar portador"
 								/>
 							)}
