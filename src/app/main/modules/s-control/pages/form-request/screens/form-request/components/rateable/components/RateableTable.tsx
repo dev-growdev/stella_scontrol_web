@@ -80,7 +80,7 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<Typography className="text-right">Valor total: R${formattedNumeral(totalValue())}</Typography>
+			<Typography className="text-right">Valor total adicionado: R${formattedNumeral(totalValue())}</Typography>
 		</div>
 	);
 }
