@@ -1,10 +1,10 @@
 import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
 import { authRoles } from 'src/app/auth';
 import { SControlModule } from '.';
-import { paymentsFormRoutes } from './payments-form/paymentsFormRoutes.config';
-import { productsRoutes } from './products/productsRoutes.config';
-import { categoriesRoutes } from './categories/CategoriesRoutes.config';
-import { formRequestRoutes } from './form-request/formRequestRoutes.config';
+import { paymentsFormRoutes } from './pages/payments-form/paymentsFormRoutesConfig';
+import { categoriesRoutes } from './pages/categories/CategoriesRoutesConfig';
+import { formRequestRoutes } from './pages/form-request/formRequestRoutesConfig';
+import { productsRoutes } from './pages/products/productsRoutesConfig';
 
 export const scontrolRoutes: FuseRouteConfigType = {
 	routes: [

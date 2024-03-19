@@ -4,7 +4,7 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { useAppDispatch } from 'app/store';
-import { getCategories, selectCategories } from '~/modules/s-control/categories/store/categoriesSlice';
+import { getCategories, selectCategories } from '~/modules/s-control/pages/categories/store/categoriesSlice';
 import { createProduct, selectProducts, updateProduct } from '../store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { FormProductType } from '../types/product';

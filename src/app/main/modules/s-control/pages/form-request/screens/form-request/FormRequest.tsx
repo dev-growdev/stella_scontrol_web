@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router';
 
 import { IsRateable } from './components/rateable/IsRateable';
 
-import { getProducts, selectProducts } from '~/modules/s-control/products/store/productsSlice';
+import { getProducts, selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { getPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
 import { getCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';

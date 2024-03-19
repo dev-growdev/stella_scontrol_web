@@ -2,7 +2,7 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useAppDispatch } from 'app/store';
-import { DataTable } from '../../components/data-table/DataTable';
+import { DataTable } from '../../../components/data-table/DataTable';
 import {
 	createCategory,
 	disableCategory,
@@ -10,7 +10,7 @@ import {
 	selectCategories,
 	updateCategory
 } from '../store/categoriesSlice';
-import { useSelectorSControl } from '../../store/hooks';
+import { useSelectorSControl } from '../../../store/hooks';
 import { CategoryType } from '../types/category';
 
 export default function Categories() {

@@ -1,14 +1,14 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { useEffect } from 'react';
-import { PaymentsFormTable } from '../../components/payment-form-table/PaymentsFormTable';
+import { PaymentsFormTable } from '../../../components/payment-form-table/PaymentsFormTable';
 import {
 	HolderType,
 	PaymentForm,
 	disablePaymentsForm,
 	getPaymentsForm,
 	selectPaymentsForm
-} from '../../store/slices/PaymentsFormSlice';
-import { useDispatchSControl, useSelectorSControl } from '../../store/hooks';
+} from '../../../store/slices/PaymentsFormSlice';
+import { useDispatchSControl, useSelectorSControl } from '../../../store/hooks';
 
 export default function PaymentsForm() {
 	const dispatchScontrol = useDispatchSControl();

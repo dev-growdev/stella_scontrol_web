@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
-import { ReduxStateScontrol } from '../../store';
 import { CreateProductType, FormProductType, ProductsType } from '../types/product';
+import { ReduxStateScontrol } from '~/modules/s-control/store';
 
 export const createProduct = createAppAsyncThunk(
 	'products/createProduct',
