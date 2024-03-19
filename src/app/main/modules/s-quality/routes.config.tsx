@@ -2,6 +2,7 @@ import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
 import { authRoles } from 'src/app/auth';
 import HomeRoutesConfig from './home/homeConfig';
 import { SQualityModule } from '.';
+import { suppliersRoutesConfig } from './pages/suppliers/suppliersRoutesConfig';
 
 export const squalityRoutes: FuseRouteConfigType = {
 	routes: [
@@ -30,7 +31,7 @@ export const squalityRoutes: FuseRouteConfigType = {
 			path: '/squality',
 			auth: authRoles.squality,
 			element: <SQualityModule />,
-			children: [...HomeRoutesConfig]
+			children: [...HomeRoutesConfig, suppliersRoutesConfig]
 		}
 	]
 };

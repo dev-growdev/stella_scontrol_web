@@ -31,18 +31,17 @@ export const SQualityNavigationConfig: FuseNavigationType = [
 				]
 			},
 			{
-				id: 'squality.unauthorized',
-				title: 'Exemplo não autorizado',
+				id: 'squality.create.list',
+				title: 'Cadastros',
 				type: 'collapse',
 				icon: 'heroicons-outline:clock',
-				auth: ['squality.superuser'],
 				children: [
 					{
-						id: 'squality.exemplo.unauthorized',
-						title: 'Contador',
+						id: 'squality.create.products',
+						title: 'Fornecedores',
 						type: 'item',
 						icon: 'heroicons-outline:cube',
-						url: 'squality/any'
+						url: 'squality/fornecedores'
 					}
 				]
 			}
