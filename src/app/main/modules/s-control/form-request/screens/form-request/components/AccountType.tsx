@@ -102,8 +102,8 @@ export function AccountType({
 				<TextField
 					label="Informe a chave pix"
 					{...register('pix')}
-					error={!!errors.pix?.message}
-					helperText={errors.pix?.message ?? ''}
+					error={!!errors.paymentMethod?.pix?.message}
+					helperText={errors.paymentMethod?.pix?.message ?? ''}
 				/>
 			)}
 			{paymentMethod === 'Transferência bancária' && (
