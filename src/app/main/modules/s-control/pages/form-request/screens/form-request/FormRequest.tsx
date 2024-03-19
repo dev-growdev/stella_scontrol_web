@@ -91,7 +91,8 @@ export default function PaymentRequestFormGeneral() {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
 				}, 0);
-				setTotalValue(formatedNumeral(total.toString().replace('.', ',')));
+
+				setTotalValue(formattedNumeral(total));
 				setTotalValueUnformated(total);
 			}
 		});
@@ -298,7 +299,7 @@ export default function PaymentRequestFormGeneral() {
 							))}
 						</div>
 						<div className="mb-28">
-							<Typography>Valor total: R$ {formattedNumeral(parseFloat(totalValue))}</Typography>
+							<Typography>Valor total: R$ {totalValue}</Typography>
 						</div>
 						<div className="flex items-center">
 							<Button
