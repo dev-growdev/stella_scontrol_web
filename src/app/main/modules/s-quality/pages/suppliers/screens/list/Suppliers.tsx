@@ -1,7 +1,10 @@
-import { Box, Paper } from '@mui/material';
-import { SupplierTable } from '../../components/supplier-table/SupplierTable';
+import { useEffect, useState } from 'react';
+import { SupplierTable } from './components/supplier-table/SupplierTable';
+import { Header } from './components/Header';
+import { DefaultPage } from '~/modules/s-quality/components/DefaultPage';
 
 export default function Suppliers() {
+	const [searchValue, setSearchValue] = useState('');
 	/* const dispatchSControl = useDispatchSControl();
 	const productsRedux = useSelectorSControl(selectProducts);
 	const navigate = useNavigate();
@@ -28,18 +31,17 @@ export default function Suppliers() {
 		dispatchSControl(disableProduct(itemToggleEnable));
 	} */
 
+	useEffect(() => {
+		console.log('searchValue', searchValue);
+	}, [searchValue]);
+
 	return (
-		<Box>
-			<div className="p-32 mt-20">
-				<Paper
-					elevation={4}
-					className="mt-24 flex flex-col gap-24 py-16"
-				>
-					<div className="flex items-center gap-24 flex-col sm:flex-row">
-						<SupplierTable suppliersData={console.log('cheguei aqui')} />
-					</div>
-				</Paper>
-			</div>
-		</Box>
+		<DefaultPage>
+			<Header
+				searchValue={searchValue}
+				setSearchValue={setSearchValue}
+			/>
+			<SupplierTable suppliersData={[]} />
+		</DefaultPage>
 	);
 }
