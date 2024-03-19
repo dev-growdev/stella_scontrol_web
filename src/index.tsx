@@ -5,6 +5,7 @@ import './i18n';
 import './styles/app-base.css';
 import './styles/app-components.css';
 import './styles/app-utilities.css';
+import './styles/muiCustomComponents.css';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
 

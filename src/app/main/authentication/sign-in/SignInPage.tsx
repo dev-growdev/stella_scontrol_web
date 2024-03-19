@@ -1,43 +1,45 @@
-import { useMsal } from "@azure/msal-react";
+import { useMsal } from '@azure/msal-react';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { graphConfig, loginRequest } from 'app/configs/authConfig';
-import { useAppDispatch } from "app/store";
-import { UserType } from "app/store/user";
-import { setUser } from "app/store/user/userSlice";
-import axios from "axios";
-import JwtService from "src/app/auth/services/jwtService";
+import { useAppDispatch } from 'app/store';
+import { UserType } from 'app/store/user';
+import { setUser } from 'app/store/user/userSlice';
+import axios from 'axios';
+import JwtService from 'src/app/auth/services/jwtService';
 
 function SignInPage() {
-	const dispatch = useAppDispatch()
+	const dispatch = useAppDispatch();
 
 	const { instance } = useMsal();
 
 	function handleMicrosoftAD() {
-		instance.loginPopup(loginRequest)
-			.then(async (loginResponse) => {
-
-				const me = await axios.get(graphConfig.graphMeEndpoint, { headers: { Authorization: `Bearer ${loginResponse.accessToken}` } })
+		instance
+			.loginPopup(loginRequest)
+			.then(async loginResponse => {
+				const me = await axios.get(graphConfig.graphMeEndpoint, {
+					headers: { Authorization: `Bearer ${loginResponse.accessToken}` }
+				});
 
 				const user = {
 					idUserAd: me.data.id,
 					email: me.data.userPrincipalName,
 					name: me.data.displayName
-				}
+				};
 				JwtService.signInWithId(user)
 					.then((user: UserType) => {
-						dispatch(setUser(user))
+						dispatch(setUser(user));
 					})
-					.catch((errors) => {
-						console.log(errors)
-					})
+					.catch(errors => {
+						console.log(errors);
+					});
 			})
-			.catch((e) => {
-				console.log(e)
-			})
+			.catch(e => {
+				console.log(e);
+			});
 	}
 
 	return (
@@ -58,7 +60,8 @@ function SignInPage() {
 					</Typography>
 
 					<div className="mt-32 flex items-center space-x-16">
-						<Button onClick={handleMicrosoftAD}
+						<Button
+							onClick={handleMicrosoftAD}
 							variant="outlined"
 							className="flex-auto"
 							sx={{ borderRadius: '7px' }}
@@ -66,7 +69,6 @@ function SignInPage() {
 							<MicrosoftIcon sx={{ marginRight: '10px' }} />
 							Entrar com a Microsoft
 						</Button>
-
 					</div>
 				</div>
 			</Paper>
@@ -76,8 +78,7 @@ function SignInPage() {
 				sx={{
 					backgroundImage: `url('assets/images//pages/login-page/login-background.svg')`
 				}}
-			>
-			</Box>
+			/>
 		</div>
 	);
 }

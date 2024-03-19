@@ -6,6 +6,7 @@
 			"@history*": ["./src/@history"],
 			"@lodash": ["./src/@lodash"],
 			"@mock-api": ["./src/@mock-api"],
+			"~/*": ["./src/app/main/*"],
 			"app/store": ["./src/app/store/index"],
 			"app/store/*": ["./src/app/store/*"],
 			"app/components/*": ["src/app/components/*"],

@@ -17,7 +17,7 @@ type AppRootStateType = RootStateType<userSliceType>;
 /**
  * Sets the user data in the Redux store and updates the login redirect URL if provided.
  */
-export const setUser = createAsyncThunk('user/setUser', (user: UserType) => {
+export const setUser = createAsyncThunk('user/setUser', async (user: UserType) => {
 	/*
     You can redirect the logged-in user to a specific route depending on his role
     */
@@ -25,7 +25,9 @@ export const setUser = createAsyncThunk('user/setUser', (user: UserType) => {
 		settingsConfig.loginRedirectUrl = user.loginRedirectUrl; // for example 'apps/academy'
 	}
 
-	return Promise.resolve(user);
+	user.role = ['squality', 'scontrol']; // admin
+
+	return user;
 });
 
 /**
@@ -46,11 +48,13 @@ export const updateUserSettings = createAppAsyncThunk(
 		const userRequestData = { data: { ...user.data, settings } } as UserType;
 
 		try {
-			const response = await jwtService.updateUserData(userRequestData);
+			// @ts-expect-error - Service Fuse
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+			const response: { data: UserType } = await jwtService.updateUserData(userRequestData);
 
 			dispatch(showMessage({ message: 'User settings saved with api' }));
 
-			return response.data as UserType;
+			return response.data;
 		} catch (error) {
 			const axiosError = error as AxiosError;
 
@@ -81,11 +85,13 @@ export const updateUserShortcuts = createAppAsyncThunk(
 		} as PartialDeep<UserType>;
 
 		try {
-			const response = await jwtService.updateUserData(userRequestData);
+			// @ts-expect-error - Service Fuse
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+			const response: { data: UserType } = await jwtService.updateUserData(userRequestData);
 
 			dispatch(showMessage({ message: 'User shortcuts saved with api' }));
 
-			return response.data as UserType;
+			return response.data;
 		} catch (error) {
 			const axiosError = error as AxiosError;
 
@@ -132,11 +138,13 @@ export const updateUserData = createAppAsyncThunk<UserType, PartialDeep<UserType
 		}
 
 		try {
-			const response = await jwtService.updateUserData(userRequestData);
+			// @ts-expect-error - Service Fuse
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+			const response: { data: UserType } = await jwtService.updateUserData(userRequestData);
 
 			dispatch(showMessage({ message: 'User data saved with api' }));
 
-			return response.data as UserType;
+			return response.data;
 		} catch (error) {
 			const axiosError = error as AxiosError;
 
@@ -151,12 +159,12 @@ export const updateUserData = createAppAsyncThunk<UserType, PartialDeep<UserType
  * The initial state of the user slice.
  */
 const initialState: UserType = {
+	uid: '',
 	role: [], // guest
 	data: {
-		displayName: 'John Doe',
-		photoURL: 'assets/images/avatars/brian-hughes.jpg',
-		email: 'johndoe@withinpixels.com',
-		shortcuts: ['apps.calendar', 'apps.mailbox', 'apps.contacts', 'apps.tasks']
+		displayName: '',
+		photoURL: '',
+		email: ''
 	}
 };
 
