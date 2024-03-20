@@ -1,9 +1,4 @@
-interface Payment {
-	value: string;
-	dueDate: Date;
-}
-
-interface Files {
+interface IFiles {
 	uid: string;
 	name: string;
 	key: string;
@@ -11,7 +6,7 @@ interface Files {
 	updatedAt: Date;
 }
 
-export interface CreateRequestGeneralType {
+export interface ICreateRequestGeneralType {
 	supplier: string;
 	description: string;
 	requiredReceipt: boolean;
@@ -21,19 +16,28 @@ export interface CreateRequestGeneralType {
 	payments: Payment[];
 }
 
-export interface RequestType {
+export interface IRequestType {
+	paymentMethod: string;
 	uid: string;
+	Apportionments: any[];
 	supplier: string;
 	description?: string;
-	sendReceipt: boolean;
+	requiredReceipt: boolean;
 	totalValue: string;
 	accountingAccount: string;
-	payments: Payment[];
+	payments: IPaymentRequestForm[];
 	createdAt: Date;
-	files: Files[];
+	files: IFiles[];
+	cardHolder: any;
+	isRateable: boolean;
+}
+
+export interface IPaymentRequestForm {
+	name: string;
+	dueDate: Date;
 }
 
 export interface RequestPaymentGeneralType {
 	loading: boolean;
-	requests: RequestType[];
+	payload: IRequestType[];
 }
