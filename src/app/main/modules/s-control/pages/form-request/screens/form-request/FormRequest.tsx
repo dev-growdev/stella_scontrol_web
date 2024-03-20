@@ -137,7 +137,7 @@ export default function PaymentRequestFormGeneral() {
 		}
 	}, [watch('apportionments')]);
 
-	async function onSubmit(data: FormDataType) {
+	async function handleSubmitFormRequest(data: FormDataType) {
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
@@ -221,7 +221,7 @@ export default function PaymentRequestFormGeneral() {
 	return (
 		<Box className="flex flex-col w-full">
 			<form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(handleSubmitFormRequest)}
 				className="p-32 mt-20"
 			>
 				<Button
