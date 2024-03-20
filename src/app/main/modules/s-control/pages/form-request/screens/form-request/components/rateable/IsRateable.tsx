@@ -12,6 +12,8 @@ import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
+import { useAppDispatch } from 'app/store';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { selectedCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
@@ -57,6 +59,7 @@ export function IsRateable({
 	const [valueInputValue, setValueInputValue] = useState('');
 	const formCostCenters = watch('apportionments');
 	const [disableButtonAdd, setDisableButtonAdd] = useState(false);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (shouldDisableButtonAdd(totalApportionmentsValueState, totalValue)) {
@@ -101,11 +104,18 @@ export function IsRateable({
 					`${process.env.REACT_APP_API_URL}/budget-account/accounting-accounts/${costCenterId}`
 				);
 				const { data } = res.data;
-				if (data) {
-					setAccountingAccounts(data);
-				}
+				setAccountingAccounts(data);
 			} catch (error) {
-				setError('apportionments', { message: 'Não foi possível encontrar contas contábeis.' });
+				dispatch(
+					showMessage({
+						message: 'Erro ao procurar contas contábeis. Atualize a página e tente novamente',
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'error'
+					})
+				);
 			}
 		}
 		if (costCenterId !== '') {
