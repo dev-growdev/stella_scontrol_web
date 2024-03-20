@@ -153,7 +153,7 @@ export default function PaymentRequestFormGeneral() {
 				return;
 			}
 
-			if (totalApportionmentsValue.toString() !== totalValue) {
+			if (formattedNumeral(totalApportionmentsValue).toString() !== totalValue) {
 				dispatch(
 					showMessage({
 						message: `O rateio deve ser igual ao valor total da solicitação.`,
@@ -182,7 +182,15 @@ export default function PaymentRequestFormGeneral() {
 			return;
 		}
 
-		const request = { ...data, userCreatedUid: user.uid, totalValue };
+		const request = {
+			...data,
+			apportionments: data.apportionments.map(apportionment => ({
+				...apportionment,
+				value: apportionment.value.replace(/\./g, '').replace(',', '.')
+			})),
+			userCreatedUid: user.uid,
+			totalValue: totalValue.replace(/\./g, '').replace(',', '.')
+		};
 
 		const formData = new FormData();
 
