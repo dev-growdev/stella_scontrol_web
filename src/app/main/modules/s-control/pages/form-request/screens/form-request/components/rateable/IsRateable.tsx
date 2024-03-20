@@ -18,7 +18,7 @@ import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted
 import { FormDataType } from '../../types/formData';
 import { RateableTable } from './components';
 
-interface RateableProps {
+interface PropsRateable {
 	isRateable: boolean;
 	setToggleRateable: (arg: boolean) => void;
 	watch: UseFormWatch<FormDataType>;
@@ -30,7 +30,7 @@ interface RateableProps {
 	totalValue: number;
 }
 
-interface AccountingAccountType {
+interface IAccountingAccount {
 	id: number;
 	name: string;
 }
@@ -45,9 +45,9 @@ export function IsRateable({
 	errors,
 	totalApportionmentsValue,
 	totalValue
-}: RateableProps) {
-	const costCentersRedux = useSelectorSControl(selectedCostCenters);
-	const [accountingAccounts, setAccountingAccounts] = useState<AccountingAccountType[]>([]);
+}: PropsRateable) {
+	const costCenters = useSelectorSControl(selectedCostCenters);
+	const [accountingAccounts, setAccountingAccounts] = useState<IAccountingAccount[]>([]);
 	const [costCenterId, setCostCenterId] = useState('');
 	const [costCenterName, setCostCenterName] = useState<string | null>('');
 	const [accountingAccountName, setAccountingAccountName] = useState<string | null>('');
@@ -96,12 +96,16 @@ export function IsRateable({
 
 	useEffect(() => {
 		async function getAccountingAccounts() {
-			const res = await axios.get<{ data: AccountingAccountType[] }>(
-				`${process.env.REACT_APP_API_URL}/budget-account/accounting-accounts/${costCenterId}`
-			);
-			const { data } = res.data;
-			if (data) {
-				setAccountingAccounts(data);
+			try {
+				const res = await axios.get<{ data: IAccountingAccount[] }>(
+					`${process.env.REACT_APP_API_URL}/budget-account/accounting-accounts/${costCenterId}`
+				);
+				const { data } = res.data;
+				if (data) {
+					setAccountingAccounts(data);
+				}
+			} catch (error) {
+				setError('apportionments', { message: 'Não foi possível encontrar contas contábeis.' });
 			}
 		}
 		if (costCenterId !== '') {
@@ -117,7 +121,7 @@ export function IsRateable({
 
 	const handleChangeCostCenter = (event: ChangeEvent<HTMLInputElement>) => {
 		if (event.target.outerText) {
-			const findCostCenter = costCentersRedux.costCenters.find(
+			const findCostCenter = costCenters.costCenters.find(
 				costCenter => costCenter.name === event.target.outerText
 			);
 			if (findCostCenter) {
@@ -237,7 +241,7 @@ export function IsRateable({
 						<Autocomplete
 							disablePortal
 							id="combo-box-demo"
-							options={costCentersRedux.costCenters.map(costCenter => {
+							options={costCenters.costCenters.map(costCenter => {
 								return costCenter.name;
 							})}
 							value={costCenterName}

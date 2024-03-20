@@ -1,5 +1,4 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppSelector } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
@@ -28,7 +27,6 @@ import {
 } from './components';
 import { FormDataType } from './types/formData';
 import { ProductOptionType } from './types/productOptions';
-import { paymentRequestFormSchema } from './validations/paymentRequestForm.schema';
 
 const defaultValues = {
 	paymentMethod: '',
@@ -69,8 +67,8 @@ export default function PaymentRequestFormGeneral() {
 		clearErrors,
 		unregister
 	} = useForm<FormDataType>({
-		defaultValues,
-		resolver: yupResolver(paymentRequestFormSchema)
+		defaultValues
+		// resolver: yupResolver(paymentRequestFormSchema)
 	});
 
 	const {
