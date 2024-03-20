@@ -1,10 +1,11 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Chip, Stack, Paper, Table, TableBody, TableContainer, TableHead, TablePagination } from '@mui/material';
-
+import { Chip, Paper, Stack, Table, TableBody, TableContainer, TableHead, TablePagination } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
-import { StyledTableCell, StyledTableRow } from './styles';
+import { useNavigate } from 'react-router';
+
 import { RequestType } from '../../pages/form-request/types/request';
 import { formattedNumeral } from '../../utils/formatters/formatted-value';
+import { StyledTableCell, StyledTableRow } from './styles';
 
 interface RequestTableProps {
 	rows: RequestType[];
@@ -13,6 +14,7 @@ interface RequestTableProps {
 export default function RequestsTable({ rows }: RequestTableProps) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const navigate = useNavigate();
 
 	const handleChangePage = (event: unknown, newPage: number) => {
 		setPage(newPage);
@@ -30,6 +32,10 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 		const year = date.getFullYear();
 
 		return `${day}/${month}/${year}`;
+	}
+
+	function handleEditPaymentRequest(uid: string) {
+		navigate(`cadastro/${uid}`);
 	}
 
 	return (
@@ -87,7 +93,13 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 											<StyledTableCell>{formatDate(row.payments[0].dueDate)}</StyledTableCell>
 
 											<StyledTableCell className="flex gap-28 justify-end">
-												<FuseSvgIcon color="primary">heroicons-outline:pencil</FuseSvgIcon>
+												<FuseSvgIcon
+													className="cursor-pointer"
+													onClick={() => handleEditPaymentRequest(row.uid)}
+													color="primary"
+												>
+													heroicons-outline:pencil
+												</FuseSvgIcon>
 												<FuseSvgIcon color="primary">heroicons-outline:eye</FuseSvgIcon>
 											</StyledTableCell>
 										</StyledTableRow>
