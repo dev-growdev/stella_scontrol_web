@@ -6,7 +6,7 @@ import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { IsRateable } from './components/rateable/IsRateable';
 
@@ -16,7 +16,11 @@ import { getPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSl
 import { getCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from '../../store/AccountingAccountSlice';
-import { createRequestPaymentGeneral } from '../../store/FormRequestSlice';
+import {
+	createRequestPaymentGeneral,
+	listRequestsPaymentsByUser,
+	selectedRequestPaymentGeneral
+} from '../../store/FormRequestSlice';
 import {
 	AccountType,
 	PaymentMethod,
@@ -33,7 +37,7 @@ import { TPaymentRequestForm, paymentRequestFormSchema } from './validations/pay
 const defaultValues: TPaymentRequestForm = {
 	paymentMethod: '',
 	valueProducts: null,
-	requiredReceipt: false,
+	sendReceipt: false,
 	isRateable: false,
 	products: [],
 	description: '',
@@ -48,12 +52,16 @@ export default function PaymentRequestFormGeneral() {
 	const dispatch = useDispatchSControl();
 	const navigate = useNavigate();
 	const user = useAppSelector(selectUser);
-	const productsRedux = useSelectorSControl(selectProducts);
+	const requests = useSelectorSControl(selectedRequestPaymentGeneral);
+	const products = useSelectorSControl(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState(0);
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelectorSControl(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
+	const [editMode, setEditMode] = useState(false);
+
+	const { requestUid } = useParams();
 
 	const {
 		control,
@@ -84,21 +92,29 @@ export default function PaymentRequestFormGeneral() {
 		control,
 		name: 'apportionments'
 	});
+	useEffect(() => {
+		dispatch(listRequestsPaymentsByUser(user.uid));
+	}, []);
+	useEffect(() => {
+		if (requestUid && requests.payload.length > 0) {
+			setEditMode(true);
+			const findRequest = requests.payload.find(request => request.uid === requestUid);
 
-	async function validatePixAndCardHolder() {
-		const formData = {
-			...watch(),
-			userCreatedUid: user.uid,
-			totalValue
-		};
-		await paymentRequestFormSchema.parseAsync(formData);
-	}
+			const { payments } = findRequest;
+
+			payments.map(payment => {
+				appendPayments({ value: payment.value.replace('.', ','), dueDate: new Date(`${payment.duedate}`) });
+			});
+		} else {
+			setEditMode(false);
+		}
+	}, [requestUid, requests]);
 
 	useEffect(() => {
 		const subscription = watch(value => {
 			if (Array.isArray(value.payments)) {
 				const total = value.payments.reduce((acc, current) => {
-					const value = parseFloat(current.value) || 0;
+					const value = parseFloat(current.value.replace(',', '.')) || 0;
 					return acc + value;
 				}, 0);
 				setTotalValue(total.toString());
@@ -115,8 +131,8 @@ export default function PaymentRequestFormGeneral() {
 	}, []);
 
 	useEffect(() => {
-		if (productsRedux.products.length > 0) {
-			const refProducts = productsRedux.products
+		if (products.products.length > 0) {
+			const refProducts = products.products
 				.map(product => product.enable && { product: product.name })
 				.filter(product => product);
 			setProductsToOptionsSelect(refProducts);
@@ -128,7 +144,7 @@ export default function PaymentRequestFormGeneral() {
 				.filter(accountingAccount => accountingAccount);
 			setAccountingAccountToOptionsSelect(refAccountingAccount);
 		}
-	}, [productsRedux, accountingAccountRedux]);
+	}, [products, accountingAccountRedux]);
 
 	useEffect(() => {
 		const apportionments = watch('apportionments');
@@ -136,6 +152,15 @@ export default function PaymentRequestFormGeneral() {
 			clearErrors('apportionments');
 		}
 	}, [watch('apportionments')]);
+
+	async function validatePixAndCardHolder() {
+		const formData = {
+			...watch(),
+			userCreatedUid: user.uid,
+			totalValue
+		};
+		await paymentRequestFormSchema.parseAsync(formData);
+	}
 
 	async function handleSubmitFormRequest(data: FormDataType) {
 		await validatePixAndCardHolder();
@@ -178,8 +203,12 @@ export default function PaymentRequestFormGeneral() {
 			);
 			return;
 		}
-
-		const request = { ...data, userCreatedUid: user.uid, totalValue };
+		const request = {
+			...data,
+			userCreatedUid: user.uid,
+			totalValue,
+			payments: data.payments.map(payment => ({ ...payment, value: payment.value.replace(',', '.') }))
+		};
 
 		const formData = new FormData();
 
@@ -244,7 +273,7 @@ export default function PaymentRequestFormGeneral() {
 						fontWeight={500}
 						sx={{ color: theme => theme.palette.secondary.main }}
 					>
-						Abrir nova solicitação
+						{editMode ? 'Editar solicitação' : 'Abrir nova solicitação'}
 					</Typography>
 				</Paper>
 
@@ -300,7 +329,6 @@ export default function PaymentRequestFormGeneral() {
 									key={field.id}
 								>
 									<ValueAndDueDate
-										setValue={setValue}
 										errors={errors}
 										index={index}
 										control={control}
@@ -342,8 +370,8 @@ export default function PaymentRequestFormGeneral() {
 						clearErrors={clearErrors}
 					/>
 					<RequiredReceipt
-						requiredReceipt={watch('requiredReceipt')}
-						setToggleCheck={e => setValue('requiredReceipt', e)}
+						sendReceipt={watch('sendReceipt')}
+						setToggleCheck={e => setValue('sendReceipt', e)}
 					/>
 					<UploadFiles
 						uploadedFiles={watch('uploadedFiles')}
