@@ -4,19 +4,19 @@ import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 
-interface Apportionments {
+interface IApportionments {
 	costCenter: string;
 	accountingAccount: string;
 	value: string;
 }
 
-interface RateableProps {
-	apportionments: Apportionments[];
+interface PropsRateable {
+	apportionments: IApportionments[];
 	remove: UseFieldArrayRemove;
 	totalApportionmentsValue: (value: number) => void;
 }
 
-export function RateableTable({ apportionments, remove, totalApportionmentsValue }: RateableProps) {
+export function RateableTable({ apportionments, remove, totalApportionmentsValue }: PropsRateable) {
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);
