@@ -5,8 +5,8 @@ import { selectUser } from 'app/store/user/userSlice';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import RequestsTable from '../../../components/requests-table/RequestsTable';
-import { listRequestsPaymentsByUser, selectedRequestPaymentGeneral } from '../store/FormRequestSlice';
 import { useDispatchSControl, useSelectorSControl } from '../../../store/hooks';
+import { listRequestsPaymentsByUser, selectedRequestPaymentGeneral } from '../store/FormRequestSlice';
 
 export default function Requests() {
 	const navigate = useNavigate();
@@ -44,7 +44,7 @@ export default function Requests() {
 						Solicitações
 					</Typography>
 				</Paper>
-				<RequestsTable rows={requests.requests} />
+				<RequestsTable rows={requests.payload} />
 			</div>
 		</Box>
 	);
