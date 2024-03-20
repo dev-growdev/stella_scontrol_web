@@ -56,7 +56,7 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk('requestPaymentGen
 			data: RequestType[];
 		}>(`${process.env.REACT_APP_API_URL}/payment-request-general/${userUid}`);
 		const { data } = response.data;
-
+		console.log(data);
 		return data;
 	} catch (error) {
 		const axiosError = error as AxiosError<{ message: string }>;
@@ -66,7 +66,7 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk('requestPaymentGen
 
 const initialState: RequestPaymentGeneralType = {
 	loading: false,
-	requests: []
+	payload: []
 };
 
 const requestPaymentGeneralSlice = createSlice({
@@ -81,7 +81,7 @@ const requestPaymentGeneralSlice = createSlice({
 			.addCase(createRequestPaymentGeneral.fulfilled, (state, action) => {
 				state.loading = false;
 				if (action.payload) {
-					state.requests.push(action.payload);
+					state.payload.push(action.payload);
 				}
 			})
 			.addCase(listRequestsPaymentsByUser.pending, state => {
@@ -90,7 +90,7 @@ const requestPaymentGeneralSlice = createSlice({
 			.addCase(listRequestsPaymentsByUser.fulfilled, (state, action) => {
 				state.loading = false;
 				if (action.payload) {
-					state.requests = action.payload;
+					state.payload = action.payload;
 				}
 			});
 	}
