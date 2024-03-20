@@ -1,4 +1,5 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useAppSelector } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
@@ -27,8 +28,9 @@ import {
 } from './components';
 import { FormDataType } from './types/formData';
 import { ProductOptionType } from './types/productOptions';
+import { TPaymentRequestForm, paymentRequestFormSchema } from './validations/paymentRequestForm.schema';
 
-const defaultValues = {
+const defaultValues: TPaymentRequestForm = {
 	paymentMethod: '',
 	valueProducts: null,
 	requiredReceipt: false,
@@ -37,7 +39,6 @@ const defaultValues = {
 	description: '',
 	supplier: '',
 	payments: [{ value: '', dueDate: null }],
-	typeAccount: '',
 	uploadedFiles: [],
 	accountingAccount: '',
 	apportionments: []
@@ -66,9 +67,9 @@ export default function PaymentRequestFormGeneral() {
 		setError,
 		clearErrors,
 		unregister
-	} = useForm<FormDataType>({
-		defaultValues
-		// resolver: yupResolver(paymentRequestFormSchema)
+	} = useForm<TPaymentRequestForm>({
+		defaultValues,
+		resolver: zodResolver(paymentRequestFormSchema)
 	});
 
 	const {
@@ -80,7 +81,19 @@ export default function PaymentRequestFormGeneral() {
 		name: 'payments'
 	});
 
-	const { remove: removeCostCenter } = useFieldArray({ control, name: 'apportionments' });
+	const { remove: removeCostCenter } = useFieldArray({
+		control,
+		name: 'apportionments'
+	});
+
+	async function validatePixAndCardHolder() {
+		const formData = {
+			...watch(),
+			userCreatedUid: user.uid,
+			totalValue
+		};
+		await paymentRequestFormSchema.parseAsync(formData);
+	}
 
 	useEffect(() => {
 		const subscription = watch(value => {
@@ -127,13 +140,16 @@ export default function PaymentRequestFormGeneral() {
 		}
 	}, [watch('apportionments')]);
 
-	function onSubmit(data: FormDataType) {
+	async function handleSubmitFormRequest(data: FormDataType) {
+		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
 			const apportionments = watch('apportionments');
 
 			if (apportionments.length === 0) {
-				setError('apportionments', { message: 'É necessário adicionar rateio.' });
+				setError('apportionments', {
+					message: 'É necessário adicionar rateio.'
+				});
 				return;
 			}
 
@@ -208,7 +224,7 @@ export default function PaymentRequestFormGeneral() {
 	return (
 		<Box className="flex flex-col w-full">
 			<form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(handleSubmitFormRequest)}
 				className="p-32 mt-20"
 			>
 				<Button

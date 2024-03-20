@@ -15,17 +15,17 @@ import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, Use
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { selectedCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
-import { FormDataType } from '../../types/formData';
+import { TPaymentRequestForm } from '../../validations/paymentRequestForm.schema';
 import { RateableTable } from './components';
 
 interface PropsRateable {
 	isRateable: boolean;
 	setToggleRateable: (arg: boolean) => void;
-	watch: UseFormWatch<FormDataType>;
-	setValue: UseFormSetValue<FormDataType>;
+	watch: UseFormWatch<TPaymentRequestForm>;
+	setValue: UseFormSetValue<TPaymentRequestForm>;
 	remove: UseFieldArrayRemove;
-	errors: FieldErrors<FormDataType>;
-	setError: UseFormSetError<FormDataType>;
+	errors: FieldErrors<TPaymentRequestForm>;
+	setError: UseFormSetError<TPaymentRequestForm>;
 	totalApportionmentsValue: (value: number) => void;
 	totalValue: number;
 }
