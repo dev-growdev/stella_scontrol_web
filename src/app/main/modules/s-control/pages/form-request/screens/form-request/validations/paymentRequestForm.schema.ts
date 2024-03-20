@@ -32,15 +32,13 @@ const paymentRequestFormSchema = z
 			.optional(),
 		pix: z.string().optional(),
 
-		products: z
-			.array(
-				z.object({
-					product: z.string({
-						required_error: 'É necessário adicionar um produto.'
-					})
+		products: z.array(
+			z.object({
+				product: z.string({
+					required_error: 'É necessário adicionar um produto.'
 				})
-			)
-			.nonempty('É necessário adicionar um produto.'),
+			})
+		),
 		description: z.string(),
 		supplier: z.string().min(5, 'É necessário adicionar um fornecedor.'),
 		payments: z.array(
@@ -96,6 +94,13 @@ const paymentRequestFormSchema = z
 			ctx.addIssue({
 				path: ['accountingAccount'],
 				message: 'É necessário adicionar uma conta contábil.',
+				code: z.ZodIssueCode.custom
+			});
+		}
+		if (value.supplier && value.products.length === 0) {
+			ctx.addIssue({
+				path: ['products'],
+				message: 'É necessário adicionar algum produto.',
 				code: z.ZodIssueCode.custom
 			});
 		}
