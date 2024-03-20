@@ -12,19 +12,19 @@ import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFieldArrayRemove, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { FormDataType } from '../../types/formData';
-import { RateableTable } from './components';
-import { selectedCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
+import { selectedCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
+import { TPaymentRequestForm } from '../../validations/paymentRequestForm.schema';
+import { RateableTable } from './components';
 
 interface RateableProps {
 	isRateable: boolean;
 	setToggleRateable: (arg: boolean) => void;
-	watch: UseFormWatch<FormDataType>;
-	setValue: UseFormSetValue<FormDataType>;
+	watch: UseFormWatch<TPaymentRequestForm>;
+	setValue: UseFormSetValue<TPaymentRequestForm>;
 	remove: UseFieldArrayRemove;
-	errors: FieldErrors<FormDataType>;
-	setError: UseFormSetError<FormDataType>;
+	errors: FieldErrors<TPaymentRequestForm>;
+	setError: UseFormSetError<TPaymentRequestForm>;
 	totalApportionmentsValue: (value: number) => void;
 }
 

@@ -16,17 +16,17 @@ import {
 } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { HolderType, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
-import { FormDataType } from '../types/formData';
+import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface AccountTypeProps {
 	paymentMethod: string;
-	control: Control<FormDataType>;
-	register: UseFormRegister<FormDataType>;
-	setValue: UseFormSetValue<FormDataType>;
-	unregister: UseFormUnregister<FormDataType>;
-	errors: FieldErrors<FormDataType>;
-	setError: UseFormSetError<FormDataType>;
-	clearErrors: UseFormClearErrors<FormDataType>;
+	control: Control<TPaymentRequestForm>;
+	register: UseFormRegister<TPaymentRequestForm>;
+	setValue: UseFormSetValue<TPaymentRequestForm>;
+	unregister: UseFormUnregister<TPaymentRequestForm>;
+	errors: FieldErrors<TPaymentRequestForm>;
+	setError: UseFormSetError<TPaymentRequestForm>;
+	clearErrors: UseFormClearErrors<TPaymentRequestForm>;
 }
 
 export function AccountType({
@@ -81,12 +81,14 @@ export function AccountType({
 	}, [paymentMethod]);
 
 	function handleAutocomplete(event: ChangeEvent<HTMLInputElement>) {
-		if (!event.target.outerText) {
+		const { outerText } = event.target;
+		if (!outerText) {
 			setError('cardHolder.name', { message: 'É necessário adicionar um portador.' });
 			return;
 		}
+
 		clearErrors('cardHolder');
-		const { outerText } = event.target;
+
 		setValue('cardHolder.name', outerText);
 
 		const findHolder = paymentsForm.find(
@@ -186,8 +188,8 @@ export function AccountType({
 								<TextField
 									{...field}
 									{...params}
-									error={!!errors.cardHolder?.name?.message}
-									helperText={errors.cardHolder?.name?.message ?? ''}
+									error={!!errors.cardHolder?.message}
+									helperText={errors.cardHolder?.message ?? ''}
 									label="Selecionar portador"
 								/>
 							)}
@@ -209,8 +211,8 @@ export function AccountType({
 								<TextField
 									{...field}
 									{...params}
-									error={!!errors.cardHolder?.name?.message}
-									helperText={errors.cardHolder?.name?.message ?? ''}
+									error={!!errors.cardHolder?.message}
+									helperText={errors.cardHolder?.message ?? ''}
 									label="Selecionar portador"
 								/>
 							)}
@@ -232,8 +234,8 @@ export function AccountType({
 								<TextField
 									{...field}
 									{...params}
-									error={!!errors.cardHolder?.name?.message}
-									helperText={errors.cardHolder?.name?.message ?? ''}
+									error={!!errors.cardHolder?.message}
+									helperText={errors.cardHolder?.message ?? ''}
 									label="Selecionar portador"
 								/>
 							)}
