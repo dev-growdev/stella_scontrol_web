@@ -9,7 +9,7 @@ const paymentRequestFormSchema = z
 			.trim()
 			.min(3, 'É necessário adicionar uma forma de pagamento.'),
 		valueProducts: z.string().nullable().optional(),
-		requiredReceipt: z.boolean(),
+		sendReceipt: z.boolean(),
 		isRateable: z.boolean(),
 		cardHolder: z
 			.object({
