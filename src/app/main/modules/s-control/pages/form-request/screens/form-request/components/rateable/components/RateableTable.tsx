@@ -5,9 +5,9 @@ import { UseFieldArrayRemove } from 'react-hook-form';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 
 interface IApportionments {
-	costCenter: string;
-	accountingAccount: string;
-	value: string;
+	costCenter?: string;
+	accountingAccount?: string;
+	value?: string;
 }
 
 interface PropsRateable {
@@ -20,6 +20,12 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);
+
+	const formApportionments: IApportionments[] = apportionments.map(apportionment => ({
+		costCenter: apportionment.costCenter ?? '',
+		accountingAccount: apportionment.accountingAccount ?? '',
+		value: apportionment.value ?? ''
+	}));
 
 	function totalValue() {
 		let total = 0;
@@ -62,7 +68,7 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{apportionments.map((item, index) => (
+						{formApportionments.map((item, index) => (
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
