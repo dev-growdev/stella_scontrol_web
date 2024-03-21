@@ -111,9 +111,11 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch }: Ta
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{productsForm.map(item => (
-							<TableRow key={item.uid}>
-								<TableCell>{item.name}</TableCell>
+						{productsForm.map((item: { name?: string; uid?: string } | string) => (
+							<TableRow
+								key={typeof item === 'object' ? item.uid ?? `${Math.floor(Math.random() * 10)}` : item}
+							>
+								<TableCell>{typeof item === 'object' ? item.name : item}</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
