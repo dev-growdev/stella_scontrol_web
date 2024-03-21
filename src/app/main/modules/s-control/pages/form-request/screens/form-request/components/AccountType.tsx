@@ -66,15 +66,15 @@ export function AccountType({
 	}, [paymentsForm]);
 
 	useEffect(() => {
-		if (paymentMethod === 'Pix') {
+		if (paymentMethod.name === 'Pix') {
 			unregister('bankTransfer');
 			unregister('cardHolder');
 		}
-		if (paymentMethod.includes('crédito') || paymentMethod.includes('corporativo')) {
+		if (paymentMethod.name.includes('crédito') || paymentMethod.name.includes('corporativo')) {
 			unregister('bankTransfer');
 			unregister('pix');
 		}
-		if (paymentMethod === 'Transferência bancária') {
+		if (paymentMethod.name === 'Transferência bancária') {
 			unregister('cardHolder');
 			unregister('pix');
 		}
@@ -100,7 +100,7 @@ export function AccountType({
 
 	return (
 		<>
-			{paymentMethod === 'Pix' && (
+			{paymentMethod.name === 'Pix' && (
 				<TextField
 					label="Informe a chave pix"
 					{...register('pix')}
@@ -108,7 +108,7 @@ export function AccountType({
 					helperText={errors.pix?.message ?? ''}
 				/>
 			)}
-			{paymentMethod === 'Transferência bancária' && (
+			{paymentMethod.name === 'Transferência bancária' && (
 				<div className="flex gap-24 justify-center">
 					<div className="flex flex-col w-full gap-24">
 						<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
@@ -174,7 +174,7 @@ export function AccountType({
 					</div>
 				</div>
 			)}
-			{paymentMethod === 'Cartão de crédito BB' && (
+			{paymentMethod.name === 'Cartão de crédito BB' && (
 				<Controller
 					control={control}
 					name="cardHolder"
@@ -197,7 +197,7 @@ export function AccountType({
 					)}
 				/>
 			)}
-			{paymentMethod === 'Cartão de crédito BRAD' && (
+			{paymentMethod.name === 'Cartão de crédito BRAD' && (
 				<Controller
 					control={control}
 					name="cardHolder"
@@ -220,7 +220,7 @@ export function AccountType({
 					)}
 				/>
 			)}
-			{paymentMethod.includes('corporativo') && (
+			{paymentMethod.name.includes('corporativo') && (
 				<Controller
 					control={control}
 					name="cardHolder"

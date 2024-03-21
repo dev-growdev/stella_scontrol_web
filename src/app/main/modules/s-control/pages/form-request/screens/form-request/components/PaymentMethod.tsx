@@ -65,15 +65,10 @@ export function PaymentMethod({ selectedPaymentMethod, setValue, control, errors
 						{...field}
 						labelId="demo-multiple-name-label"
 						id="demo-multiple-name"
-						value={selectedPaymentMethod}
+						value={selectedPaymentMethod.name}
 						error={!!errors?.paymentMethod}
 						onChange={handleChangePaymentMethod}
-						input={
-							<OutlinedInput
-								// {...register('paymentMethod')}
-								label="Forma de pagamento"
-							/>
-						}
+						input={<OutlinedInput label="Forma de pagamento" />}
 						MenuProps={MenuProps}
 					>
 						{payments.map(item => (

@@ -22,6 +22,7 @@ import {
 	selectedRequestPaymentGeneral
 } from '../../store/FormRequestSlice';
 import {
+	AccountType,
 	PaymentMethod,
 	RequestUser,
 	RequiredReceipt,
@@ -57,10 +58,8 @@ export default function PaymentRequestFormGeneral() {
 	const [totalValue, setTotalValue] = useState('');
 	const [editMode, setEditMode] = useState(false);
 
-	const [teste, setTeste] = useState<any>({});
-
 	const { requestUid } = useParams();
-	const [totalValueUnformated, setTotalValueUnformated] = useState(0);
+	const [totalValueUnformatted, setTotalValueUnformatted] = useState(0);
 
 	const {
 		control,
@@ -71,7 +70,8 @@ export default function PaymentRequestFormGeneral() {
 		formState: { errors },
 		setError,
 		clearErrors,
-		reset
+		reset,
+		unregister
 	} = useForm<TPaymentRequestForm>({
 		defaultValues,
 		resolver: zodResolver(paymentRequestFormSchema)
@@ -100,6 +100,7 @@ export default function PaymentRequestFormGeneral() {
 			setEditMode(true);
 			const findRequest = requests.payload.find(request => request.uid === requestUid);
 			const editValues = mapToFormDTO(findRequest);
+
 			reset(editValues as TPaymentRequestForm);
 		} else {
 			setEditMode(false);
@@ -115,7 +116,7 @@ export default function PaymentRequestFormGeneral() {
 				}, 0);
 
 				setTotalValue(formattedNumeral(total));
-				setTotalValueUnformated(total);
+				setTotalValueUnformatted(total);
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -353,7 +354,7 @@ export default function PaymentRequestFormGeneral() {
 						setValue={setValue}
 						errors={errors}
 					/>
-					{/* <AccountType
+					<AccountType
 						paymentMethod={watch('paymentMethod')}
 						control={control}
 						register={register}
@@ -362,7 +363,7 @@ export default function PaymentRequestFormGeneral() {
 						setError={setError}
 						unregister={unregister}
 						clearErrors={clearErrors}
-					/> */}
+					/>
 					<RequiredReceipt
 						sendReceipt={watch('sendReceipt')}
 						setToggleCheck={e => setValue('sendReceipt', e)}
@@ -381,7 +382,7 @@ export default function PaymentRequestFormGeneral() {
 						errors={errors}
 						setError={setError}
 						totalApportionmentsValue={setTotalApportionmentsValue}
-						totalValue={totalValueUnformated}
+						totalValue={totalValueUnformatted}
 					/>
 					{!watch('isRateable') && (
 						<Autocomplete
