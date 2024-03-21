@@ -1,3 +1,5 @@
+import { ProductType } from '../../products/types/product';
+
 interface IFiles {
 	uid: string;
 	name: string;
@@ -9,20 +11,25 @@ interface IFiles {
 export interface ICreateRequestGeneralType {
 	supplier: string;
 	description: string;
-	requiredReceipt: boolean;
+	sendReceipt: boolean;
 	uploadedFiles: File[];
 	totalValue: string;
 	accountingAccount: string;
-	payments: Payment[];
+	payments: IPaymentRequestForm[];
+}
+
+export interface IPaymentForm {
+	uid: string;
+	name: string;
 }
 
 export interface IRequestType {
-	paymentMethod: string;
+	PaymentForm: IPaymentForm;
 	uid: string;
 	Apportionments: any[];
 	supplier: string;
 	description?: string;
-	requiredReceipt: boolean;
+	sendReceipt: boolean;
 	totalValue: string;
 	accountingAccount: string;
 	payments: IPaymentRequestForm[];
@@ -30,10 +37,12 @@ export interface IRequestType {
 	files: IFiles[];
 	cardHolder: any;
 	isRateable: boolean;
+	Products: ProductType[];
+	unregisteredProducts: string[];
 }
 
 export interface IPaymentRequestForm {
-	name: string;
+	value: string;
 	dueDate: Date;
 }
 
