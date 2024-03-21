@@ -37,7 +37,7 @@ export const SQualityNavigationConfig: FuseNavigationType = [
 				icon: 'heroicons-outline:clock',
 				children: [
 					{
-						id: 'squality.create.products',
+						id: 'squality.create.suppliers',
 						title: 'Fornecedores',
 						type: 'item',
 						icon: 'heroicons-outline:cube',

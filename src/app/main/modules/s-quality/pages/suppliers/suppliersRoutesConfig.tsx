@@ -13,7 +13,7 @@ export const suppliersRoutesConfig: FuseRouteItemType = {
 			element: <SuppliersPage />
 		},
 		{
-			path: 'cadastro/:supplierUid?',
+			path: 'cadastro',
 			element: <CreateSuppliersPage />
 		}
 	]
