@@ -28,6 +28,7 @@ export interface IRequestType {
 	uid: string;
 	Apportionments: any[];
 	supplier: string;
+	bankTransfer: string;
 	description?: string;
 	sendReceipt: boolean;
 	totalValue: string;

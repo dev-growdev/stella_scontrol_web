@@ -149,10 +149,10 @@ export function AccountType({
 										<Select
 											labelId="demo-simple-select-label"
 											id="demo-simple-select"
+											value={field.field.value}
 											{...field}
 											{...register('bankTransfer.accountType')}
 											error={!!errors.bankTransfer?.accountType?.message}
-											label="Age"
 										>
 											<MenuItem value="Conta poupança">Conta poupança</MenuItem>
 											<MenuItem value="Conta corrente">Conta corrente</MenuItem>

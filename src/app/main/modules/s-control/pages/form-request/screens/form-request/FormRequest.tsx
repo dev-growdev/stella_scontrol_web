@@ -155,6 +155,7 @@ export default function PaymentRequestFormGeneral() {
 	}
 
 	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
+		console.log(data);
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
