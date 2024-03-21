@@ -4,31 +4,39 @@ import { useEffect } from 'react';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 
-interface Apportionments {
-	costCenter: string;
-	accountingAccount: string;
-	value: string;
+interface IApportionments {
+	costCenter?: string;
+	accountingAccount?: string;
+	value?: string;
 }
 
-interface RateableProps {
-	apportionments: Apportionments[];
+interface PropsRateable {
+	apportionments: IApportionments[];
 	remove: UseFieldArrayRemove;
 	totalApportionmentsValue: (value: number) => void;
 }
 
-export function RateableTable({ apportionments, remove, totalApportionmentsValue }: RateableProps) {
+export function RateableTable({ apportionments, remove, totalApportionmentsValue }: PropsRateable) {
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);
+
+	const formApportionments: IApportionments[] = apportionments.map(apportionment => ({
+		costCenter: apportionment.costCenter ?? '',
+		accountingAccount: apportionment.accountingAccount ?? '',
+		value: apportionment.value ?? ''
+	}));
 
 	function totalValue() {
 		let total = 0;
 
 		apportionments.forEach(apportionment => {
-			const value = parseFloat(apportionment.value.replace(',', '.'));
+			let stringValue = apportionment.value;
+			stringValue = stringValue.replace(/\./g, '');
+			stringValue = stringValue.replace(',', '.');
 
-			if (value) {
-				total += value;
+			if (stringValue) {
+				total += parseFloat(stringValue);
 			}
 		});
 
@@ -60,11 +68,11 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{apportionments.map((item, index) => (
+						{formApportionments.map((item, index) => (
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${formattedNumeral(parseFloat(item.value))}</TableCell>
+								<TableCell>R${item.value}</TableCell>
 								<TableCell className="flex justify-end">
 									<FuseSvgIcon
 										color="primary"
@@ -78,7 +86,7 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<Typography className="text-right">Valor total: R${formattedNumeral(totalValue())}</Typography>
+			<Typography className="text-right">Valor total adicionado: R${formattedNumeral(totalValue())}</Typography>
 		</div>
 	);
 }

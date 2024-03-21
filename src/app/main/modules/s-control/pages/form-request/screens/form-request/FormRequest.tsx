@@ -54,6 +54,7 @@ export default function PaymentRequestFormGeneral() {
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelectorSControl(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
+	const [totalValueUnformated, setTotalValueUnformated] = useState(0);
 
 	const {
 		control,
@@ -101,7 +102,9 @@ export default function PaymentRequestFormGeneral() {
 					const value = parseFloat(current.value) || 0;
 					return acc + value;
 				}, 0);
-				setTotalValue(total.toString());
+
+				setTotalValue(formattedNumeral(total));
+				setTotalValueUnformated(total);
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -150,7 +153,7 @@ export default function PaymentRequestFormGeneral() {
 				return;
 			}
 
-			if (totalApportionmentsValue.toString() !== totalValue) {
+			if (formattedNumeral(totalApportionmentsValue).toString() !== totalValue) {
 				dispatch(
 					showMessage({
 						message: `O rateio deve ser igual ao valor total da solicitação.`,
@@ -179,7 +182,15 @@ export default function PaymentRequestFormGeneral() {
 			return;
 		}
 
-		const request = { ...data, userCreatedUid: user.uid, totalValue };
+		const request = {
+			...data,
+			apportionments: data.apportionments.map(apportionment => ({
+				...apportionment,
+				value: apportionment.value.replace(/\./g, '').replace(',', '.')
+			})),
+			userCreatedUid: user.uid,
+			totalValue: totalValue.replace(/\./g, '').replace(',', '.')
+		};
 
 		const formData = new FormData();
 
@@ -310,7 +321,7 @@ export default function PaymentRequestFormGeneral() {
 							))}
 						</div>
 						<div className="mb-28">
-							<Typography>Valor total: R$ {formattedNumeral(parseFloat(totalValue))}</Typography>
+							<Typography>Valor total: R$ {totalValue}</Typography>
 						</div>
 						<div className="flex items-center">
 							<Button
@@ -359,6 +370,7 @@ export default function PaymentRequestFormGeneral() {
 						errors={errors}
 						setError={setError}
 						totalApportionmentsValue={setTotalApportionmentsValue}
+						totalValue={totalValueUnformated}
 					/>
 					{!watch('isRateable') && (
 						<Autocomplete
