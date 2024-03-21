@@ -100,12 +100,6 @@ const paymentRequestFormSchema = z
 				code: z.ZodIssueCode.custom
 			});
 		}
-		if (value.supplier && value.products.length === 0) {
-			ctx.addIssue({
-				path: ['products'],
-				message: 'É necessário adicionar algum produto.'
-			});
-		}
 		if (value.products.length === 0 && value.supplier) {
 			ctx.addIssue({
 				path: ['products'],
