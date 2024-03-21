@@ -13,42 +13,45 @@ import {
 } from '@mui/material';
 import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
-import { ChangeEvent, useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
+import { useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { ProductOptionType } from '../types/productOptions';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface TableProductsFromRequestProps {
-	control: Control<TPaymentRequestForm>;
 	errors: FieldErrors<TPaymentRequestForm>;
-	productsToOptions: ProductOptionType[];
 	setValueProducts: UseFormSetValue<TPaymentRequestForm>;
 	watch: UseFormWatch<TPaymentRequestForm>;
 }
 
-export function TableProductsFromRequest({
-	control,
-	errors,
-	productsToOptions,
-	setValueProducts,
-	watch
-}: TableProductsFromRequestProps) {
+export function TableProductsFromRequest({ errors, setValueProducts, watch }: TableProductsFromRequestProps) {
 	const [value, setValue] = useState<ProductOptionType | null>(null);
-	const products = watch('products');
+	const productsForm = watch('products');
+	const products = useSelectorSControl(selectProducts);
+	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const dispatch = useAppDispatch();
 
-	const handleInputValueAutoComplete = (event: ChangeEvent<HTMLInputElement>) => {
-		setValue({ product: event.target.outerText });
+	useEffect(() => {
+		if (products.products.length > 0) {
+			setProductsToOptionsSelect(products.products.filter(product => product.enable));
+		}
+	}, [products]);
+
+	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: ProductOptionType | null) => {
+		setValue(newValue);
 	};
+
 	const handleInputValueTextField = (event: ChangeEvent<HTMLInputElement>) => {
-		setValue({ product: event.target.value });
+		setValue({ name: event.target.value });
 	};
 
 	const handleAddProduct = () => {
-		if (!value || !value.product) {
+		if (!value || !value.name) {
 			dispatch(
 				showMessage({
-					message: 'Adicione um produto para enviar solicitação',
+					message: 'Digite um produto para adicionar.',
 					anchorOrigin: {
 						vertical: 'top',
 						horizontal: 'center'
@@ -56,45 +59,30 @@ export function TableProductsFromRequest({
 					variant: 'error'
 				})
 			);
-
 			return;
 		}
-		setValueProducts('products', [...products, { product: value.product }]);
+
+		setValueProducts('products', [...productsForm, value]);
 		setValue(null);
 	};
 
 	return (
 		<>
 			<div className="flex flex-col sm:flex-row relative gap-24 items-center justify-center">
-				<Controller
-					name="products"
-					control={control}
-					render={({ field }) => (
-						<Autocomplete
-							{...field}
-							className="w-full"
-							value={value}
-							noOptionsText="Adicione um novo produto."
-							onChange={handleInputValueAutoComplete}
-							options={productsToOptions}
-							getOptionLabel={option => option.product || ''}
-							renderInput={params => (
-								<TextField
-									{...field}
-									fullWidth
-									sx={{
-										'& .MuiFormHelperText-root': {
-											position: 'absolute',
-											top: '55px'
-										}
-									}}
-									onChange={handleInputValueTextField}
-									{...params}
-									label="Digite um produto"
-									error={!!errors?.products?.message}
-									helperText={errors?.products?.message}
-								/>
-							)}
+				<Autocomplete
+					className="w-full"
+					value={value}
+					onChange={handleInputValueAutoComplete}
+					options={productsToOptionsSelect}
+					getOptionLabel={option => option.name}
+					renderInput={params => (
+						<TextField
+							{...params}
+							fullWidth
+							onChange={handleInputValueTextField}
+							label="Digite um produto"
+							error={!!errors?.products?.message}
+							helperText={errors?.products?.message}
 						/>
 					)}
 				/>
@@ -123,18 +111,10 @@ export function TableProductsFromRequest({
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{products.map((item, index) => (
-							<div key={item.product}>
-								<Controller
-									name={`products.${index}.product`}
-									control={control}
-									render={({ field }) => (
-										<TableRow {...field}>
-											<TableCell>{item.product}</TableCell>
-										</TableRow>
-									)}
-								/>
-							</div>
+						{productsForm.map(item => (
+							<TableRow key={item.uid}>
+								<TableCell>{item.name}</TableCell>
+							</TableRow>
 						))}
 					</TableBody>
 				</Table>
