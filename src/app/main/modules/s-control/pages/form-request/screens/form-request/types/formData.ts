@@ -23,7 +23,7 @@ export interface FormDataType {
 	description?: string;
 	supplier: string;
 	payments: Payments[];
-	typeAccount: string;
+	typeAccount?: string;
 	uploadedFiles: File[];
 	accountingAccount: string;
 	apportionments?: Apportionments[];

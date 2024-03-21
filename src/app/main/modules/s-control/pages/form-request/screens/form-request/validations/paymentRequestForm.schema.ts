@@ -103,7 +103,20 @@ const paymentRequestFormSchema = z
 		if (value.supplier && value.products.length === 0) {
 			ctx.addIssue({
 				path: ['products'],
-				message: 'É necessário adicionar algum produto.',
+				message: 'É necessário adicionar algum produto.'
+			});
+		}
+		if (value.products.length === 0 && value.supplier) {
+			ctx.addIssue({
+				path: ['products'],
+				message: 'É necessário adicionar ao menos um produto.',
+				code: z.ZodIssueCode.custom
+			});
+		}
+		if (value.apportionments.length === 0 && value.isRateable) {
+			ctx.addIssue({
+				path: ['apportionments'],
+				message: 'É necessário adicionar rateio.',
 				code: z.ZodIssueCode.custom
 			});
 		}
