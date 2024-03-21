@@ -1,6 +1,6 @@
 import { FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 
 import { PaymentForm, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
@@ -19,13 +19,13 @@ const MenuProps = {
 };
 
 interface PaymentMethod {
-	selectedPaymentMethod: string;
-	register: UseFormRegister<TPaymentRequestForm>;
+	selectedPaymentMethod: { name?: string; uid?: string };
+	setValue: UseFormSetValue<TPaymentRequestForm>;
 	control: Control<TPaymentRequestForm>;
 	errors: FieldErrors<TPaymentRequestForm>;
 }
 
-export function PaymentMethod({ selectedPaymentMethod, register, control, errors }: PaymentMethod) {
+export function PaymentMethod({ selectedPaymentMethod, setValue, control, errors }: PaymentMethod) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
 
@@ -43,6 +43,14 @@ export function PaymentMethod({ selectedPaymentMethod, register, control, errors
 		}
 		setPayments(paymentsFormFiltered);
 	}, [paymentsForm]);
+
+	function handleChangePaymentMethod(event: ChangeEvent<HTMLInputElement>) {
+		const { value } = event.target;
+		const findPaymentMethod = payments.find(payment => payment.name === value);
+		const { name, uid } = findPaymentMethod;
+		setValue('paymentMethod', { name, uid });
+	}
+
 	return (
 		<Controller
 			name="paymentMethod"
@@ -59,9 +67,10 @@ export function PaymentMethod({ selectedPaymentMethod, register, control, errors
 						id="demo-multiple-name"
 						value={selectedPaymentMethod}
 						error={!!errors?.paymentMethod}
+						onChange={handleChangePaymentMethod}
 						input={
 							<OutlinedInput
-								{...register('paymentMethod')}
+								// {...register('paymentMethod')}
 								label="Forma de pagamento"
 							/>
 						}

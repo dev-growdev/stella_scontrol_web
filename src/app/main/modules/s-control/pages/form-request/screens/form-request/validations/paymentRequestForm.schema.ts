@@ -2,12 +2,14 @@ import * as z from 'zod';
 
 const paymentRequestFormSchema = z
 	.object({
-		paymentMethod: z
-			.string({
+		paymentMethod: z.object({
+			name: z.string({
+				required_error: 'É necessário adicionar uma forma de pagamento.'
+			}),
+			uid: z.string({
 				required_error: 'É necessário adicionar uma forma de pagamento.'
 			})
-			.trim()
-			.min(3, 'É necessário adicionar uma forma de pagamento.'),
+		}),
 		valueProducts: z.string().nullable().optional(),
 		sendReceipt: z.boolean(),
 		isRateable: z.boolean(),
@@ -34,9 +36,10 @@ const paymentRequestFormSchema = z
 
 		products: z.array(
 			z.object({
-				product: z.string({
+				name: z.string({
 					required_error: 'É necessário adicionar um produto.'
-				})
+				}),
+				uid: z.string().optional()
 			})
 		),
 		description: z.string(),
@@ -76,14 +79,14 @@ const paymentRequestFormSchema = z
 			.optional()
 	})
 	.superRefine((value, ctx) => {
-		if (value.paymentMethod === 'Pix' && value.pix === '') {
+		if (value.paymentMethod.name === 'Pix' && value.pix === '') {
 			ctx.addIssue({
 				path: ['pix'],
 				message: 'É necessário adicionar uma chave pix.',
 				code: z.ZodIssueCode.custom
 			});
 		}
-		if (value.paymentMethod.includes('Cartão') && !value.cardHolder) {
+		if (value.paymentMethod.name.includes('Cartão') && !value.cardHolder) {
 			ctx.addIssue({
 				path: ['cardHolder'],
 				message: 'É necessário adicionar um portador.',

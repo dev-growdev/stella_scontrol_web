@@ -19,7 +19,7 @@ import { HolderType, selectPaymentsForm } from '~/modules/s-control/store/slices
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface AccountTypeProps {
-	paymentMethod: string;
+	paymentMethod: { name?: string; uid?: string };
 	control: Control<TPaymentRequestForm>;
 	register: UseFormRegister<TPaymentRequestForm>;
 	setValue: UseFormSetValue<TPaymentRequestForm>;
