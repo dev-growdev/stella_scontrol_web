@@ -16,7 +16,7 @@ export const formRequestRoutes: FuseRouteItemType = {
 			element: <Request />
 		},
 		{
-			path: 'cadastro/:requestUid?',
+			path: 'cadastro/:requestUid?/:edit?',
 			element: <PaymentRequestFormGeneral />
 		}
 	]

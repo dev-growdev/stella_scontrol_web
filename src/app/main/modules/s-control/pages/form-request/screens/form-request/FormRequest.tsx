@@ -57,8 +57,11 @@ export default function PaymentRequestFormGeneral() {
 	const accountingAccountRedux = useSelectorSControl(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
 	const [editMode, setEditMode] = useState(false);
+	const [readMode, setReadMode] = useState(false);
 
 	const { requestUid } = useParams();
+	const { edit } = useParams();
+
 	const [totalValueUnformatted, setTotalValueUnformatted] = useState(0);
 
 	const {
@@ -96,13 +99,17 @@ export default function PaymentRequestFormGeneral() {
 	}, []);
 
 	useEffect(() => {
-		if (requestUid && requests.payload.length > 0) {
+		if (requestUid && requests.payload.length > 0 && edit) {
 			setEditMode(true);
+			setReadMode(false);
 			const findRequest = requests.payload.find(request => request.uid === requestUid);
 			const editValues = mapToFormDTO(findRequest);
 
 			reset(editValues as TPaymentRequestForm);
-		} else {
+		}
+
+		if (requestUid && requests.payload.length > 0 && !edit) {
+			setReadMode(true);
 			setEditMode(false);
 		}
 	}, [requestUid, requests]);
@@ -155,6 +162,7 @@ export default function PaymentRequestFormGeneral() {
 	}
 
 	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
+		console.log(data, '------------------------------------');
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
@@ -244,6 +252,8 @@ export default function PaymentRequestFormGeneral() {
 		reset();
 	}
 
+	function pageTitle() {}
+
 	return (
 		<Box className="flex flex-col w-full">
 			<form
@@ -270,7 +280,7 @@ export default function PaymentRequestFormGeneral() {
 						fontWeight={500}
 						sx={{ color: theme => theme.palette.secondary.main }}
 					>
-						{editMode ? 'Editar solicitação' : 'Abrir nova solicitação'}
+						{pageTitle()}
 					</Typography>
 				</Paper>
 
@@ -400,6 +410,7 @@ export default function PaymentRequestFormGeneral() {
 									renderInput={params => (
 										<TextField
 											{...params}
+											label="Adicione uma conta contábil"
 											error={!!errors.accountingAccount}
 											helperText={errors?.accountingAccount?.message}
 										/>

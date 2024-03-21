@@ -3,12 +3,12 @@ import { Chip, Paper, Stack, Table, TableBody, TableContainer, TableHead, TableP
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { RequestType } from '../../pages/form-request/types/request';
+import { IRequestType } from '../../pages/form-request/types/request';
 import { formattedNumeral } from '../../utils/formatters/formatted-value';
 import { StyledTableCell, StyledTableRow } from './styles';
 
 interface RequestTableProps {
-	rows: RequestType[];
+	rows: IRequestType[];
 }
 
 export default function RequestsTable({ rows }: RequestTableProps) {
@@ -35,6 +35,9 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 	}
 
 	function handleEditPaymentRequest(uid: string) {
+		navigate(`cadastro/${uid}/edit`);
+	}
+	function handleReadPaymentRequest(uid: string) {
 		navigate(`cadastro/${uid}`);
 	}
 
@@ -100,7 +103,12 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 												>
 													heroicons-outline:pencil
 												</FuseSvgIcon>
-												<FuseSvgIcon color="primary">heroicons-outline:eye</FuseSvgIcon>
+												<FuseSvgIcon
+													onClick={() => handleReadPaymentRequest(row.uid)}
+													color="primary"
+												>
+													heroicons-outline:eye
+												</FuseSvgIcon>
 											</StyledTableCell>
 										</StyledTableRow>
 									);

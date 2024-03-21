@@ -148,6 +148,7 @@ export function AccountType({
 										</InputLabel>
 										<Select
 											labelId="demo-simple-select-label"
+											label="Tipo de conta"
 											id="demo-simple-select"
 											value={field.field.value}
 											{...field}

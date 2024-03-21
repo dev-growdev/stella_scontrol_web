@@ -37,6 +37,7 @@ export interface IRequestType {
 	description?: string;
 	sendReceipt: boolean;
 	totalValue: string;
+	pix: string;
 	accountingAccount: string;
 	payments: IPaymentRequestForm[];
 	createdAt: Date;
