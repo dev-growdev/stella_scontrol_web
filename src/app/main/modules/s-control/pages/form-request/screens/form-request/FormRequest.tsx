@@ -155,7 +155,6 @@ export default function PaymentRequestFormGeneral() {
 	}
 
 	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
-		console.log(data);
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
@@ -386,16 +385,25 @@ export default function PaymentRequestFormGeneral() {
 						totalValue={totalValueUnformatted}
 					/>
 					{!watch('isRateable') && (
-						<Autocomplete
-							className="w-full"
-							options={accountingAccountToOptionsSelect}
-							renderInput={params => (
-								<TextField
-									{...params}
-									label="Escolha a Conta Contábil"
-									{...register('accountingAccount')}
-									error={!!errors.accountingAccount}
-									helperText={errors?.accountingAccount?.message}
+						<Controller
+							control={control}
+							name="accountingAccount"
+							render={({ field }) => (
+								<Autocomplete
+									className="w-full"
+									value={field.value}
+									onChange={(event: ChangeEvent<HTMLInputElement>) => {
+										field.onChange(event.target.outerText);
+									}}
+									onBlur={field.onBlur}
+									options={accountingAccountToOptionsSelect}
+									renderInput={params => (
+										<TextField
+											{...params}
+											error={!!errors.accountingAccount}
+											helperText={errors?.accountingAccount?.message}
+										/>
+									)}
 								/>
 							)}
 						/>

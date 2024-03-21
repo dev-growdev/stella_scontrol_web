@@ -2,12 +2,13 @@ import { IRequestType } from '../../../types/request';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 export function mapToFormDTO(request: IRequestType): Promise<TPaymentRequestForm> {
-	console.log(request, '-----------');
+	console.log(request, 'request');
 	const {
 		PaymentForm,
 		sendReceipt,
 		isRateable,
 		Products,
+		CardHolder,
 		unregisteredProducts,
 		description,
 		supplier,
@@ -23,6 +24,7 @@ export function mapToFormDTO(request: IRequestType): Promise<TPaymentRequestForm
 		bankTransfer: bankTransfer ? JSON.parse(bankTransfer) : null,
 		sendReceipt,
 		isRateable,
+		cardHolder: { uid: CardHolder.uid, name: CardHolder.name, code: CardHolder.code },
 		products: [...Products, ...unregisteredProducts],
 		description,
 		supplier,

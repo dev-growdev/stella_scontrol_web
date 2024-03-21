@@ -92,7 +92,7 @@ export function AccountType({
 		setValue('cardHolder.name', outerText);
 
 		const findHolder = paymentsForm.find(
-			(item: HolderType) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod
+			(item: HolderType) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod.name
 		);
 
 		setValue('cardHolder.uid', findHolder.uid);
@@ -182,6 +182,7 @@ export function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
+							value={field.value}
 							options={creditCardHoldersBB}
 							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
@@ -205,6 +206,7 @@ export function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
+							value={field.value}
 							options={creditCardHoldersBRAD}
 							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
@@ -228,6 +230,7 @@ export function AccountType({
 						<Autocomplete
 							id="corporate-card-holder"
 							onChange={handleAutocomplete}
+							value={field.value}
 							options={corporateCardHolders}
 							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (

@@ -23,6 +23,11 @@ export interface IPaymentForm {
 	name: string;
 }
 
+export interface ICardHolder {
+	uid: string;
+	name: string;
+	code: number;
+}
 export interface IRequestType {
 	PaymentForm: IPaymentForm;
 	uid: string;
@@ -36,7 +41,7 @@ export interface IRequestType {
 	payments: IPaymentRequestForm[];
 	createdAt: Date;
 	files: IFiles[];
-	cardHolder: any;
+	CardHolder: ICardHolder;
 	isRateable: boolean;
 	Products: ProductType[];
 	unregisteredProducts: string[];
