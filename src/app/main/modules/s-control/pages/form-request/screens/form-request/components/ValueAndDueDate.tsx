@@ -11,9 +11,10 @@ interface ValueAndDueDateProps {
 	index: number;
 	errors?: FieldErrors<TPaymentRequestForm>;
 	remove: UseFieldArrayRemove;
+	readMode: boolean;
 }
 
-export function ValueAndDueDate({ control, index, errors, remove }: ValueAndDueDateProps) {
+export function ValueAndDueDate({ control, index, errors, remove, readMode }: ValueAndDueDateProps) {
 	const currentDate = new Date();
 	const minDate = new Date();
 	minDate.setDate(currentDate.getDate() + 7);
@@ -34,10 +35,9 @@ export function ValueAndDueDate({ control, index, errors, remove }: ValueAndDueD
 								}
 							}}
 							{...field}
-							// onChange={handleValue}
-							// value={valueInput}
 							error={!!errors.payments?.[index]?.value?.message}
 							helperText={errors.payments?.[index]?.value?.message}
+							disabled={readMode}
 							label="Valor"
 							InputProps={{
 								startAdornment: <InputAdornment position="start">R$</InputAdornment>,
@@ -60,6 +60,7 @@ export function ValueAndDueDate({ control, index, errors, remove }: ValueAndDueD
 							<DatePicker
 								className="w-full"
 								label="Vencimento"
+								disabled={readMode}
 								minDate={minDate}
 								format="dd/MM/yyyy"
 								onChange={field.onChange}
@@ -80,12 +81,14 @@ export function ValueAndDueDate({ control, index, errors, remove }: ValueAndDueD
 						</LocalizationProvider>
 					)}
 				/>
-				<FuseSvgIcon
-					onClick={() => remove(index)}
-					color="primary"
-				>
-					heroicons-outline:trash
-				</FuseSvgIcon>
+				{!readMode && (
+					<FuseSvgIcon
+						onClick={() => remove(index)}
+						color="primary"
+					>
+						heroicons-outline:trash
+					</FuseSvgIcon>
+				)}
 			</div>
 		</div>
 	);

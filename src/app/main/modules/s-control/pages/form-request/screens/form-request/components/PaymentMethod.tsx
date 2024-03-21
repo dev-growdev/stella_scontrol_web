@@ -23,9 +23,10 @@ interface PaymentMethod {
 	setValue: UseFormSetValue<TPaymentRequestForm>;
 	control: Control<TPaymentRequestForm>;
 	errors: FieldErrors<TPaymentRequestForm>;
+	readMode: boolean;
 }
 
-export function PaymentMethod({ selectedPaymentMethod, setValue, control, errors }: PaymentMethod) {
+export function PaymentMethod({ selectedPaymentMethod, setValue, control, errors, readMode }: PaymentMethod) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
 
@@ -63,6 +64,7 @@ export function PaymentMethod({ selectedPaymentMethod, setValue, control, errors
 					<InputLabel id="demo-multiple-name-label">Forma de pagamento</InputLabel>
 					<Select
 						{...field}
+						disabled={readMode}
 						labelId="demo-multiple-name-label"
 						id="demo-multiple-name"
 						value={selectedPaymentMethod.name}

@@ -99,18 +99,18 @@ export default function PaymentRequestFormGeneral() {
 	}, []);
 
 	useEffect(() => {
-		if (requestUid && requests.payload.length > 0 && edit) {
-			setEditMode(true);
-			setReadMode(false);
+		if (requestUid && requests.payload.length > 0) {
+			if (edit) {
+				setEditMode(true);
+				setReadMode(false);
+			} else {
+				setReadMode(true);
+			}
+
 			const findRequest = requests.payload.find(request => request.uid === requestUid);
 			const editValues = mapToFormDTO(findRequest);
 
 			reset(editValues as TPaymentRequestForm);
-		}
-
-		if (requestUid && requests.payload.length > 0 && !edit) {
-			setReadMode(true);
-			setEditMode(false);
 		}
 	}, [requestUid, requests]);
 
@@ -250,9 +250,20 @@ export default function PaymentRequestFormGeneral() {
 
 	function clearFormState() {
 		reset();
+		if (readMode) {
+			navigate(-1);
+		}
 	}
 
-	function pageTitle() {}
+	function pageTitle() {
+		if (editMode) {
+			return 'Editar solicitação';
+		}
+		if (readMode) {
+			return 'Visualizar solicitação';
+		}
+		return 'Abrir nova solicitação';
+	}
 
 	return (
 		<Box className="flex flex-col w-full">
@@ -289,9 +300,14 @@ export default function PaymentRequestFormGeneral() {
 					className="mt-24 p-36 flex flex-col gap-24"
 				>
 					<RequestUser user={user} />
-					<Typography color="GrayText">Adicione os produtos para solicitação de pagamento</Typography>
+					<Typography color="GrayText">
+						{readMode
+							? 'Visualize os produtos da sua solicitação.'
+							: 'Adicione os produtos para solicitação de pagamento'}
+					</Typography>
 
 					<TableProductsFromRequest
+						readMode={readMode}
 						errors={errors}
 						setValueProducts={setValue}
 						watch={watch}
@@ -304,6 +320,7 @@ export default function PaymentRequestFormGeneral() {
 							<TextField
 								{...field}
 								{...register('description')}
+								disabled={readMode}
 								error={!!errors.description}
 								helperText={errors?.description?.message}
 								rows={4}
@@ -319,6 +336,7 @@ export default function PaymentRequestFormGeneral() {
 							<TextField
 								{...field}
 								{...register('supplier')}
+								disabled={readMode}
 								error={!!errors.supplier}
 								helperText={errors?.supplier?.message}
 								label="Fornecedor"
@@ -334,6 +352,7 @@ export default function PaymentRequestFormGeneral() {
 									key={field.id}
 								>
 									<ValueAndDueDate
+										readMode={readMode}
 										errors={errors}
 										index={index}
 										control={control}
@@ -346,25 +365,29 @@ export default function PaymentRequestFormGeneral() {
 							<Typography>Valor total: R$ {totalValue}</Typography>
 						</div>
 						<div className="flex items-center">
-							<Button
-								onClick={() => appendPayments({ value: '', dueDate: null })}
-								className="rounded-4"
-								variant="contained"
-							>
-								<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
-								{watch('payments').length > 0
-									? 'Adicionar mais pagamentos'
-									: 'Adicionar algum pagamento'}
-							</Button>
+							{!readMode && (
+								<Button
+									onClick={() => appendPayments({ value: '', dueDate: null })}
+									className="rounded-4"
+									variant="contained"
+								>
+									<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
+									{watch('payments').length > 0
+										? 'Adicionar mais pagamentos'
+										: 'Adicionar algum pagamento'}
+								</Button>
+							)}
 						</div>
 					</div>
 					<PaymentMethod
+						readMode={readMode}
 						selectedPaymentMethod={watch('paymentMethod')}
 						control={control}
 						setValue={setValue}
 						errors={errors}
 					/>
 					<AccountType
+						readMode={readMode}
 						paymentMethod={watch('paymentMethod')}
 						control={control}
 						register={register}
@@ -377,6 +400,7 @@ export default function PaymentRequestFormGeneral() {
 					<RequiredReceipt
 						sendReceipt={watch('sendReceipt')}
 						setToggleCheck={e => setValue('sendReceipt', e)}
+						readMode={readMode}
 					/>
 					<UploadFiles
 						uploadedFiles={watch('uploadedFiles')}
@@ -393,6 +417,7 @@ export default function PaymentRequestFormGeneral() {
 						setError={setError}
 						totalApportionmentsValue={setTotalApportionmentsValue}
 						totalValue={totalValueUnformatted}
+						readMode={readMode}
 					/>
 					{!watch('isRateable') && (
 						<Controller
@@ -425,15 +450,17 @@ export default function PaymentRequestFormGeneral() {
 							className="rounded-4"
 							onClick={clearFormState}
 						>
-							CANCELAR
+							{!readMode ? 'CANCELAR' : 'VOLTAR'}
 						</Button>
-						<Button
-							className="rounded-4"
-							type="submit"
-							variant="contained"
-						>
-							ENVIAR
-						</Button>
+						{!readMode && (
+							<Button
+								className="rounded-4"
+								type="submit"
+								variant="contained"
+							>
+								ENVIAR
+							</Button>
+						)}
 					</div>
 				</Paper>
 			</form>

@@ -21,12 +21,13 @@ import { ProductOptionType } from '../types/productOptions';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface TableProductsFromRequestProps {
+	readMode: boolean;
 	errors: FieldErrors<TPaymentRequestForm>;
 	setValueProducts: UseFormSetValue<TPaymentRequestForm>;
 	watch: UseFormWatch<TPaymentRequestForm>;
 }
 
-export function TableProductsFromRequest({ errors, setValueProducts, watch }: TableProductsFromRequestProps) {
+export function TableProductsFromRequest({ errors, setValueProducts, watch, readMode }: TableProductsFromRequestProps) {
 	const [value, setValue] = useState<ProductOptionType | null>(null);
 	const productsForm = watch('products');
 	const products = useSelectorSControl(selectProducts);
@@ -68,34 +69,36 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch }: Ta
 
 	return (
 		<>
-			<div className="flex flex-col sm:flex-row relative gap-24 items-center justify-center">
-				<Autocomplete
-					className="w-full"
-					value={value}
-					onChange={handleInputValueAutoComplete}
-					options={productsToOptionsSelect}
-					getOptionLabel={option => option.name}
-					renderInput={params => (
-						<TextField
-							{...params}
-							fullWidth
-							onChange={handleInputValueTextField}
-							label="Digite um produto"
-							error={!!errors?.products?.message}
-							helperText={errors?.products?.message}
-						/>
-					)}
-				/>
-				<Button
-					className="w-full sm:w-256"
-					onClick={handleAddProduct}
-					sx={{ borderRadius: '7px' }}
-					variant="contained"
-					startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
-				>
-					ADICIONAR ITEM
-				</Button>
-			</div>
+			{!readMode && (
+				<div className="flex flex-col sm:flex-row relative gap-24 items-center justify-center">
+					<Autocomplete
+						className="w-full"
+						value={value}
+						onChange={handleInputValueAutoComplete}
+						options={productsToOptionsSelect}
+						getOptionLabel={option => option.name}
+						renderInput={params => (
+							<TextField
+								{...params}
+								fullWidth
+								onChange={handleInputValueTextField}
+								label="Digite um produto"
+								error={!!errors?.products?.message}
+								helperText={errors?.products?.message}
+							/>
+						)}
+					/>
+					<Button
+						className="w-full sm:w-256"
+						onClick={handleAddProduct}
+						sx={{ borderRadius: '7px' }}
+						variant="contained"
+						startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
+					>
+						ADICIONAR ITEM
+					</Button>
+				</div>
+			)}
 			<TableContainer
 				className="my-10"
 				component={Paper}

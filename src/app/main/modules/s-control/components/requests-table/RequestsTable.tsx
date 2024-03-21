@@ -104,6 +104,7 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 													heroicons-outline:pencil
 												</FuseSvgIcon>
 												<FuseSvgIcon
+													className="cursor-pointer"
 													onClick={() => handleReadPaymentRequest(row.uid)}
 													color="primary"
 												>

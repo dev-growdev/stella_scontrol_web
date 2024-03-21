@@ -27,6 +27,7 @@ interface AccountTypeProps {
 	errors: FieldErrors<TPaymentRequestForm>;
 	setError: UseFormSetError<TPaymentRequestForm>;
 	clearErrors: UseFormClearErrors<TPaymentRequestForm>;
+	readMode: boolean;
 }
 
 export function AccountType({
@@ -37,7 +38,8 @@ export function AccountType({
 	unregister,
 	errors,
 	setError,
-	clearErrors
+	clearErrors,
+	readMode
 }: AccountTypeProps) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
@@ -104,6 +106,7 @@ export function AccountType({
 				<TextField
 					label="Informe a chave pix"
 					{...register('pix')}
+					disabled={readMode}
 					error={!!errors.pix?.message}
 					helperText={errors.pix?.message ?? ''}
 				/>
@@ -115,11 +118,13 @@ export function AccountType({
 							<TextField
 								fullWidth
 								label="Banco"
+								disabled={readMode}
 								{...register('bankTransfer.bank')}
 								error={!!errors.bankTransfer?.bank?.message}
 								helperText={errors.bankTransfer?.bank?.message ?? ''}
 							/>
 							<TextField
+								disabled={readMode}
 								fullWidth
 								label="Numero da conta"
 								{...register('bankTransfer.accountNumber')}
@@ -127,6 +132,7 @@ export function AccountType({
 								helperText={errors.bankTransfer?.accountNumber?.message ?? ''}
 							/>
 							<TextField
+								disabled={readMode}
 								fullWidth
 								label="Agência"
 								{...register('bankTransfer.agency')}
@@ -149,6 +155,7 @@ export function AccountType({
 										<Select
 											labelId="demo-simple-select-label"
 											label="Tipo de conta"
+											disabled={readMode}
 											id="demo-simple-select"
 											value={field.field.value}
 											{...field}
@@ -168,6 +175,7 @@ export function AccountType({
 								fullWidth
 								error={!!errors.bankTransfer?.cpfOrCnpj?.message}
 								helperText={errors.bankTransfer?.cpfOrCnpj?.message ?? ''}
+								disabled={readMode}
 								label="CPF ou CNPJ do Beneficiário"
 								{...register('bankTransfer.cpfOrCnpj')}
 							/>
@@ -183,6 +191,7 @@ export function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
+							disabled={readMode}
 							value={field.value}
 							options={creditCardHoldersBB}
 							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
@@ -192,6 +201,7 @@ export function AccountType({
 									{...params}
 									error={!!errors.cardHolder?.message}
 									helperText={errors.cardHolder?.message ?? ''}
+									disabled={readMode}
 									label="Selecionar portador"
 								/>
 							)}
@@ -207,12 +217,14 @@ export function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
+							disabled={readMode}
 							value={field.value}
 							options={creditCardHoldersBRAD}
 							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
+									disabled={readMode}
 									{...params}
 									error={!!errors.cardHolder?.message}
 									helperText={errors.cardHolder?.message ?? ''}
@@ -229,6 +241,7 @@ export function AccountType({
 					name="cardHolder"
 					render={({ field }) => (
 						<Autocomplete
+							disabled={readMode}
 							id="corporate-card-holder"
 							onChange={handleAutocomplete}
 							value={field.value}
@@ -237,6 +250,7 @@ export function AccountType({
 							renderInput={params => (
 								<TextField
 									{...field}
+									disabled={readMode}
 									{...params}
 									error={!!errors.cardHolder?.message}
 									helperText={errors.cardHolder?.message ?? ''}

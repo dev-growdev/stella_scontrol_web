@@ -14,9 +14,10 @@ interface PropsRateable {
 	apportionments: IApportionments[];
 	remove: UseFieldArrayRemove;
 	totalApportionmentsValue: (value: number) => void;
+	readMode: boolean;
 }
 
-export function RateableTable({ apportionments, remove, totalApportionmentsValue }: PropsRateable) {
+export function RateableTable({ apportionments, remove, totalApportionmentsValue, readMode }: PropsRateable) {
 	useEffect(() => {
 		totalApportionmentsValue(totalValue());
 	}, [totalValue]);
@@ -31,9 +32,7 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 		let total = 0;
 
 		apportionments.forEach(apportionment => {
-			let stringValue = apportionment.value;
-			stringValue = stringValue.replace(/\./g, '');
-			stringValue = stringValue.replace(',', '.');
+			const stringValue = apportionment.value;
 
 			if (stringValue) {
 				total += parseFloat(stringValue);
@@ -59,12 +58,14 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 							<TableCell sx={{ backgroundColor: '#ffffff' }}>CENTRO DE CUSTOS</TableCell>
 							<TableCell sx={{ backgroundColor: '#ffffff' }}>CONTA CONTÁBIL</TableCell>
 							<TableCell sx={{ backgroundColor: '#ffffff' }}>VALOR</TableCell>
-							<TableCell
-								align="right"
-								sx={{ backgroundColor: '#ffffff' }}
-							>
-								AÇÕES
-							</TableCell>
+							{!readMode && (
+								<TableCell
+									align="right"
+									sx={{ backgroundColor: '#ffffff' }}
+								>
+									AÇÕES
+								</TableCell>
+							)}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -72,15 +73,17 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 							<TableRow key={item.costCenter + Math.random()}>
 								<TableCell>{item.costCenter}</TableCell>
 								<TableCell>{item.accountingAccount}</TableCell>
-								<TableCell>R${item.value}</TableCell>
-								<TableCell className="flex justify-end">
-									<FuseSvgIcon
-										color="primary"
-										onClick={() => remove(index)}
-									>
-										heroicons-outline:trash
-									</FuseSvgIcon>
-								</TableCell>
+								<TableCell>R${formattedNumeral(parseFloat(item.value))}</TableCell>
+								{!readMode && (
+									<TableCell className="flex justify-end">
+										<FuseSvgIcon
+											color="primary"
+											onClick={() => remove(index)}
+										>
+											heroicons-outline:trash
+										</FuseSvgIcon>
+									</TableCell>
+								)}
 							</TableRow>
 						))}
 					</TableBody>

@@ -30,6 +30,7 @@ interface PropsRateable {
 	setError: UseFormSetError<TPaymentRequestForm>;
 	totalApportionmentsValue: (value: number) => void;
 	totalValue: number;
+	readMode: boolean;
 }
 
 interface IAccountingAccount {
@@ -46,7 +47,8 @@ export function IsRateable({
 	remove,
 	errors,
 	totalApportionmentsValue,
-	totalValue
+	totalValue,
+	readMode
 }: PropsRateable) {
 	const costCenters = useSelectorSControl(selectedCostCenters);
 	const [accountingAccounts, setAccountingAccounts] = useState<IAccountingAccount[]>([]);
@@ -226,6 +228,7 @@ export function IsRateable({
 					<FormControlLabel
 						control={
 							<Checkbox
+								disabled={readMode}
 								onClick={() => setToggleRateable(true)}
 								checked={isRateable}
 								color="primary"
@@ -236,6 +239,7 @@ export function IsRateable({
 					<FormControlLabel
 						control={
 							<Checkbox
+								disabled={readMode}
 								onClick={() => setToggleRateable(false)}
 								checked={!isRateable}
 								color="primary"
@@ -247,72 +251,75 @@ export function IsRateable({
 			</div>
 			{isRateable && (
 				<>
-					<div className="flex sm:flex-row flex-col gap-24 items-center">
-						<Autocomplete
-							disablePortal
-							id="combo-box-demo"
-							options={costCenters.costCenters.map(costCenter => {
-								return costCenter.name;
-							})}
-							value={costCenterName}
-							noOptionsText="Adicione um centro de custo"
-							className="w-full sm:w-1/3"
-							onChange={handleChangeCostCenter}
-							renderInput={params => (
-								<TextField
-									{...params}
-									label="Centro de custo"
-									error={!!errors?.apportionments?.message}
-									helperText={errors?.apportionments?.message}
-								/>
-							)}
-						/>
-						<Autocomplete
-							disablePortal
-							id="combo-box-demo"
-							value={accountingAccountName}
-							options={accountingAccounts.map(acc => {
-								return acc.name;
-							})}
-							noOptionsText="É necessário adicionar um centro de custo antes."
-							className="w-full sm:w-1/3"
-							onChange={handleChangeAccountingAccount}
-							renderInput={params => (
-								<TextField
-									{...params}
-									label="Conta contábil"
-									error={!!errors?.apportionments?.message}
-									helperText={errors?.apportionments?.message}
-								/>
-							)}
-						/>
-						<TextField
-							className="sm:w-1/3"
-							label="Valor"
-							type="text"
-							value={valueInputValue}
-							onChange={handleValueCostCenter}
-							error={!!errors?.apportionments?.message}
-							helperText={errors?.apportionments?.message}
-							InputProps={{
-								startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-								sx: {
-									height: '3.73em'
-								}
-							}}
-						/>
+					{!readMode && (
+						<div className="flex sm:flex-row flex-col gap-24 items-center">
+							<Autocomplete
+								disablePortal
+								id="combo-box-demo"
+								options={costCenters.costCenters.map(costCenter => {
+									return costCenter.name;
+								})}
+								value={costCenterName}
+								noOptionsText="Adicione um centro de custo"
+								className="w-full sm:w-1/3"
+								onChange={handleChangeCostCenter}
+								renderInput={params => (
+									<TextField
+										{...params}
+										label="Centro de custo"
+										error={!!errors?.apportionments?.message}
+										helperText={errors?.apportionments?.message}
+									/>
+								)}
+							/>
+							<Autocomplete
+								disablePortal
+								id="combo-box-demo"
+								value={accountingAccountName}
+								options={accountingAccounts.map(acc => {
+									return acc.name;
+								})}
+								noOptionsText="É necessário adicionar um centro de custo antes."
+								className="w-full sm:w-1/3"
+								onChange={handleChangeAccountingAccount}
+								renderInput={params => (
+									<TextField
+										{...params}
+										label="Conta contábil"
+										error={!!errors?.apportionments?.message}
+										helperText={errors?.apportionments?.message}
+									/>
+								)}
+							/>
+							<TextField
+								className="sm:w-1/3"
+								label="Valor"
+								type="text"
+								value={valueInputValue}
+								onChange={handleValueCostCenter}
+								error={!!errors?.apportionments?.message}
+								helperText={errors?.apportionments?.message}
+								InputProps={{
+									startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+									sx: {
+										height: '3.73em'
+									}
+								}}
+							/>
 
-						<Button
-							onClick={handleSubmitApportionments}
-							variant="contained"
-							disabled={disableButtonAdd}
-						>
-							Adicionar
-						</Button>
-					</div>
+							<Button
+								onClick={handleSubmitApportionments}
+								variant="contained"
+								disabled={disableButtonAdd}
+							>
+								Adicionar
+							</Button>
+						</div>
+					)}
 
 					<RateableTable
 						remove={remove}
+						readMode={readMode}
 						totalApportionmentsValue={setTotalApportionmentsValueState}
 						apportionments={formCostCenters}
 					/>
