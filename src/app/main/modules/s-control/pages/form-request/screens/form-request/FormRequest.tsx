@@ -10,7 +10,7 @@ import { useNavigate, useParams } from 'react-router';
 
 import { IsRateable } from './components/rateable/IsRateable';
 
-import { getProducts, selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
+import { getProducts } from '~/modules/s-control/pages/products/store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { getPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
 import { getCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
@@ -22,7 +22,6 @@ import {
 	selectedRequestPaymentGeneral
 } from '../../store/FormRequestSlice';
 import {
-	AccountType,
 	PaymentMethod,
 	RequestUser,
 	RequiredReceipt,
@@ -30,12 +29,11 @@ import {
 	UploadFiles,
 	ValueAndDueDate
 } from './components';
-import { FormDataType } from './types/formData';
-import { ProductOptionType } from './types/productOptions';
+import { mapToFormDTO } from './formatters/formatterToFormType';
 import { TPaymentRequestForm, paymentRequestFormSchema } from './validations/paymentRequestForm.schema';
 
 const defaultValues: TPaymentRequestForm = {
-	paymentMethod: '',
+	paymentMethod: { name: '', uid: '' },
 	valueProducts: null,
 	sendReceipt: false,
 	isRateable: false,
@@ -53,13 +51,13 @@ export default function PaymentRequestFormGeneral() {
 	const navigate = useNavigate();
 	const user = useAppSelector(selectUser);
 	const requests = useSelectorSControl(selectedRequestPaymentGeneral);
-	const products = useSelectorSControl(selectProducts);
-	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
 	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState(0);
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelectorSControl(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
 	const [editMode, setEditMode] = useState(false);
+
+	const [teste, setTeste] = useState<any>({});
 
 	const { requestUid } = useParams();
 
@@ -69,11 +67,10 @@ export default function PaymentRequestFormGeneral() {
 		setValue,
 		watch,
 		register,
-		reset,
 		formState: { errors },
 		setError,
 		clearErrors,
-		unregister
+		reset
 	} = useForm<TPaymentRequestForm>({
 		defaultValues,
 		resolver: zodResolver(paymentRequestFormSchema)
@@ -92,19 +89,17 @@ export default function PaymentRequestFormGeneral() {
 		control,
 		name: 'apportionments'
 	});
+
 	useEffect(() => {
 		dispatch(listRequestsPaymentsByUser(user.uid));
 	}, []);
+
 	useEffect(() => {
 		if (requestUid && requests.payload.length > 0) {
 			setEditMode(true);
 			const findRequest = requests.payload.find(request => request.uid === requestUid);
-
-			const { payments } = findRequest;
-
-			payments.map(payment => {
-				appendPayments({ value: payment.value.replace('.', ','), dueDate: new Date(`${payment.duedate}`) });
-			});
+			const editValues = mapToFormDTO(findRequest);
+			reset(editValues as TPaymentRequestForm);
 		} else {
 			setEditMode(false);
 		}
@@ -131,20 +126,13 @@ export default function PaymentRequestFormGeneral() {
 	}, []);
 
 	useEffect(() => {
-		if (products.products.length > 0) {
-			const refProducts = products.products
-				.map(product => product.enable && { product: product.name })
-				.filter(product => product);
-			setProductsToOptionsSelect(refProducts);
-		}
-
 		if (accountingAccountRedux.accountingAccount.length > 0) {
 			const refAccountingAccount = accountingAccountRedux.accountingAccount
 				.map(accountingAccount => accountingAccount.name)
 				.filter(accountingAccount => accountingAccount);
 			setAccountingAccountToOptionsSelect(refAccountingAccount);
 		}
-	}, [products, accountingAccountRedux]);
+	}, [accountingAccountRedux]);
 
 	useEffect(() => {
 		const apportionments = watch('apportionments');
@@ -162,7 +150,7 @@ export default function PaymentRequestFormGeneral() {
 		await paymentRequestFormSchema.parseAsync(formData);
 	}
 
-	async function handleSubmitFormRequest(data: FormDataType) {
+	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
@@ -221,8 +209,8 @@ export default function PaymentRequestFormGeneral() {
 
 		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
-				clearFormState();
-				navigate('/scontrol/solicitacoes');
+				// clearFormState();
+				// navigate('/scontrol/solicitacoes');
 			}
 		});
 	}
@@ -285,9 +273,7 @@ export default function PaymentRequestFormGeneral() {
 					<Typography color="GrayText">Adicione os produtos para solicitação de pagamento</Typography>
 
 					<TableProductsFromRequest
-						control={control}
 						errors={errors}
-						productsToOptions={productsToOptionsSelect}
 						setValueProducts={setValue}
 						watch={watch}
 					/>
@@ -356,10 +342,10 @@ export default function PaymentRequestFormGeneral() {
 					<PaymentMethod
 						selectedPaymentMethod={watch('paymentMethod')}
 						control={control}
-						register={register}
+						setValue={setValue}
 						errors={errors}
 					/>
-					<AccountType
+					{/* <AccountType
 						paymentMethod={watch('paymentMethod')}
 						control={control}
 						register={register}
@@ -368,7 +354,7 @@ export default function PaymentRequestFormGeneral() {
 						setError={setError}
 						unregister={unregister}
 						clearErrors={clearErrors}
-					/>
+					/> */}
 					<RequiredReceipt
 						sendReceipt={watch('sendReceipt')}
 						setToggleCheck={e => setValue('sendReceipt', e)}
