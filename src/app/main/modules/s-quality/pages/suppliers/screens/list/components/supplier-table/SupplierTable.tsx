@@ -25,12 +25,12 @@ export function SupplierTable({ suppliersData }: SupplierTableProps) {
 						className="flex justify-between font-600"
 						sx={{ backgroundColor: theme => theme.palette.action.hover }}
 					>
-						<StyledTableCell>Nome</StyledTableCell>
+						<StyledTableCell>Name</StyledTableCell>
 						<StyledTableCell>Email</StyledTableCell>
-						<StyledTableCell>Contato</StyledTableCell>
-						<StyledTableCell>Telefone</StyledTableCell>
-						<StyledTableCell>Endereço</StyledTableCell>
-						<StyledTableCell>Ativo</StyledTableCell>
+						<StyledTableCell>Contact</StyledTableCell>
+						<StyledTableCell>Phone</StyledTableCell>
+						<StyledTableCell>Address</StyledTableCell>
+						<StyledTableCell>Active</StyledTableCell>
 					</TableHead>
 					<TableContainer />
 				</Table>

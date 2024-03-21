@@ -1,5 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Typography, TextField, InputAdornment, Button, Grid } from '@mui/material';
+import { useNavigate } from 'react-router';
 
 interface PropsHeader {
 	searchValue: string;
@@ -7,6 +8,12 @@ interface PropsHeader {
 }
 
 export function Header({ searchValue, setSearchValue }: PropsHeader) {
+	const navigate = useNavigate();
+
+	const handleNavigateCreateSupplier = () => {
+		navigate('cadastro');
+	};
+
 	return (
 		<Grid
 			container
@@ -24,7 +31,7 @@ export function Header({ searchValue, setSearchValue }: PropsHeader) {
 					fontWeight={500}
 					color={theme => theme.palette.secondary.main}
 				>
-					Fornecedores
+					Suppliers
 				</Typography>
 				<Button
 					id="basic-button"
@@ -32,9 +39,9 @@ export function Header({ searchValue, setSearchValue }: PropsHeader) {
 					className="w-full sm:w-256 shadow-lg py-24"
 					variant="contained"
 					startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
-					/* onClick={handleNavigateCreateProduct} */
+					onClick={handleNavigateCreateSupplier}
 				>
-					Cadastro de novo fornecedor
+					New supplier registration
 				</Button>
 			</Grid>
 			<Grid
@@ -46,7 +53,7 @@ export function Header({ searchValue, setSearchValue }: PropsHeader) {
 					value={searchValue}
 					onChange={e => setSearchValue(e.target.value)}
 					className="sm:w-512"
-					label="Pesquise por fornecedores"
+					label="Search for suppliers"
 					fullWidth
 					InputProps={{
 						endAdornment: (
