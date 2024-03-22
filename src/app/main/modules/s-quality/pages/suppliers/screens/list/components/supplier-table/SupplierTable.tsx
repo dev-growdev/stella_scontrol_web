@@ -2,18 +2,15 @@ import { Box, Table, TableContainer, TableHead } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { StyledTableCell } from './tableStyles';
-import { ISupplier } from '~/modules/s-quality/pages/suppliers/types/suppliers';
+import { ISupplier } from '~/modules/s-quality/pages/suppliers/types/supplier';
 
 interface SupplierTableProps {
-	/* selectItem: (item: ISupplierType | null) => void; */
 	suppliersData: ISupplier[];
-	/* handleStatus: (item: ISupplierType) => void; */
 }
 
 export function SupplierTable({ suppliersData }: SupplierTableProps) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
-	/* const [selectedItemId, setSelectedItemId] = useState<string | null>(null); */
 
 	const navigate = useNavigate();
 

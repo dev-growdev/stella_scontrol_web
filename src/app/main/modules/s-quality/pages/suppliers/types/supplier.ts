@@ -2,7 +2,7 @@ export interface ISupplier {
 	name: string;
 	email: string;
 	continent: string;
-	address?: string; // utilização de api para buscar a lista de cidade, região e país
+	address?: string;
 	city?: string;
 	region?: string;
 	country?: string;
@@ -10,4 +10,3 @@ export interface ISupplier {
 	contactName?: string;
 	enable: boolean;
 }
-

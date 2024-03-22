@@ -1,6 +1,7 @@
 import * as z from 'zod';
 
 const ContinentEnum = z.enum(['Africa', 'Antarctica', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']);
+//verificar validação correta
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
   );
@@ -19,8 +20,9 @@ const supplierRegistrationFormSchema = z.object({
     city: z.string().optional(),
     region: z.string().optional(),
     country: z.string().optional(),
-    phone: z.string().regex(phoneRegex, 'Invalid Number!').optional(),
+    phone: z.string().optional().refine((phone) => !phone? true : phoneRegex.test(phone), 'Phone is invalid.' ),
     contactName: z.string().optional(),
+    enable: z.boolean(),
 });
 
 export type TSupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>;
