@@ -1,6 +1,6 @@
 import { ProductType } from '../../products/types/product';
 
-interface IFiles {
+export interface IFiles {
 	uid: string;
 	name: string;
 	key: string;
@@ -28,10 +28,18 @@ export interface ICardHolder {
 	name: string;
 	code: number;
 }
+
+export interface IApportionment {
+	accountingAccount: string;
+	costCenter: string;
+	paymentRequestsGeneralUid: string;
+	uid: string;
+	value: string;
+}
 export interface IRequestType {
 	PaymentForm: IPaymentForm;
 	uid: string;
-	Apportionments: any[];
+	Apportionments: IApportionment[];
 	supplier: string;
 	bankTransfer: string;
 	description?: string;
@@ -42,7 +50,7 @@ export interface IRequestType {
 	payments: IPaymentRequestForm[];
 	createdAt: Date;
 	files: IFiles[];
-	CardHolder: ICardHolder;
+	cardHolder: ICardHolder;
 	isRateable: boolean;
 	Products: ProductType[];
 	unregisteredProducts: string[];

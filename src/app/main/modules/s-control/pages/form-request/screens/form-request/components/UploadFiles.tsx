@@ -9,7 +9,7 @@ interface UploadFilesProps {
 	uploadedFiles: File[];
 	handleFileRemove: (index: number) => void;
 	requestUid: string;
-	getFiles: any[];
+	getFiles: IFiles[];
 	readMode: boolean;
 }
 
@@ -122,10 +122,10 @@ export function UploadFiles({
 						<TableBody className="flex flex-col">
 							{getFiles.map((file, index) => (
 								<TableRow key={index}>
-									<TableCell>{file.fileUid.name}</TableCell>
+									<TableCell>{file.name}</TableCell>
 									<TableCell>
 										<FuseSvgIcon
-											onClick={() => handleFileView(file.fileUid.key, file.fileUid.name)}
+											onClick={() => handleFileView(file.key, file.name)}
 											aria-label="view"
 											className="cursor-pointer"
 											color="primary"

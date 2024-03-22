@@ -30,6 +30,7 @@ export default function AlertDialog({ open, file, setOpen }: PropsAlertDialog) {
 					documents={documents}
 					pluginRenderers={DocViewerRenderers}
 					language="pt"
+					className="min-w-480"
 				/>
 			</DialogContent>
 			<DialogActions>
