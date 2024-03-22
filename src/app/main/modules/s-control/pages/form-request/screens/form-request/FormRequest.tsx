@@ -404,8 +404,11 @@ export default function PaymentRequestFormGeneral() {
 					/>
 					<UploadFiles
 						uploadedFiles={watch('uploadedFiles')}
+						getFiles={watch('getFiles')}
 						handleFileChange={handleFileChange}
 						handleFileRemove={handleFileRemove}
+						readMode={readMode}
+						requestUid={requestUid}
 					/>
 					<IsRateable
 						isRateable={watch('isRateable')}

@@ -15,13 +15,15 @@ export function mapToFormDTO(request: IRequestType): Promise<TPaymentRequestForm
 		accountingAccount,
 		Apportionments,
 		bankTransfer,
-		pix
+		pix,
+		files
 	} = request;
 
 	return {
 		paymentMethod: { name: PaymentForm.name, uid: PaymentForm.uid },
 		valueProducts: null,
 		bankTransfer: bankTransfer ? JSON.parse(bankTransfer) : null,
+		getFiles: files,
 		sendReceipt,
 		isRateable,
 		pix,
