@@ -5,6 +5,7 @@
 	"dependencies": {
 		"@azure/msal-browser": "^3.7.1",
 		"@azure/msal-react": "^2.0.10",
+		"@cyntler/react-doc-viewer": "^1.14.1",
 		"@emotion/cache": "11.11.0",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",

@@ -15,7 +15,8 @@ export function mapToFormDTO(request: IRequestType): Promise<TPaymentRequestForm
 		accountingAccount,
 		Apportionments,
 		bankTransfer,
-		pix
+		pix,
+		files
 	} = request;
 
 	return {
@@ -30,6 +31,7 @@ export function mapToFormDTO(request: IRequestType): Promise<TPaymentRequestForm
 		description,
 		supplier,
 		payments: payments.map(payment => ({ value: `${payment.value}`, dueDate: new Date(payment.dueDate) })),
+		getFiles: files,
 		uploadedFiles: [],
 		accountingAccount,
 		apportionments: Apportionments

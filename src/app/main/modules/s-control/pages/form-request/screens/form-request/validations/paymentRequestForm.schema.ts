@@ -54,6 +54,7 @@ const paymentRequestFormSchema = z
 			})
 		),
 		uploadedFiles: z.array(z.instanceof(File)),
+		getFiles: z.array(z.object({ name: z.string(), key: z.string(), uid: z.string() })).optional(),
 		accountingAccount: z.string().optional(),
 		apportionments: z
 			.array(
