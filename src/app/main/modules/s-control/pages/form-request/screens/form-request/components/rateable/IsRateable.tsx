@@ -185,7 +185,7 @@ export function IsRateable({
 		const setApportionments = {
 			costCenter: costCenterName,
 			accountingAccount: accountingAccountName,
-			value: formattedNumeral(valueCostCenter)
+			value: valueCostCenter.replace(/[^\d,]/g, '').replace(',', '.')
 		};
 
 		const apportionments = watch('apportionments');

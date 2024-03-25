@@ -160,9 +160,8 @@ export default function PaymentRequestFormGeneral() {
 		};
 		await paymentRequestFormSchema.parseAsync(formData);
 	}
-
+	console.log(watch('apportionments'));
 	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
-		console.log(data, '------------------------------------');
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
@@ -208,7 +207,7 @@ export default function PaymentRequestFormGeneral() {
 			...data,
 			apportionments: data.apportionments.map(apportionment => ({
 				...apportionment,
-				value: apportionment.value.replace(/\./g, '').replace(',', '.')
+				value: apportionment.value
 			})),
 			userCreatedUid: user.uid,
 			totalValue: totalValue.replace(/\./g, '').replace(',', '.'),
@@ -226,8 +225,8 @@ export default function PaymentRequestFormGeneral() {
 
 		dispatch(createRequestPaymentGeneral(formData)).then(res => {
 			if (res.payload) {
-				// clearFormState();
-				// navigate('/scontrol/solicitacoes');
+				clearFormState();
+				navigate('/scontrol/solicitacoes');
 			}
 		});
 	}
@@ -407,8 +406,8 @@ export default function PaymentRequestFormGeneral() {
 						getFiles={watch('getFiles')}
 						handleFileChange={handleFileChange}
 						handleFileRemove={handleFileRemove}
-						readMode={readMode}
 						requestUid={requestUid}
+						readMode={readMode}
 					/>
 					<IsRateable
 						isRateable={watch('isRateable')}
@@ -430,6 +429,7 @@ export default function PaymentRequestFormGeneral() {
 								<Autocomplete
 									className="w-full"
 									value={field.value}
+									disabled={readMode}
 									onChange={(event: ChangeEvent<HTMLInputElement>) => {
 										field.onChange(event.target.outerText);
 									}}
