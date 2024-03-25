@@ -1,6 +1,4 @@
-const locale = {
+export const i18nEN = {
 	APPLICATIONS: 'Applications',
 	EXAMPLE: 'Example'
 };
-
-export default locale;

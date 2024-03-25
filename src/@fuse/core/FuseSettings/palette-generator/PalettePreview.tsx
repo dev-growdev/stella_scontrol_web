@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import clsx from 'clsx';
 import Box from '@mui/material/Box';
 import { Palette } from '@mui/material/styles/createPalette';

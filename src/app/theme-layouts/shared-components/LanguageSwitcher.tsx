@@ -41,15 +41,15 @@ function LanguageSwitcher() {
 			>
 				<img
 					className="mx-4 min-w-20"
-					src={`assets/images/flags/${currentLanguage.flag}.svg`}
-					alt={currentLanguage.title}
+					src={`assets/images/flags/${currentLanguage?.flag}.svg`}
+					alt={currentLanguage?.title}
 				/>
 
 				<Typography
 					className="mx-4 font-semibold uppercase"
 					color="text.secondary"
 				>
-					{currentLanguage.id}
+					{currentLanguage?.id}
 				</Typography>
 			</Button>
 

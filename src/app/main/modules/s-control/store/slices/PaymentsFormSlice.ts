@@ -90,8 +90,8 @@ export const disablePaymentsForm = createAsyncThunk(
 						code: data.code,
 						enable: data.enable,
 						type: data.type,
-						namePaymentForm: data.paymentForm.name,
-						uidPaymentForm: data.paymentForm.uid
+						namePaymentForm: data?.paymentForm?.name,
+						uidPaymentForm: data?.paymentForm?.uid
 					};
 				}
 

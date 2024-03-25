@@ -38,7 +38,7 @@ export const messageSlice = createSlice({
 	name: 'fuse/message',
 	initialState,
 	reducers: {
-		showMessage: (state, action: PayloadAction<SnackbarProps>) => {
+		showMessage: (state, action: PayloadAction<Partial<initialStateProps['options']>>) => {
 			state.state = true;
 			state.options = {
 				...initialState.options,

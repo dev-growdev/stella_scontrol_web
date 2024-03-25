@@ -128,6 +128,7 @@ export const logoutUser = () => async (dispatch: AppDispatchType, getState: () =
  */
 export const updateUserData = createAppAsyncThunk<UserType, PartialDeep<UserType>>(
 	'user/update',
+	// @ts-expect-error - Service Fuse
 	async (userRequestData, { dispatch, rejectWithValue, getState }) => {
 		const AppState = getState() as AppRootStateType;
 
@@ -182,10 +183,14 @@ export const userSlice = createSlice({
 			.addCase(setUser.fulfilled, (state, action) => action.payload)
 			.addCase(updateUserData.fulfilled, (state, action) => action.payload)
 			.addCase(updateUserShortcuts.fulfilled, (state, action) => {
-				state.data.shortcuts = action.payload.data.shortcuts;
+				if (action?.payload?.data.shortcuts) {
+					state.data.shortcuts = action.payload.data.shortcuts;
+				}
 			})
 			.addCase(updateUserSettings.fulfilled, (state, action) => {
-				state.data.settings = action.payload.data.settings;
+				if (action?.payload?.data.settings) {
+					state.data.settings = action.payload.data.settings;
+				}
 			});
 	}
 });

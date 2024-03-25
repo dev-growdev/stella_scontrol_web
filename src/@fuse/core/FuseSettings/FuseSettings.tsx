@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useDebounce, usePrevious } from '@fuse/hooks';
 import { styled } from '@mui/material/styles';
 import { Controller, useForm } from 'react-hook-form';

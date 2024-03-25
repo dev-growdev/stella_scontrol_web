@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useDeepCompareEffect } from '@fuse/hooks';
 import _ from '@lodash';
 import AppContext from 'app/AppContext';

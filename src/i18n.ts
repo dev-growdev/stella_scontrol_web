@@ -9,6 +9,11 @@ const resources = {
 		translation: {
 			'Welcome to React': 'Welcome to React and react-i18next'
 		}
+	},
+	ptbr: {
+		translation: {
+			'Welcome to React': 'Bem-vindo ao React e react-i18next'
+		}
 	}
 };
 
