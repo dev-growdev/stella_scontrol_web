@@ -1,12 +1,12 @@
 import i18next from 'i18next';
 import { FuseNavigationType } from '@fuse/core/FuseNavigation/types/FuseNavigationType';
 import { i18nEN } from './navigation-i18n/en';
-import { i18nPTBR } from './navigation-i18n/ptbr';
+import { i18nBR } from './navigation-i18n/br';
 import { SControlNavigationConfig } from '../main/modules/s-control/navigationConfig';
 import { SQualityNavigationConfig } from '../main/modules/s-quality/navigationConfig';
 
 i18next.addResourceBundle('en', 'navigation', i18nEN);
-i18next.addResourceBundle('ptbr', 'navigation', i18nPTBR);
+i18next.addResourceBundle('', 'navigation', i18nBR);
 
 /**
  * The navigationConfig object is an array of navigation items for the Fuse application.

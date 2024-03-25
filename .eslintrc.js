@@ -106,6 +106,7 @@ module.exports = {
 		'react/jsx-no-bind': 'off',
 		'react/jsx-props-no-spreading': 'off',
 		'react/no-array-index-key': 'off',
-		'no-restricted-exports': ['off', { restrictedNamedExports: ['default'] }]
+		'no-restricted-exports': ['off', { restrictedNamedExports: ['default'] }],
+    '@typescript-eslint/no-unsafe-return': 'off',
 	}
 };

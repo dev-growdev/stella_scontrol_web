@@ -1,4 +1,4 @@
-export const i18nPTBR = {
+export const i18nBR = {
   APPLICATIONS: 'Aplicações',
   EXAMPLE: 'Exemplo'
 };
