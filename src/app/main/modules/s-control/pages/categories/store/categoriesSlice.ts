@@ -115,7 +115,7 @@ export const disableCategory = createAsyncThunk('categories/disableCategory', as
 	const body = {
 		enable: data.enable
 	};
-	const response = await axios.put<{ data: CategoryType }>(
+	const response = await axios.patch<{ data: CategoryType }>(
 		`${process.env.REACT_APP_API_URL}/categories/${data.uid}/disable`,
 		body
 	);
