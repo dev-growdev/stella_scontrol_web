@@ -160,7 +160,6 @@ export default function PaymentRequestFormGeneral() {
 		};
 		await paymentRequestFormSchema.parseAsync(formData);
 	}
-	console.log(watch('apportionments'));
 	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {

@@ -17,21 +17,21 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
-import { ProductOptionType } from '../types/productOptions';
+import { IProductOption } from '../types/productOptions';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
-interface TableProductsFromRequestProps {
+interface PropsTableProductsFromRequest {
 	readMode: boolean;
 	errors: FieldErrors<TPaymentRequestForm>;
 	setValueProducts: UseFormSetValue<TPaymentRequestForm>;
 	watch: UseFormWatch<TPaymentRequestForm>;
 }
 
-export function TableProductsFromRequest({ errors, setValueProducts, watch, readMode }: TableProductsFromRequestProps) {
-	const [value, setValue] = useState<ProductOptionType | null>(null);
+export function TableProductsFromRequest({ errors, setValueProducts, watch, readMode }: PropsTableProductsFromRequest) {
+	const [value, setValue] = useState<IProductOption | null>(null);
 	const productsForm = watch('products');
 	const products = useSelectorSControl(selectProducts);
-	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<IProductOption[]>([]);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -40,7 +40,7 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch, read
 		}
 	}, [products]);
 
-	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: ProductOptionType | null) => {
+	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: IProductOption | null) => {
 		setValue(newValue);
 	};
 
@@ -49,7 +49,7 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch, read
 	};
 
 	const handleAddProduct = () => {
-		if (!value || !value.name) {
+		if (!value) {
 			dispatch(
 				showMessage({
 					message: 'Digite um produto para adicionar.',
