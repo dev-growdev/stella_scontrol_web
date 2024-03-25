@@ -6,7 +6,7 @@ const SuppliersPage = lazy(() => import('./screens/list/Suppliers'));
 
 export const suppliersRoutesConfig: FuseRouteItemType = {
 	// auth: authRoles.admin,
-	path: 'fornecedores',
+	path: 'suppliers',
 	children: [
 		{
 			path: '',

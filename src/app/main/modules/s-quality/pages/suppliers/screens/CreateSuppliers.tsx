@@ -1,10 +1,9 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Autocomplete, Box, Button, FormControl, FormControlLabel, FormGroup, Grid, MenuItem, Paper, Switch, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, FormControlLabel, FormGroup, Grid, Paper, Switch, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { TSupplierRegistrationForm, supplierRegistrationFormSchema } from './validations/supplierRegistrationForm.schema'
-import { log } from 'console';
+import { TSupplierRegistrationForm, supplierRegistrationFormSchema } from './validations/supplierRegistrationForm.schema';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatchSQuality } from '~/modules/s-quality/store/hooks';
 import { createSupplier } from '../store/suppliersSlice';
@@ -73,10 +72,11 @@ export default function CreateSuppliers() {
 
 	function handleReset() {
 		reset(defaultValues);
+
 	}
 
-	const handleRedirectToSuppliers = () => {
-		navigate('/squality/fornecedores');
+	function handleRedirectToSuppliers() {
+		navigate('/squality/suppliers');
 	}
 
 	return (
@@ -112,7 +112,7 @@ export default function CreateSuppliers() {
 						onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
 						onReset={handleReset}
 					>
-						<FormGroup>
+						<FormGroup className='mb-24'>
 							<FormControlLabel
 								label=''
 								control={
@@ -123,7 +123,7 @@ export default function CreateSuppliers() {
 									render={({ field }) => (
 										<>
 											<Switch {...field} defaultChecked color='primary' />
-											<Typography>{field.value ? 'Desativar': 'Ativar'}</Typography>
+											<Typography>{field.value ? 'Disable': 'Enable'}</Typography>
 										</>
 									)}
 								/>
@@ -263,37 +263,7 @@ export default function CreateSuppliers() {
 											)}
 										/>
 									)}
-								/>
-								{/* <Autocomplete
-									fullWidth
-									id="country-select-demo"
-									options={countries}
-									autoHighlight
-									getOptionLabel={(option) => option.label}
-									renderOption={(props, option) => (
-										<Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-										<img
-											loading="lazy"
-											width="20"
-											srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-											src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-											alt=""
-										/>
-										{option.label} ({option.code})
-										</Box>
-									)}
-									renderInput={(params) => (
-										<TextField
-											fullWidth
-											{...params}
-											label="Choose a country"
-											inputProps={{
-												...params.inputProps,
-												autoComplete: 'new-password', // disable autocomplete and autofill
-											}}
-										/>
-									)}
-								/> */}								
+								/>							
 							</div>
 						</div>
 						<div className="flex flex-col w-full gap-24">

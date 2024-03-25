@@ -38,10 +38,10 @@ export const SQualityNavigationConfig: FuseNavigationType = [
 				children: [
 					{
 						id: 'squality.create.suppliers',
-						title: 'Fornecedores',
+						title: 'Suppliers',
 						type: 'item',
 						icon: 'heroicons-outline:cube',
-						url: 'squality/fornecedores'
+						url: 'squality/suppliers'
 					}
 				]
 			}

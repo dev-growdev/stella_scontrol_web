@@ -3,7 +3,8 @@ import * as z from 'zod';
 const ContinentEnum = z.enum(['Africa', 'Antarctica', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']);
 //verificar validação correta
 const phoneRegex = new RegExp(
-    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
+    /^([+]?[\s0-9]+)?([(]?\d{3,}[)])?([-]?[\s]?[0-9]){8,}$/
+
   );
 type ContinentEnum = z.infer<typeof ContinentEnum>;
 
