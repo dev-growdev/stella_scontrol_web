@@ -17,7 +17,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
-import { TProductOption } from '../types/productOptions';
+import { IProductOption } from '../types/productOptions';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface IProductItem {
@@ -50,10 +50,10 @@ function renderTableRow(item: IProductItem) {
 }
 
 export function TableProductsFromRequest({ errors, setValueProducts, watch, readMode }: PropsTableProductsFromRequest) {
-	const [value, setValue] = useState<TProductOption | null>(null);
+	const [value, setValue] = useState<IProductOption | null>(null);
 	const productsForm = watch('products');
 	const products = useSelectorSControl(selectProducts);
-	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<TProductOption[]>([]);
+	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<IProductOption[]>([]);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -62,7 +62,7 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch, read
 		}
 	}, [products]);
 
-	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: TProductOption | null) => {
+	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: IProductOption | null) => {
 		setValue(newValue);
 	};
 
