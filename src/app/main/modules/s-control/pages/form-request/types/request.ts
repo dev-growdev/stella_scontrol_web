@@ -35,7 +35,7 @@ export interface IApportionment {
 	uid: string;
 	value: string;
 }
-export interface IRequest {
+export interface IRequestPaymentGeneral {
 	PaymentForm: IPaymentForm;
 	uid: string;
 	Apportionments: IApportionment[];
@@ -62,5 +62,5 @@ export interface IPaymentRequestForm {
 
 export interface RequestPaymentGeneralType {
 	loading: boolean;
-	payload: IRequest[];
+	payload: IRequestPaymentGeneral[];
 }

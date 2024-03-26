@@ -1,6 +1,6 @@
-import { IRequest } from '../../../types/request';
+import { IRequestPaymentGeneral } from '../../../types/request';
 
-export function mapToFormDTO(request: IRequest) {
+export function mapToFormDTO(request: IRequestPaymentGeneral) {
 	const {
 		PaymentForm,
 		sendReceipt,

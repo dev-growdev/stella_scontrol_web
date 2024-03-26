@@ -3,7 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios, { AxiosError } from 'axios';
 import { ReduxStateScontrol } from '../../../store';
-import { IRequest, RequestPaymentGeneralType } from '../types/request';
+import { IRequestPaymentGeneral, RequestPaymentGeneralType } from '../types/request';
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',
@@ -12,7 +12,7 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 			const response = await axios.post<{
 				code: number;
 				success: boolean;
-				data: { request: IRequest };
+				data: { request: IRequestPaymentGeneral };
 			}>(`${process.env.REACT_APP_API_URL}/payment-request-general`, data, {
 				headers: { 'Content-Type': 'multipart/form-data' }
 			});
@@ -54,7 +54,7 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk('requestPaymentGen
 		const response = await axios.get<{
 			code: number;
 			success: boolean;
-			data: IRequest[];
+			data: IRequestPaymentGeneral[];
 		}>(`${process.env.REACT_APP_API_URL}/payment-request-general/${userUid}`);
 		const { data } = response.data;
 
