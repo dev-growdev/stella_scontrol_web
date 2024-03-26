@@ -4,24 +4,27 @@ import {
   Autocomplete,
   Box,
   Button,
-  FormControlLabel,
-  FormGroup,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
   Paper,
-  Switch,
+  Select,
   TextField,
   Typography
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Controller, useForm } from 'react-hook-form';
 import {
   TSupplierRegistrationForm,
   supplierRegistrationFormSchema
 } from './validations/supplierRegistrationForm.schema';
+import { Controller, useForm } from 'react-hook-form';
 import { useDispatchSQuality } from '~/modules/s-quality/store/hooks';
 import { createSupplier } from '../store/suppliersSlice';
 import { ISupplier } from '../types/supplier';
+
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const optionsContinents = [
   { value: 'Africa', label: 'Africa' },
@@ -61,7 +64,7 @@ const defaultValues: TSupplierRegistrationForm = {
   country: '',
   phone: '',
   contactName: '',
-  enable: true
+  enable: 'true'
 };
 
 export default function CreateSuppliers() {
@@ -85,6 +88,7 @@ export default function CreateSuppliers() {
 
   function onSubmit(data: TSupplierRegistrationForm) {
     dispatchSQuality(createSupplier(data as ISupplier));
+    handleReset();
   }
 
   function handleReset() {
@@ -128,28 +132,6 @@ export default function CreateSuppliers() {
             onSubmit={handleSubmit(onSubmit, error => console.log(error))}
             onReset={handleReset}
           >
-            <FormGroup className="mb-24">
-              <FormControlLabel
-                label=""
-                control={
-                  <Controller
-                    name="enable"
-                    control={control}
-                    defaultValue
-                    render={({ field }) => (
-                      <>
-                        <Switch
-                          {...field}
-                          defaultChecked
-                          color="primary"
-                        />
-                        <Typography>{field.value ? 'Disable' : 'Enable'}</Typography>
-                      </>
-                    )}
-                  />
-                }
-              />
-            </FormGroup>
             <div className="flex flex-col gap-24 sm:flex-row">
               <Grid
                 container
@@ -284,6 +266,32 @@ export default function CreateSuppliers() {
                     />
                   )}
                 />
+                <Controller
+                  control={control}
+                  name="region"
+                  render={({ field, fieldState }) => (
+                    <Autocomplete
+                      fullWidth
+                      options={optionsRegions}
+                      getOptionLabel={option => option.label}
+                      isOptionEqualToValue={(option, value) => option.value === value.value}
+                      inputValue={regionInputValue}
+                      onInputChange={(e, value) => setRegionInputValue(value)}
+                      onChange={(_, value) => {
+                        field.onChange(value?.value);
+                      }}
+                      value={optionsRegions.find(option => option.value === field.value)}
+                      renderInput={params => (
+                        <TextField
+                          {...params}
+                          label="Region"
+                          error={fieldState.invalid}
+                          helperText={fieldState.error?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
               </div>
             </div>
             <div className="flex flex-col w-full gap-24">
@@ -329,28 +337,20 @@ export default function CreateSuppliers() {
                 />
                 <Controller
                   control={control}
-                  name="region"
+                  name="enable"
                   render={({ field, fieldState }) => (
-                    <Autocomplete
-                      fullWidth
-                      options={optionsRegions}
-                      getOptionLabel={option => option.label}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      inputValue={regionInputValue}
-                      onInputChange={(e, value) => setRegionInputValue(value)}
-                      onChange={(_, value) => {
-                        field.onChange(value?.value);
-                      }}
-                      value={optionsRegions.find(option => option.value === field.value)}
-                      renderInput={params => (
-                        <TextField
-                          {...params}
-                          label="Region"
-                          error={fieldState.invalid}
-                          helperText={fieldState.error?.message}
-                        />
-                      )}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel id="status-select-label">Status</InputLabel>
+                      <Select
+                        labelId="status-select-label"
+                        fullWidth
+                        {...field}
+                        label="Status"
+                      >
+                        <MenuItem value="true">Enable</MenuItem>
+                        <MenuItem value="false">Disable</MenuItem>
+                      </Select>
+                    </FormControl>
                   )}
                 />
               </div>
