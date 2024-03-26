@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 
-import { PaymentForm, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { IPaymentForm, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 const itemHeight = 48;
@@ -30,7 +30,7 @@ export function PaymentMethod({ selectedPaymentMethod, setValue, control, errors
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
 
-	const [payments, setPayments] = useState<PaymentForm[]>([]);
+	const [payments, setPayments] = useState<IPaymentForm[]>([]);
 
 	useEffect(() => {
 		let paymentsFormFiltered = paymentsForm.filter(holder => holder.type === '' && holder.enable);

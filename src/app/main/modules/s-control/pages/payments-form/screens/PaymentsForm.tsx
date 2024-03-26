@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { PaymentsFormTable } from '../../../components/payment-form-table/PaymentsFormTable';
 import {
 	IHolder,
-	PaymentForm,
+	IPaymentForm,
 	disablePaymentsForm,
 	getPaymentsForm,
 	selectPaymentsForm
@@ -18,7 +18,7 @@ export default function PaymentsForm() {
 		dispatchScontrol(getPaymentsForm());
 	}, []);
 
-	async function handleGetStatus(item: PaymentForm | IHolder) {
+	async function handleGetStatus(item: IPaymentForm | IHolder) {
 		dispatchScontrol(disablePaymentsForm(item));
 	}
 

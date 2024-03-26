@@ -4,10 +4,10 @@ import { ReduxStateScontrol } from '..';
 
 export interface PaymentsFormType {
 	loading: boolean;
-	paymentsForm: PaymentForm[] | IHolder[];
+	paymentsForm: IPaymentForm[] | IHolder[];
 }
 
-export interface PaymentForm {
+export interface IPaymentForm {
 	uid: string;
 	code: number;
 	name: string;
@@ -74,7 +74,7 @@ export const getPaymentsForm = createAsyncThunk('payments-form/getPaymentsForm',
 
 export const disablePaymentsForm = createAsyncThunk(
 	'payments-form/disablePaymentsForm',
-	async (dataToUpdate: PaymentForm | IHolder) => {
+	async (dataToUpdate: IPaymentForm | IHolder) => {
 		try {
 			const response = await axios.put<ResponseDataType>(
 				`${process.env.REACT_APP_API_URL}/payments-form/${dataToUpdate.uid}`

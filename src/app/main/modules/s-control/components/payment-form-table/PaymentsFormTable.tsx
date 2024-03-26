@@ -20,12 +20,12 @@ import {
 	Toolbar
 } from '@mui/material';
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import { IHolder, PaymentForm, PaymentsFormType } from '../../store/slices/PaymentsFormSlice';
+import { IHolder, IPaymentForm, PaymentsFormType } from '../../store/slices/PaymentsFormSlice';
 import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface PaymentFormTable {
 	paymentsFormData: PaymentsFormType | { paymentsForm: []; loading: false };
-	handleStatus: (item: PaymentForm | IHolder) => void;
+	handleStatus: (item: IPaymentForm | IHolder) => void;
 }
 
 // export interface FormattedPaymentsArray {
@@ -47,11 +47,11 @@ export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFor
 
 	const openMenuStatus = Boolean(anchorStatusMenu);
 
-	const filteredPayments: PaymentForm[] | IHolder[] =
+	const filteredPayments: IPaymentForm[] | IHolder[] =
 		paymentsFormData.paymentsForm && paymentsFormData.paymentsForm.length > 0
-			? paymentsFormData.paymentsForm.filter((row: PaymentForm | IHolder) => {
+			? paymentsFormData.paymentsForm.filter((row: IPaymentForm | IHolder) => {
 					const matchSearch =
-						!searchValue || (row as PaymentForm).name.toLowerCase().includes(searchValue.toLowerCase());
+						!searchValue || (row as IPaymentForm).name.toLowerCase().includes(searchValue.toLowerCase());
 					const matchStatus =
 						filterByStatus === 'all' ||
 						(filterByStatus === 'active' && row.enable) ||
@@ -161,7 +161,7 @@ export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFor
 						) : (
 							sortedPayments
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								.map((row: PaymentForm | IHolder) => (
+								.map((row: IPaymentForm | IHolder) => (
 									<StyledTableRow
 										className="flex justify-between"
 										key={row.uid}
