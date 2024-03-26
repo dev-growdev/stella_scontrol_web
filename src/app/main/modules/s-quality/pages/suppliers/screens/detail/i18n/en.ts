@@ -1,5 +1,24 @@
 export const i18nEN = {
   SUPPLIERS: 'Suppliers',
   REGISTER_SUPPLIER: 'Register Supplier',
-  NAME: 'Name'
+  NAME: 'Name',
+  EMAIL: 'Email',
+  PHONE: 'Phone',
+  CONTACT_NAME: 'Contact name',
+  CONTINENT: 'Continent',
+  AFRICA: 'Africa',
+  ASIA: 'Asia',
+  EUROPE: 'Europe',
+  NORTH_AMERICA: 'North America',
+  OCEANIA: 'Oceania',
+  SOUTH_AMERICA: 'South America',
+  COUNTRY: 'Country',
+  REGION: 'Region',
+  ADDRESS: 'Address',
+  CITY: 'City',
+  STATUS: 'Status',
+  ENABLE: 'Enable',
+  DISABLE: 'Desable',
+  CANCEL: 'Cancel',
+  SUBMIT: 'Submit'
 };

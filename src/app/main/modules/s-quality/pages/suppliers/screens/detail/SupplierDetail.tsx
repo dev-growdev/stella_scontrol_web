@@ -177,7 +177,7 @@ export default function SupplierDetail() {
                         {...field}
                         fullWidth
                         required
-                        label="Email"
+                        label={t('EMAIL')}
                         error={!!errors.email}
                         helperText={errors.email?.message}
                       />
@@ -195,7 +195,7 @@ export default function SupplierDetail() {
                     <TextField
                       {...field}
                       fullWidth
-                      label="Phone"
+                      label={t('PHONE')}
                       error={!!errors.phoneNumber}
                       helperText={errors.phoneNumber?.message}
                     />
@@ -208,7 +208,7 @@ export default function SupplierDetail() {
                     <TextField
                       {...field}
                       fullWidth
-                      label="Contact name"
+                      label={t('CONTACT_NAME')}
                       error={!!errors.contactName}
                       helperText={errors.contactName?.message}
                     />
@@ -236,7 +236,7 @@ export default function SupplierDetail() {
                       renderInput={params => (
                         <TextField
                           {...params}
-                          label="Continent"
+                          label={t('CONTINENT')}
                           required
                           error={fieldState.invalid}
                           helperText={fieldState.error?.message}
@@ -263,7 +263,7 @@ export default function SupplierDetail() {
                       renderInput={params => (
                         <TextField
                           {...params}
-                          label="Country"
+                          label={t('COUNTRY')}
                           error={fieldState.invalid}
                           helperText={fieldState.error?.message}
                         />
@@ -289,7 +289,7 @@ export default function SupplierDetail() {
                       renderInput={params => (
                         <TextField
                           {...params}
-                          label="Region"
+                          label={t('REGION')}
                           error={fieldState.invalid}
                           helperText={fieldState.error?.message}
                         />
@@ -308,7 +308,7 @@ export default function SupplierDetail() {
                     <TextField
                       {...field}
                       fullWidth
-                      label="Address"
+                      label={t('ADDRESS')}
                       error={!!errors.address}
                       helperText={errors.address?.message}
                     />
@@ -332,7 +332,7 @@ export default function SupplierDetail() {
                       renderInput={params => (
                         <TextField
                           {...params}
-                          label="City"
+                          label={t('CITY')}
                           error={fieldState.invalid}
                           helperText={fieldState.error?.message}
                         />
@@ -345,16 +345,16 @@ export default function SupplierDetail() {
                   name="enable"
                   render={({ field }) => (
                     <FormControl fullWidth>
-                      <InputLabel id="status-select-label">Status</InputLabel>
+                      <InputLabel id="status-select-label">{t('STATUS')}</InputLabel>
                       <Select
                         labelId="status-select-label"
                         fullWidth
                         {...field}
-                        value={field.value ? 'true' : 'false'}
-                        label="Status"
+                        value={field.value}
+                        label={t('STATUS')}
                       >
-                        <MenuItem value="true">Enable</MenuItem>
-                        <MenuItem value="false">Disable</MenuItem>
+                        <MenuItem value="true">{t('ENABLE')}</MenuItem>
+                        <MenuItem value="false">{t('DISABLE')}</MenuItem>
                       </Select>
                     </FormControl>
                   )}
@@ -366,14 +366,14 @@ export default function SupplierDetail() {
                 variant="outlined"
                 type="reset"
               >
-                CANCEL
+                {t('CANCEL')}
               </Button>
               <Button
                 variant="contained"
                 type="submit"
                 disabled={!isValid || !isDirty}
               >
-                SUBMIT
+                {t('SUBMIT')}
               </Button>
             </div>
           </form>

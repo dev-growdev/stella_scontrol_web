@@ -1,5 +1,24 @@
 export const i18nBR = {
   SUPPLIERS: 'Fornecedores',
   REGISTER_SUPPLIER: 'Cadastrar Fornecedor',
-  NAME: 'Nome'
+  NAME: 'Nome',
+  EMAIL: 'E-mail',
+  PHONE: 'Telefone',
+  CONTACT_NAME: 'Contato',
+  CONTINENT: 'Continente',
+  AFRICA: 'África',
+  ASIA: 'Ásia',
+  EUROPE: 'Europe',
+  NORTH_AMERICA: 'América do Norte',
+  OCEANIA: 'Oceania',
+  SOUTH_AMERICA: 'América do Sul',
+  COUNTRY: 'País',
+  REGION: 'Região',
+  ADDRESS: 'Endereço',
+  CITY: 'Cidade',
+  STATUS: 'Status',
+  ENABLE: 'Ativo',
+  DISABLE: 'Inativo',
+  CANCEL: 'Cancelar',
+  SUBMIT: 'Enviar'
 };
