@@ -8,47 +8,47 @@ type AppRootStateType = RootStateType<messageSliceType>;
 /**
  * The type definition for the initial state of the message slice.
  */
-type initialStateProps = {
-	state: boolean;
-	options: Pick<SnackbarProps, 'anchorOrigin' | 'autoHideDuration' | 'message'> & {
-		variant: FuseMessageVariantType;
-	};
+type TInitialStateProps = {
+  state: boolean;
+  options: Pick<SnackbarProps, 'anchorOrigin' | 'autoHideDuration' | 'message'> & {
+    variant: FuseMessageVariantType;
+  };
 };
 
 /**
  * The initial state of the message slice.
  */
-const initialState: initialStateProps = {
-	state: false,
-	options: {
-		variant: 'info',
-		anchorOrigin: {
-			vertical: 'top',
-			horizontal: 'center'
-		},
-		autoHideDuration: 2000,
-		message: 'Hi'
-	}
+const initialState: TInitialStateProps = {
+  state: false,
+  options: {
+    variant: 'info',
+    anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'center'
+    },
+    autoHideDuration: 2000,
+    message: 'Hi'
+  }
 };
 
 /**
  * The Message slice.
  */
 export const messageSlice = createSlice({
-	name: 'fuse/message',
-	initialState,
-	reducers: {
-		showMessage: (state, action: PayloadAction<SnackbarProps>) => {
-			state.state = true;
-			state.options = {
-				...initialState.options,
-				...action.payload
-			} as initialStateProps['options'];
-		},
-		hideMessage: state => {
-			state.state = false;
-		}
-	}
+  name: 'fuse/message',
+  initialState,
+  reducers: {
+    showMessage: (state, action: PayloadAction<TInitialStateProps['options']>) => {
+      state.state = true;
+      state.options = {
+        ...initialState.options,
+        ...action.payload
+      };
+    },
+    hideMessage: state => {
+      state.state = false;
+    }
+  }
 });
 
 export const { hideMessage, showMessage } = messageSlice.actions;
