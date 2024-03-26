@@ -1,9 +1,9 @@
 import { ProductType } from '../../products/types/product';
 
-interface IFiles {
-	name: string;
-	key: string;
-	uid: string;
+export interface IFiles {
+	name?: string;
+	key?: string;
+	uid?: string;
 	createdAt?: string;
 	updatedAt?: string;
 }
