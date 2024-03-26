@@ -215,6 +215,10 @@ export function IsRateable({
 		setRemainingValue(0);
 	};
 
+	const options = costCenters.costCenters.map(costCenter => {
+		return costCenter.name;
+	});
+
 	return (
 		<div className="flex flex-col">
 			<div className="flex items-center">
@@ -256,9 +260,7 @@ export function IsRateable({
 							<Autocomplete
 								disablePortal
 								id="apportionments"
-								options={costCenters.costCenters.map(costCenter => {
-									return costCenter.name;
-								})}
+								options={options}
 								value={costCenterName}
 								noOptionsText="Adicione um centro de custo"
 								className="w-full sm:w-1/3"
