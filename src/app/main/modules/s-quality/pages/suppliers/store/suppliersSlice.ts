@@ -1,13 +1,12 @@
-import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
+import { PayloadAction, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import { ISupplier, ISupplierCreate } from '../types/supplier';
-import { ReduxStateSquality } from '~/modules/s-quality/store';
+import { PropsAsyncThunkSQuality, ReduxStateSquality } from '~/modules/s-quality/store';
 import { httpClient } from '~/shared/services/http-client/api';
 
-export const createSupplier = createAppAsyncThunk(
+export const createSupplier = createAsyncThunk<ISupplier, ISupplierCreate, PropsAsyncThunkSQuality>(
   '/squality/fornecedores/cadastro',
-  async (data: ISupplierCreate, { dispatch, rejectWithValue }) => {
+  async (data, { dispatch, rejectWithValue }) => {
     const response = await httpClient.doPost('/squality/suppliers', data);
     if (!response.success) {
       dispatch(

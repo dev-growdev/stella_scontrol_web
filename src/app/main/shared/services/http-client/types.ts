@@ -1,15 +1,16 @@
 // generic if unknown type extends any
 
-export type ResponseAPI<T> =
+export type ResponseAPIFailure = {
+  success: false;
+  message: string;
+  invalidFields: {
+    field: string;
+    messages: string;
+  }[];
+};
+export type ResponseAPI<T = unknown> =
   | {
       success: true;
       data: T;
     }
-  | {
-      success: false;
-      message: string;
-      invalidFields: {
-        field: string;
-        messages: string;
-      }[];
-    };
+  | ResponseAPIFailure;

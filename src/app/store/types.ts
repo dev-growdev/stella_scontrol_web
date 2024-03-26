@@ -14,10 +14,10 @@ export type AppAction<R = Promise<void>> = Action<string> | ThunkAction<R, RootS
 
 // export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootStateType, unknown, Action<string>>;
 export type AppThunk<ReturnType = void> = ThunkAction<
-	ReturnType,
-	RootStateType,
-	{ s: string; n: number },
-	Action<string>
+  ReturnType,
+  RootStateType,
+  { s: string; n: number },
+  Action<string>
 >;
 
 export type AppDispatchType = Dispatch<Action<string>> & ((thunk: AppThunk) => Promise<AnyAction>);
@@ -31,14 +31,14 @@ export type BaseRootStateType = typeof store.getState;
  * The extended type of the root state for this application (AppState).
  */
 type ExtendedRootStateType<T extends string, State> = BaseRootStateType & {
-	[K in T]: State;
+  [K in T]: State;
 };
 
 /**
  * The type of the async reducers for this application (AppState).
  */
 export type AsyncReducersType = {
-	[key: string]: Reducer;
+  [key: string]: Reducer;
 };
 
 /**
@@ -69,41 +69,41 @@ export type AppThunkDispatchType<E = unknown> = ThunkDispatch<RootStateType, E, 
  * The type of a path to a specific type.
  */
 type PathToType<Str extends string, T> = Str extends `${infer Start}/${infer Rest}`
-	? { [P in Start as P]: PathToType<Rest, T> }
-	: { [P in Str]: T };
+  ? { [P in Start as P]: PathToType<Rest, T> }
+  : { [P in Str]: T };
 
 /**
  * The type of multiple paths to specific types.
  * _T - The type to return.
  */
 type MultiplePathsToType<Slices extends unknown[], _T = unknown> = Slices extends [infer First, ...infer Rest]
-	? First extends { name: string; getInitialState: () => unknown }
-		? PathToType<First['name'], ReturnType<First['getInitialState']>> & MultiplePathsToType<Rest>
-		: Record<string, never>
-	: Record<string, never>;
+  ? First extends { name: string; getInitialState: () => unknown }
+    ? PathToType<First['name'], ReturnType<First['getInitialState']>> & MultiplePathsToType<Rest>
+    : Record<string, never>
+  : Record<string, never>;
 
 /**
  * The type of the root state for this application (AppState) with a specific slice.
  */
 export type RootStateWithSliceType<SliceType extends { name: string; getInitialState: () => unknown }> =
-	BaseRootStateType & PathToType<SliceType['name'], ReturnType<SliceType['getInitialState']>>;
+  BaseRootStateType & PathToType<SliceType['name'], ReturnType<SliceType['getInitialState']>>;
 
 export type RootStateType<
-	T extends
-		| string
-		| { name: string; getInitialState: () => unknown }
-		| Array<{ name: string; getInitialState: () => unknown }> = never,
-	State = never
+  T extends
+    | string
+    | { name: string; getInitialState: () => unknown }
+    | Array<{ name: string; getInitialState: () => unknown }> = never,
+  State = never
 > = T extends string
-	? ExtendedRootStateType<T, State>
-	: T extends { name: string; getInitialState: () => unknown }
-	? RootStateWithSliceType<T>
-	: T extends Array<{ name: string; getInitialState: () => unknown }>
-	? BaseRootStateType & MultiplePathsToType<T>
-	: BaseRootStateType;
+  ? ExtendedRootStateType<T, State>
+  : T extends { name: string; getInitialState: () => unknown }
+  ? RootStateWithSliceType<T>
+  : T extends Array<{ name: string; getInitialState: () => unknown }>
+  ? BaseRootStateType & MultiplePathsToType<T>
+  : BaseRootStateType;
 
 export type AsyncStateType<T> = {
-	data: T | null;
-	status: 'idle' | 'loading' | 'succeeded' | 'failed';
-	error?: string | null;
+  data: T | null;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error?: string | null;
 };
