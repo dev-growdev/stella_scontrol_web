@@ -23,7 +23,7 @@ const supplierRegistrationFormSchema = z.object({
     .optional()
     .refine(phone => (!phone ? true : phoneRegex.test(phone)), 'Phone is invalid.'),
   contactName: z.string().optional(),
-  enable: z.enum(['true', 'false']).transform(val => val === 'true')
+  enable: z.enum(['true', 'false']).transform(val => val === 'true').default('true')
 });
 
 export type TSupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>;
