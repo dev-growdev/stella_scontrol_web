@@ -20,12 +20,12 @@ import {
 	Toolbar
 } from '@mui/material';
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import { HolderType, PaymentForm, PaymentsFormType } from '../../store/slices/PaymentsFormSlice';
+import { IHolder, PaymentForm, PaymentsFormType } from '../../store/slices/PaymentsFormSlice';
 import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface PaymentFormTable {
 	paymentsFormData: PaymentsFormType | { paymentsForm: []; loading: false };
-	handleStatus: (item: PaymentForm | HolderType) => void;
+	handleStatus: (item: PaymentForm | IHolder) => void;
 }
 
 // export interface FormattedPaymentsArray {
@@ -47,9 +47,9 @@ export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFor
 
 	const openMenuStatus = Boolean(anchorStatusMenu);
 
-	const filteredPayments: PaymentForm[] | HolderType[] =
+	const filteredPayments: PaymentForm[] | IHolder[] =
 		paymentsFormData.paymentsForm && paymentsFormData.paymentsForm.length > 0
-			? paymentsFormData.paymentsForm.filter((row: PaymentForm | HolderType) => {
+			? paymentsFormData.paymentsForm.filter((row: PaymentForm | IHolder) => {
 					const matchSearch =
 						!searchValue || (row as PaymentForm).name.toLowerCase().includes(searchValue.toLowerCase());
 					const matchStatus =
@@ -161,23 +161,23 @@ export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFor
 						) : (
 							sortedPayments
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								.map((row: PaymentForm | HolderType) => (
+								.map((row: PaymentForm | IHolder) => (
 									<StyledTableRow
 										className="flex justify-between"
 										key={row.uid}
 									>
 										<StyledTableCell className="w-[24.5rem]">
-											{(row as HolderType).code || row.code
-												? (row as HolderType).code ?? row.code
+											{(row as IHolder).code || row.code
+												? (row as IHolder).code ?? row.code
 												: '-'}
 										</StyledTableCell>
 
 										<StyledTableCell className="w-[34rem]">
-											{(row as HolderType).namePaymentForm ?? row.name}
+											{(row as IHolder).namePaymentForm ?? row.name}
 										</StyledTableCell>
 
 										<StyledTableCell className="w-88 flex justify-center">
-											{(row as HolderType).type ? row.name : ''}
+											{(row as IHolder).type ? row.name : ''}
 										</StyledTableCell>
 
 										<StyledTableCell className="min-w-256 flex justify-end">

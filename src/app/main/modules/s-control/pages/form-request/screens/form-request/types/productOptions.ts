@@ -1,4 +1,4 @@
-export interface ProductOptionType {
+export interface TProductOption {
 	name: string;
 	uid?: string;
 }

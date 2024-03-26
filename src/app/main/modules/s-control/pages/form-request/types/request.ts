@@ -8,7 +8,7 @@ export interface IFiles {
 	updatedAt: Date;
 }
 
-export interface ICreateRequestGeneralType {
+export interface ICreateRequestGeneral {
 	supplier: string;
 	description: string;
 	sendReceipt: boolean;
@@ -36,7 +36,7 @@ export interface IApportionment {
 	uid: string;
 	value: string;
 }
-export interface IRequestType {
+export interface IRequest {
 	PaymentForm: IPaymentForm;
 	uid: string;
 	Apportionments: IApportionment[];
@@ -63,5 +63,5 @@ export interface IPaymentRequestForm {
 
 export interface RequestPaymentGeneralType {
 	loading: boolean;
-	payload: IRequestType[];
+	payload: IRequest[];
 }

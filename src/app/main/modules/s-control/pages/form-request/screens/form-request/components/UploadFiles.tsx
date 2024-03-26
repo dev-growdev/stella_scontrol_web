@@ -17,7 +17,6 @@ export function UploadFiles({
 	handleFileChange,
 	uploadedFiles,
 	handleFileRemove,
-	requestUid,
 	getFiles,
 	readMode
 }: UploadFilesProps) {
@@ -30,7 +29,7 @@ export function UploadFiles({
 		const res = await axios.get<{ base64: string; type: string }>(
 			`${process.env.REACT_APP_API_URL}/payment-request-general/file/${fileKey}`
 		);
-		console.log(res);
+
 		const { base64, type } = res.data;
 		setOpen(true);
 		setFileUploaded({ base64, type, name: fileName });
