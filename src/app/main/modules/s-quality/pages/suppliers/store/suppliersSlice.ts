@@ -1,67 +1,60 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
-import axios from 'axios';
-import { ISupplier } from '../types/supplier';
+import { ISupplier, ISupplierCreate } from '../types/supplier';
 import { ReduxStateSquality } from '~/modules/s-quality/store';
+import { httpClient } from '~/shared/services/http-client/api';
 
 export const createSupplier = createAppAsyncThunk(
   '/squality/fornecedores/cadastro',
-  async (data: ISupplier, { dispatch }) => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/squality/suppliers`, data);
-
+  async (data: ISupplierCreate, { dispatch, rejectWithValue }) => {
+    const response = await httpClient.doPost('/squality/suppliers', data);
+    if (!response.success) {
       dispatch(
         showMessage({
-          message: 'Supplier successfully registered',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'center'
-          },
-          variant: 'success'
-        })
-      );
-
-      return response.data.data;
-    } catch (error) {
-      dispatch(
-        showMessage({
-          message: error.response.data.message,
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'center'
-          },
+          message: response.message,
           variant: 'error'
         })
       );
-
-      return error;
+      return rejectWithValue(response);
     }
+
+    dispatch(
+      showMessage({
+        message: 'Supplier successfully registered',
+        variant: 'success'
+      })
+    );
+
+    return response.data;
   }
 );
 
-const initialState: { data: ISupplier[]; loading: boolean } = {
-  data: [],
-  loading: false
-};
+const suppliersAdapter = createEntityAdapter<ISupplier>({
+  selectId: supplier => supplier.id
+});
 
 const suppliersSlice = createSlice({
   name: 'suppliers',
-  initialState,
+  initialState: suppliersAdapter.getInitialState({
+    loading: false
+  }),
   reducers: {},
   extraReducers: builder => {
     builder
       .addCase(createSupplier.pending, state => {
         state.loading = true;
       })
-      .addCase(createSupplier.fulfilled, (state, action) => {
-        if (action.payload !== undefined) {
-          state.data.push(action.payload);
-        }
+      .addCase(createSupplier.fulfilled, (state, action: PayloadAction<ISupplier>) => {
+        suppliersAdapter.addOne(state, action.payload);
+        state.loading = false;
+      })
+      .addCase(createSupplier.rejected, state => {
         state.loading = false;
       });
   }
 });
 
 export const selectSuppliers = ({ squality }: ReduxStateSquality) => squality.suppliers;
+export const { selectAll: selectAllSuppliers } = suppliersAdapter.getSelectors(selectSuppliers);
 export default suppliersSlice.reducer;
