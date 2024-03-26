@@ -28,16 +28,6 @@ interface PaymentFormTable {
 	handleStatus: (item: IPaymentForm | IHolder) => void;
 }
 
-// export interface FormattedPaymentsArray {
-interface FormattedPayment {
-	uid: string;
-	code: number;
-	formaDePagamento: string;
-	portador: string;
-	uidPortador: string;
-	enable: boolean;
-}
-
 export function PaymentsFormTable({ paymentsFormData, handleStatus }: PaymentFormTable) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
