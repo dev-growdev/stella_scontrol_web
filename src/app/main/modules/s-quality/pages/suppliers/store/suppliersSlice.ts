@@ -3,6 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
 import { ISupplier } from '../types/supplier';
+import { ReduxStateSquality } from '~/modules/s-quality/store';
 
 export const createSupplier = createAppAsyncThunk(
   '/squality/fornecedores/cadastro',
@@ -62,4 +63,5 @@ const suppliersSlice = createSlice({
   }
 });
 
+export const selectSuppliers = ({ squality }: ReduxStateSquality) => squality.suppliers;
 export default suppliersSlice.reducer;
