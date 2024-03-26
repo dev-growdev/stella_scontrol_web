@@ -10,6 +10,7 @@ interface UploadFilesProps {
 	uploadedFiles: File[];
 	handleFileRemove: (index: number) => void;
 	getFiles: IFiles[];
+	requestUid: string;
 	readMode: boolean;
 }
 
@@ -17,6 +18,7 @@ export function UploadFiles({
 	handleFileChange,
 	uploadedFiles,
 	handleFileRemove,
+	requestUid,
 	getFiles,
 	readMode
 }: UploadFilesProps) {

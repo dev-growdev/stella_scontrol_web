@@ -17,9 +17,13 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
-import { IProductOption } from '../types/productOptions';
+import { TProductOption } from '../types/productOptions';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
+interface IProductItem {
+	name?: string;
+	uid?: string;
+}
 interface PropsTableProductsFromRequest {
 	readMode: boolean;
 	errors: FieldErrors<TPaymentRequestForm>;
@@ -27,11 +31,29 @@ interface PropsTableProductsFromRequest {
 	watch: UseFormWatch<TPaymentRequestForm>;
 }
 
+function generateKey(item: IProductItem) {
+	if (typeof item === 'object' && item.uid) {
+		return item.uid;
+	}
+	return `${Math.floor(Math.random() * 10)}`;
+}
+
+function renderTableRow(item: IProductItem) {
+	const key = generateKey(item);
+	const itemName = typeof item === 'object' ? item.name : item;
+
+	return (
+		<TableRow key={key}>
+			<TableCell>{itemName}</TableCell>
+		</TableRow>
+	);
+}
+
 export function TableProductsFromRequest({ errors, setValueProducts, watch, readMode }: PropsTableProductsFromRequest) {
-	const [value, setValue] = useState<IProductOption | null>(null);
+	const [value, setValue] = useState<TProductOption | null>(null);
 	const productsForm = watch('products');
 	const products = useSelectorSControl(selectProducts);
-	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<IProductOption[]>([]);
+	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<TProductOption[]>([]);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -40,7 +62,7 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch, read
 		}
 	}, [products]);
 
-	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: IProductOption | null) => {
+	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: TProductOption | null) => {
 		setValue(newValue);
 	};
 
@@ -113,15 +135,7 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch, read
 							<TableCell sx={{ backgroundColor: '#ffffff' }}>PRODUTOS</TableCell>
 						</TableRow>
 					</TableHead>
-					<TableBody>
-						{productsForm.map((item: { name?: string; uid?: string } | string) => (
-							<TableRow
-								key={typeof item === 'object' ? item.uid ?? `${Math.floor(Math.random() * 10)}` : item}
-							>
-								<TableCell>{typeof item === 'object' ? item.name : item}</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
+					<TableBody>{productsForm.map(item => renderTableRow(item))}</TableBody>
 				</Table>
 			</TableContainer>
 		</>

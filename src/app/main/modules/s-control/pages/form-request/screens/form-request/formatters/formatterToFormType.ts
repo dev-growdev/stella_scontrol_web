@@ -21,7 +21,7 @@ export function mapToFormDTO(request: IRequest) {
 	return {
 		paymentMethod: { name: PaymentForm.name, uid: PaymentForm.uid },
 		valueProducts: null,
-		bankTransfer: bankTransfer ? JSON.parse(bankTransfer) : null,
+		bankTransfer: bankTransfer || null,
 		sendReceipt,
 		isRateable,
 		pix,

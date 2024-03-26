@@ -1,13 +1,12 @@
 import { ProductType } from '../../products/types/product';
 
-export interface IFiles {
-	uid: string;
+interface IFiles {
 	name: string;
 	key: string;
-	createdAt: Date;
-	updatedAt: Date;
+	uid: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
-
 export interface ICreateRequestGeneral {
 	supplier: string;
 	description: string;
