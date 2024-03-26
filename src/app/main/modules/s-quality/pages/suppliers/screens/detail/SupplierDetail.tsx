@@ -15,16 +15,14 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Controller, useForm } from 'react-hook-form';
+
 import {
   TSupplierRegistrationForm,
   supplierRegistrationFormSchema
-} from './validations/supplierRegistrationForm.schema';
-import { Controller, useForm } from 'react-hook-form';
+} from '../validations/supplierRegistrationForm.schema';
 import { useDispatchSQuality } from '~/modules/s-quality/store/hooks';
-import { createSupplier } from '../store/suppliersSlice';
-import { ISupplier } from '../types/supplier';
-
-const label = { inputProps: { 'aria-label': 'Switch demo' } };
+import { createSupplier } from '../../store/suppliersSlice';
 
 const optionsContinents = [
   { value: 'Africa', label: 'Africa' },
@@ -64,10 +62,10 @@ const defaultValues: TSupplierRegistrationForm = {
   country: '',
   phone: '',
   contactName: '',
-  enable: 'true'
+  enable: true
 };
 
-export default function CreateSuppliers() {
+export default function SupplierDetail() {
   const dispatchSQuality = useDispatchSQuality();
   const [continentInputValue, setContinentInputValue] = useState('');
   const [countryInputValue, setCountryInputValue] = useState('');
@@ -87,7 +85,7 @@ export default function CreateSuppliers() {
   const navigate = useNavigate();
 
   function onSubmit(data: TSupplierRegistrationForm) {
-    dispatchSQuality(createSupplier(data as ISupplier));
+    dispatchSQuality(createSupplier(data));
     handleReset();
   }
 
@@ -338,13 +336,14 @@ export default function CreateSuppliers() {
                 <Controller
                   control={control}
                   name="enable"
-                  render={({ field, fieldState }) => (
+                  render={({ field }) => (
                     <FormControl fullWidth>
                       <InputLabel id="status-select-label">Status</InputLabel>
                       <Select
                         labelId="status-select-label"
                         fullWidth
                         {...field}
+                        value={field.value ? 'true' : 'false'}
                         label="Status"
                       >
                         <MenuItem value="true">Enable</MenuItem>
