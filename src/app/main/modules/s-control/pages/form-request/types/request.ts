@@ -41,7 +41,7 @@ export interface IRequest {
 	uid: string;
 	Apportionments: IApportionment[];
 	supplier: string;
-	bankTransfer: string;
+	bankTransfer: string | null;
 	description?: string;
 	sendReceipt: boolean;
 	totalValue: string;

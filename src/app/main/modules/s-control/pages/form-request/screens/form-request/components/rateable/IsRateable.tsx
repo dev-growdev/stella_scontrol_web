@@ -255,7 +255,7 @@ export function IsRateable({
 						<div className="flex sm:flex-row flex-col gap-24 items-center">
 							<Autocomplete
 								disablePortal
-								id="combo-box-demo"
+								id="apportionments"
 								options={costCenters.costCenters.map(costCenter => {
 									return costCenter.name;
 								})}
@@ -274,7 +274,7 @@ export function IsRateable({
 							/>
 							<Autocomplete
 								disablePortal
-								id="combo-box-demo"
+								id="accounting-accounts"
 								value={accountingAccountName}
 								options={accountingAccounts.map(acc => {
 									return acc.name;
