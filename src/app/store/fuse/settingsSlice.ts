@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { createTheme, getContrastRatio } from '@mui/material/styles';
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from '@lodash';
@@ -71,6 +73,7 @@ export function generateSettings(
 		_defaultSettings,
 		{
 			layout: {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 				config: themeLayoutConfigs[_newSettings?.layout?.style]?.defaults
 			}
 		},

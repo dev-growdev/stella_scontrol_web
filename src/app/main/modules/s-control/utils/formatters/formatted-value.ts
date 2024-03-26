@@ -19,7 +19,7 @@ numeral.register('locale', 'br', {
 	}
 });
 
-export function formattedNumeral(value) {
+export function formattedNumeral(value: number | string) {
 	numeral.locale('br');
 	return numeral(value).format('0,0.00');
 }

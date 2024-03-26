@@ -1,61 +1,118 @@
-import { array, boolean, date, object, string } from 'yup';
+import * as z from 'zod';
 
-export const paymentRequestFormSchema = object().shape({
-	paymentMethod: string().required('É necessário adicionar uma forma de pagamento.'),
-	requiredReceipt: boolean(),
-	isRateable: boolean().required(),
-	cardHolder: object().when('paymentMethod', (paymentMethod: string[], schema) => {
-		return paymentMethod[0].includes('Cartão')
-			? schema.shape({
-					uid: string().required(),
-					name: string().required('É necessário adicionar um portador.')
-			  })
-			: schema;
-	}),
-	bankTransfer: object().when('paymentMethod', (paymentMethod, schema) => {
-		return paymentMethod[0] === 'Transferência bancária'
-			? schema.shape({
-					bank: string().required('É necessário adicionar um banco'),
-					accountNumber: string().required('É necessário adicionar um número de conta'),
-					agency: string().required('É necessário adicionar uma agência'),
-					accountType: string().required('É necessário adicionar um tipo de conta.'),
-					cpfOrCnpj: string().required('É necessário adicionar um CPF ou CNPJ.')
-			  })
-			: schema;
-	}),
-	pix: string().when('paymentMethod', (paymentMethod, schema) => {
-		return paymentMethod[0] === 'Pix' ? schema.required('É necessário adicionar um Pix.') : schema;
-	}),
-	products: array()
-		.of(
-			object()
-				.shape({
-					product: string().required()
+const paymentRequestFormSchema = z
+	.object({
+		apportionments: z
+			.array(
+				z.object({
+					costCenter: z
+						.string({
+							required_error: 'É necessário adicionar Centro de Custo.'
+						})
+						.min(5, 'É necessário adicionar Centro de Custo.'),
+					accountingAccount: z
+						.string({
+							required_error: 'É necessário adicionar Conta Contábil'
+						})
+						.min(5, 'É necessário adicionar Conta Contábil'),
+					value: z
+						.string({
+							required_error: 'É necessário um valor.',
+							invalid_type_error: 'É necessário adicionar uma string.'
+						})
+						.min(1, 'É necessário adicionar um valor.')
 				})
-				.required('É necessário adicionar um produto.')
-		)
-		.min(1, 'É necessário adicionar um produto.'),
-	description: string(),
-	supplier: string().required('É necessário adicionar um fornecedor.'),
-	payments: array()
-		.of(
-			object().shape({
-				value: string().required('É necessário um valor.'),
-				dueDate: date().nullable().required('É necessário adicionar uma data de vencimento.')
+			)
+			.optional(),
+		paymentMethod: z
+			.string({
+				required_error: 'É necessário adicionar uma forma de pagamento.'
 			})
-		)
-		.required(),
-	typeAccount: string().required('É necessário adicionar um tipo de conta.'),
-	uploadedFiles: array(),
-	accountingAccount: string(),
-	apportionments: array()
-		.of(
-			object().shape({
-				costCenter: string().required('É necessário adicionar Centro de Custo.'),
-				accountingAccount: string().required('É necessário adicionar Conta Contábil'),
+			.trim()
+			.min(3, 'É necessário adicionar uma forma de pagamento.'),
+		valueProducts: z.string().nullable().optional(),
+		requiredReceipt: z.boolean(),
+		isRateable: z.boolean(),
 
-				value: string().required()
+		cardHolder: z
+			.object({
+				uid: z.string().uuid(),
+				name: z.string().min(1, 'É necessário adicionar um portador.')
 			})
-		)
-		.notRequired()
-});
+			.optional(),
+		bankTransfer: z
+			.object({
+				bank: z.string().min(2, 'É necessário adicionar um banco'),
+				accountNumber: z.string().min(2, 'É necessário adicionar um número de conta'),
+				agency: z.string().min(2, 'É necessário adicionar uma agência'),
+				accountType: z
+					.string({
+						required_error: 'É necessário adicionar um tipo de conta.'
+					})
+					.min(2, 'É necessário adicionar um tipo de conta.'),
+				cpfOrCnpj: z.string().min(11, 'É necessário adicionar um CPF ou CNPJ.')
+			})
+			.optional(),
+		pix: z.string().optional(),
+		products: z.array(
+			z.object({
+				product: z.string({
+					required_error: 'É necessário adicionar um produto.'
+				})
+			})
+		),
+		description: z.string(),
+		supplier: z.string().min(5, 'É necessário adicionar um fornecedor.'),
+		payments: z.array(
+			z.object({
+				value: z.string().min(1, 'É necessário um valor.'),
+				dueDate: z.date({
+					required_error: 'É necessário adicionar uma data.',
+					invalid_type_error: 'É necessário adicionar uma data de vencimento.'
+				})
+			})
+		),
+		uploadedFiles: z.array(z.instanceof(File)),
+		accountingAccount: z.string().optional()
+	})
+	.superRefine((value, ctx) => {
+		if (value.paymentMethod === 'Pix' && value.pix === '') {
+			ctx.addIssue({
+				path: ['pix'],
+				message: 'É necessário adicionar uma chave pix.',
+				code: z.ZodIssueCode.custom
+			});
+		}
+		if (value.paymentMethod.includes('Cartão') && !value.cardHolder) {
+			ctx.addIssue({
+				path: ['cardHolder'],
+				message: 'É necessário adicionar um portador.',
+				code: z.ZodIssueCode.custom
+			});
+		}
+		if (!value.isRateable && value.accountingAccount === '') {
+			ctx.addIssue({
+				path: ['accountingAccount'],
+				message: 'É necessário adicionar uma conta contábil.',
+				code: z.ZodIssueCode.custom
+			});
+		}
+		if (value.products.length === 0 && value.supplier) {
+			ctx.addIssue({
+				path: ['products'],
+				message: 'É necessário adicionar ao menos um produto.',
+				code: z.ZodIssueCode.custom
+			});
+		}
+		if (value.apportionments.length === 0 && value.isRateable) {
+			ctx.addIssue({
+				path: ['apportionments'],
+				message: 'É necessário adicionar rateio.',
+				code: z.ZodIssueCode.custom
+			});
+		}
+	});
+
+export type TPaymentRequestForm = z.infer<typeof paymentRequestFormSchema>;
+
+export { paymentRequestFormSchema };

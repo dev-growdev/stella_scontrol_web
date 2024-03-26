@@ -28,7 +28,7 @@ function NotificationCard(props: NotificationCardProps) {
 		ev.stopPropagation();
 
 		if (onClose) {
-			onClose(item.id);
+			onClose(item.id as string);
 		}
 	};
 

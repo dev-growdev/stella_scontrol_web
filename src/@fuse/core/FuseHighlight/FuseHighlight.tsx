@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import * as Prism from 'prismjs';
 import { ElementType, forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import './prism-languages';

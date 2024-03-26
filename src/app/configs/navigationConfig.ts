@@ -1,22 +1,23 @@
 import i18next from 'i18next';
-import ar from './navigation-i18n/ar';
-import en from './navigation-i18n/en';
-import tr from './navigation-i18n/tr';
+import { FuseNavigationType } from '@fuse/core/FuseNavigation/types/FuseNavigationType';
+import { i18nEN } from './navigation-i18n/en';
+import { i18nBR } from './navigation-i18n/br';
 import { SControlNavigationConfig } from '../main/modules/s-control/navigationConfig';
 import { SQualityNavigationConfig } from '../main/modules/s-quality/navigationConfig';
 
-i18next.addResourceBundle('en', 'navigation', en);
-i18next.addResourceBundle('tr', 'navigation', tr);
-i18next.addResourceBundle('ar', 'navigation', ar);
+i18next.addResourceBundle('en', 'navigation', i18nEN);
+i18next.addResourceBundle('', 'navigation', i18nBR);
 
 /**
  * The navigationConfig object is an array of navigation items for the Fuse application.
  */
 
-const navigationConfig = {
-	scontrol: SControlNavigationConfig,
-	squality: SQualityNavigationConfig
+const navigationConfig: Record<string, FuseNavigationType> = {
+  scontrol: SControlNavigationConfig,
+  squality: SQualityNavigationConfig
 };
 
 const path = window.location.pathname.split('/')[1];
-export default navigationConfig[path] || SControlNavigationConfig;
+const config = navigationConfig[path] || SControlNavigationConfig;
+
+export default config;

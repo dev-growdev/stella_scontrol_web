@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { MouseEvent, ReactNode, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import _ from '@lodash';

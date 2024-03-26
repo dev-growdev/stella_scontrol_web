@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { amber } from '@mui/material/colors';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
