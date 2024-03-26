@@ -11,7 +11,7 @@ interface PropsAlertDialog {
 	file: { base64: string; type: string; name: string };
 }
 
-export default function AlertDialog({ open, file, setOpen }: PropsAlertDialog) {
+export function AlertDialog({ open, file, setOpen }: PropsAlertDialog) {
 	const handleClose = () => {
 		setOpen(false);
 	};

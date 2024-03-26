@@ -2,7 +2,7 @@ import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Button, Paper, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
-import AlertDialog from './files/AlertDialog';
+import { AlertDialog } from './files/AlertDialog';
 import { IFiles } from '../../../types/request';
 
 interface UploadFilesProps {
