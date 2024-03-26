@@ -60,7 +60,7 @@ const defaultValues: TSupplierRegistrationForm = {
   city: '',
   region: '',
   country: '',
-  phone: '',
+  phoneNumber: '',
   contactName: '',
   enable: true
 };
@@ -84,8 +84,9 @@ export default function SupplierDetail() {
 
   const navigate = useNavigate();
 
-  function onSubmit(data: TSupplierRegistrationForm) {
-    dispatchSQuality(createSupplier(data));
+  async function onSubmit(data: TSupplierRegistrationForm) {
+    const { payload } = await dispatchSQuality(createSupplier(data));
+    if ('success' in payload) return;
     handleReset();
   }
 
@@ -183,14 +184,14 @@ export default function SupplierDetail() {
               <div className="flex flex-col sm:flex-row gap-24 w-full justify-between mb-24">
                 <Controller
                   control={control}
-                  name="phone"
+                  name="phoneNumber"
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
                       label="Phone"
-                      error={!!errors.phone}
-                      helperText={errors.phone?.message}
+                      error={!!errors.phoneNumber}
+                      helperText={errors.phoneNumber?.message}
                     />
                   )}
                 />
