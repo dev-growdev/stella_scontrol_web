@@ -17,12 +17,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 
+import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 import {
   TSupplierRegistrationForm,
   supplierRegistrationFormSchema
 } from '../validations/supplierRegistrationForm.schema';
 import { useDispatchSQuality } from '~/modules/s-quality/store/hooks';
 import { createSupplier } from '../../store/suppliersSlice';
+import { i18nBR, i18nEN } from './i18n';
 
 const optionsContinents = [
   { value: 'Africa', label: 'Africa' },
@@ -64,8 +67,11 @@ const defaultValues: TSupplierRegistrationForm = {
   contactName: '',
   enable: true
 };
-
+const i18nKey = 'supplierDetail';
+i18next.addResourceBundle('br', i18nKey, i18nBR);
+i18next.addResourceBundle('en', i18nKey, i18nEN);
 export default function SupplierDetail() {
+  const { t } = useTranslation(i18nKey);
   const dispatchSQuality = useDispatchSQuality();
   const [continentInputValue, setContinentInputValue] = useState('');
   const [countryInputValue, setCountryInputValue] = useState('');
@@ -107,7 +113,7 @@ export default function SupplierDetail() {
           startIcon={<FuseSvgIcon>material-twotone:arrow_back_ios</FuseSvgIcon>}
           onClick={handleRedirectToSuppliers}
         >
-          SUPPLIERS
+          {t('SUPPLIERS')}
         </Button>
         <Paper
           elevation={4}
@@ -120,7 +126,7 @@ export default function SupplierDetail() {
             fontWeight={500}
             color={theme => theme.palette.secondary.main}
           >
-            Register Supplier
+            {t('REGISTER_SUPPLIER')}
           </Typography>
         </Paper>
         <Paper
@@ -150,7 +156,7 @@ export default function SupplierDetail() {
                         {...field}
                         fullWidth
                         required
-                        label="Name"
+                        label={t('NAME')}
                         error={!!errors.name}
                         helperText={errors.name?.message}
                       />
