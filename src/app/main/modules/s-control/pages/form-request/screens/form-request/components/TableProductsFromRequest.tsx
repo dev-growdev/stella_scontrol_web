@@ -25,9 +25,16 @@ interface TableProductsFromRequestProps {
 	errors: FieldErrors<TPaymentRequestForm>;
 	setValueProducts: UseFormSetValue<TPaymentRequestForm>;
 	watch: UseFormWatch<TPaymentRequestForm>;
+	handleProductsRemove: (arg: number) => void;
 }
 
-export function TableProductsFromRequest({ errors, setValueProducts, watch, readMode }: TableProductsFromRequestProps) {
+export function TableProductsFromRequest({
+	errors,
+	setValueProducts,
+	watch,
+	readMode,
+	handleProductsRemove
+}: TableProductsFromRequestProps) {
 	const [value, setValue] = useState<ProductOptionType | null>(null);
 	const productsForm = watch('products');
 	const products = useSelectorSControl(selectProducts);
@@ -114,11 +121,21 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch, read
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{productsForm.map((item: { name?: string; uid?: string } | string) => (
+						{productsForm.map((item: { name?: string; uid?: string } | string, index) => (
 							<TableRow
 								key={typeof item === 'object' ? item.uid ?? `${Math.floor(Math.random() * 10)}` : item}
 							>
-								<TableCell>{typeof item === 'object' ? item.name : item}</TableCell>
+								<TableCell>
+									<div className="flex flex-row">
+										{typeof item === 'object' ? item.name : item}{' '}
+										<FuseSvgIcon
+											onClick={() => handleProductsRemove(index)}
+											className="ml-20  text-gray-300"
+										>
+											heroicons-outline:trash
+										</FuseSvgIcon>
+									</div>
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
