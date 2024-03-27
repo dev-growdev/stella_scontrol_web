@@ -12,6 +12,7 @@ interface UploadFilesProps {
 	requestUid: string;
 	getFiles: IFiles[];
 	readMode: boolean;
+	editMode: boolean;
 }
 
 export function UploadFiles({
@@ -20,10 +21,10 @@ export function UploadFiles({
 	handleFileRemove,
 	requestUid,
 	getFiles,
-	readMode
+	readMode,
+	editMode
 }: UploadFilesProps) {
 	const theme = useTheme();
-
 	const [open, setOpen] = useState(false);
 	const [fileUploaded, setFileUploaded] = useState({ base64: '', type: '', name: '' });
 
@@ -31,10 +32,55 @@ export function UploadFiles({
 		const res = await axios.get<{ base64: string; type: string }>(
 			`${process.env.REACT_APP_API_URL}/payment-request-general/file/${fileKey}`
 		);
-		console.log(res);
+
 		const { base64, type } = res.data;
 		setOpen(true);
 		setFileUploaded({ base64, type, name: fileName });
+	}
+
+	function showUploadedFiles() {
+		return uploadedFiles.map((file, index) => (
+			<TableRow key={index}>
+				<TableCell>{file.name}</TableCell>
+				<TableCell>
+					<FuseSvgIcon
+						onClick={() => handleFileRemove(index)}
+						aria-label="delete"
+						className="cursor-pointer text-gray-300"
+					>
+						heroicons-outline:trash
+					</FuseSvgIcon>
+				</TableCell>
+			</TableRow>
+		));
+	}
+
+	function showGetFiles() {
+		return getFiles.map((file, index) => (
+			<TableRow key={index}>
+				<TableCell>{file.name}</TableCell>
+
+				<TableCell>
+					<FuseSvgIcon
+						onClick={() => handleFileView(file.key, file.name)}
+						aria-label="view"
+						className="cursor-pointer"
+						color="primary"
+					>
+						heroicons-outline:eye
+					</FuseSvgIcon>
+				</TableCell>
+				<TableCell>
+					<FuseSvgIcon
+						onClick={() => handleFileRemove(index)}
+						aria-label="view"
+						className="cursor-pointer text-gray-300"
+					>
+						heroicons-outline:trash
+					</FuseSvgIcon>
+				</TableCell>
+			</TableRow>
+		));
 	}
 
 	return (
@@ -81,7 +127,7 @@ export function UploadFiles({
 							</Button>
 						</div>
 					</div>
-					{uploadedFiles.length > 0 && (
+					{!editMode && uploadedFiles.length > 0 && (
 						<>
 							<Typography
 								className="mr-10"
@@ -90,22 +136,8 @@ export function UploadFiles({
 								Documentos anexados:
 							</Typography>
 							<TableContainer component={Paper}>
-								<TableBody className="flex flex-col">
-									{uploadedFiles.map((file, index) => (
-										<TableRow key={index}>
-											<TableCell>{file.name}</TableCell>
-											<TableCell>
-												<FuseSvgIcon
-													onClick={() => handleFileRemove(index)}
-													aria-label="delete"
-													className="cursor-pointer text-gray-300"
-												>
-													heroicons-outline:trash
-												</FuseSvgIcon>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
+								<TableBody className="flex flex-col" />
+								{showUploadedFiles()}
 							</TableContainer>
 						</>
 					)}
@@ -121,22 +153,8 @@ export function UploadFiles({
 					</Typography>
 					<TableContainer component={Paper}>
 						<TableBody className="flex flex-col">
-							{getFiles.map((file, index) => (
-								<TableRow key={index}>
-									<TableCell>{file.name}</TableCell>
-
-									<TableCell>
-										<FuseSvgIcon
-											onClick={() => handleFileView(file.key, file.name)}
-											aria-label="view"
-											className="cursor-pointer"
-											color="primary"
-										>
-											heroicons-outline:eye
-										</FuseSvgIcon>
-									</TableCell>
-								</TableRow>
-							))}
+							{showGetFiles()}
+							{showUploadedFiles()}
 						</TableBody>
 					</TableContainer>
 					<AlertDialog
@@ -144,37 +162,6 @@ export function UploadFiles({
 						open={open}
 						setOpen={setOpen}
 					/>
-				</>
-			)}
-
-			{getFiles && (
-				<>
-					<Typography
-						className="mr-10"
-						color="GrayText"
-					>
-						Documentos anexados:
-					</Typography>
-					<TableContainer component={Paper}>
-						<TableBody className="flex flex-col">
-							{getFiles.map((file, index) => (
-								<TableRow key={index}>
-									<TableCell>{file.name}</TableCell>
-
-									<TableCell>
-										<FuseSvgIcon
-											onClick={() => handleFileRemove(file.key)}
-											aria-label="delete"
-											className="cursor-pointer"
-											color="primary"
-										>
-											heroicons-outline:eye
-										</FuseSvgIcon>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</TableContainer>
 				</>
 			)}
 		</>
