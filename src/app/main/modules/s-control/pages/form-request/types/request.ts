@@ -1,11 +1,17 @@
 import { ProductType } from '../../products/types/product';
 
+export interface IUpdateRequest {
+	form: FormData;
+	userUid: string;
+	requestUid: string;
+}
+
 export interface IFiles {
-	uid: string;
-	name: string;
-	key: string;
-	createdAt: Date;
-	updatedAt: Date;
+	uid?: string;
+	name?: string;
+	key?: string;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 export interface ICreateRequestGeneralType {
@@ -36,12 +42,20 @@ export interface IApportionment {
 	uid: string;
 	value: string;
 }
-export interface IRequestType {
+
+export interface IBankTransfer {
+	bank: string;
+	accountNumber: string;
+	agency: string;
+	accountType: string;
+	cpfOrCnpj: string;
+}
+export interface IRequest {
 	PaymentForm: IPaymentForm;
 	uid: string;
 	Apportionments: IApportionment[];
 	supplier: string;
-	bankTransfer: string;
+	bankTransfer: IBankTransfer | null | string;
 	description?: string;
 	sendReceipt: boolean;
 	totalValue: string;
@@ -59,9 +73,10 @@ export interface IRequestType {
 export interface IPaymentRequestForm {
 	value: string;
 	dueDate: Date;
+	uid?: string;
 }
 
 export interface RequestPaymentGeneralType {
 	loading: boolean;
-	payload: IRequestType[];
+	payload: IRequest[];
 }

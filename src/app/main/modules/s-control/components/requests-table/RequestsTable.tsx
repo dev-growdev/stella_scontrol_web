@@ -3,12 +3,12 @@ import { Chip, Paper, Stack, Table, TableBody, TableContainer, TableHead, TableP
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { IRequestType } from '../../pages/form-request/types/request';
+import { IRequest } from '../../pages/form-request/types/request';
 import { formattedNumeral } from '../../utils/formatters/formatted-value';
 import { StyledTableCell, StyledTableRow } from './styles';
 
 interface RequestTableProps {
-	rows: IRequestType[];
+	rows: IRequest[];
 }
 
 export default function RequestsTable({ rows }: RequestTableProps) {

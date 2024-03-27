@@ -17,7 +17,7 @@ export interface PaymentForm {
 }
 export interface HolderType {
 	uid: string;
-	code: number;
+	code: number | string;
 	name: string;
 	enable: boolean;
 	type: string;
