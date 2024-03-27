@@ -73,7 +73,7 @@ export function AccountType({
 	useEffect(() => {
 		if (paymentMethod.name === 'Pix') {
 			unregister('bankTransfer');
-			setValue('cardHolder', { name: '', code: '' });
+			setValue('cardHolder', {});
 		}
 		if (paymentMethod.name.includes('crédito') || paymentMethod.name.includes('corporativo')) {
 			unregister('bankTransfer');
@@ -81,11 +81,11 @@ export function AccountType({
 			unregister('pix');
 		}
 		if (paymentMethod.name === 'Transferência bancária') {
-			setValue('cardHolder', { name: '', code: '' });
+			setValue('cardHolder', {});
 			unregister('pix');
 		}
 		if (paymentMethod.name === 'Boleto') {
-			setValue('cardHolder', { name: '', code: '' });
+			setValue('cardHolder', {});
 			unregister('pix');
 			unregister('bankTransfer');
 		}

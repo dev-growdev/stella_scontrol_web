@@ -94,6 +94,16 @@ export const updateRequestsPaymentsByUser = createAppAsyncThunk(
 			return res.data.data;
 		} catch (error) {
 			const axiosError = error as AxiosError<{ message: string }>;
+			dispatch(
+				showMessage({
+					message: `${axiosError.response?.data.message}`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
 			throw new Error(axiosError.response?.data.message);
 		}
 	}
