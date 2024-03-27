@@ -17,7 +17,7 @@ export interface IPaymentForm {
 }
 export interface IHolder {
 	uid: string;
-	code: number | string;
+	code: number;
 	name: string;
 	enable: boolean;
 	type: string;

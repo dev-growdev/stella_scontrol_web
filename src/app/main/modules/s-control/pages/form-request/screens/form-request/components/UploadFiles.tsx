@@ -13,7 +13,6 @@ interface UploadFilesProps {
 	handleFileRemove: (index: number) => void;
 	getFiles: IFiles[];
 	readMode: boolean;
-	editMode: boolean;
 }
 
 export function UploadFiles({
@@ -21,8 +20,7 @@ export function UploadFiles({
 	uploadedFiles,
 	handleFileRemove,
 	getFiles,
-	readMode,
-	editMode
+	readMode
 }: UploadFilesProps) {
 	const theme = useTheme();
 	const [open, setOpen] = useState(false);
@@ -70,31 +68,33 @@ export function UploadFiles({
 	}
 
 	function showGetFiles() {
-		return getFiles.map((file, index) => (
-			<TableRow key={index}>
-				<TableCell>{file.name}</TableCell>
+		return getFiles
+			? getFiles.map((file, index) => (
+					<TableRow key={index}>
+						<TableCell>{file.name}</TableCell>
 
-				<TableCell>
-					<FuseSvgIcon
-						onClick={() => handleFileView(file.key, file.name)}
-						aria-label="view"
-						className="cursor-pointer"
-						color="primary"
-					>
-						heroicons-outline:eye
-					</FuseSvgIcon>
-				</TableCell>
-				<TableCell>
-					<FuseSvgIcon
-						onClick={() => handleFileRemove(index)}
-						aria-label="view"
-						className="cursor-pointer text-gray-300"
-					>
-						heroicons-outline:trash
-					</FuseSvgIcon>
-				</TableCell>
-			</TableRow>
-		));
+						<TableCell>
+							<FuseSvgIcon
+								onClick={() => handleFileView(file.key, file.name)}
+								aria-label="view"
+								className="cursor-pointer"
+								color="primary"
+							>
+								heroicons-outline:eye
+							</FuseSvgIcon>
+						</TableCell>
+						<TableCell>
+							<FuseSvgIcon
+								onClick={() => handleFileRemove(index)}
+								aria-label="view"
+								className="cursor-pointer text-gray-300"
+							>
+								heroicons-outline:trash
+							</FuseSvgIcon>
+						</TableCell>
+					</TableRow>
+			  ))
+			: [];
 	}
 
 	return (
@@ -141,43 +141,28 @@ export function UploadFiles({
 							</Button>
 						</div>
 					</div>
-					{!editMode && uploadedFiles.length > 0 && (
-						<>
-							<Typography
-								className="mr-10"
-								color="GrayText"
-							>
-								Documentos anexados:
-							</Typography>
-							<TableContainer component={Paper}>
-								<TableBody className="flex flex-col" />
-								{showUploadedFiles()}
-							</TableContainer>
-						</>
-					)}
-				</>
-			)}
-			{getFiles && getFiles.length > 0 && (
-				<>
-					<Typography
-						className="mr-10"
-						color="GrayText"
-					>
-						Documentos anexados:
-					</Typography>
-					<TableContainer component={Paper}>
-						<TableBody className="flex flex-col">
+
+					<>
+						<Typography
+							className="mr-10"
+							color="GrayText"
+						>
+							Documentos anexados:
+						</Typography>
+						<TableContainer component={Paper}>
+							<TableBody className="flex flex-col" />
 							{showGetFiles()}
 							{showUploadedFiles()}
-						</TableBody>
-					</TableContainer>
-					<AlertDialog
-						file={fileUploaded}
-						open={open}
-						setOpen={setOpen}
-					/>
+						</TableContainer>
+					</>
 				</>
 			)}
+
+			<AlertDialog
+				file={fileUploaded}
+				open={open}
+				setOpen={setOpen}
+			/>
 		</>
 	);
 }

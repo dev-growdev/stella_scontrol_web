@@ -444,7 +444,6 @@ export default function PaymentRequestFormGeneral() {
 						handleFileChange={handleFileChange}
 						handleFileRemove={handleFileRemove}
 						readMode={readMode}
-						editMode={editMode}
 					/>
 					<IsRateable
 						isRateable={watch('isRateable')}
