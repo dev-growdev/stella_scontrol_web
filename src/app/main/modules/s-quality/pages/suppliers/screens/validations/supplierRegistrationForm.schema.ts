@@ -28,4 +28,17 @@ const supplierRegistrationFormSchema = z.object({
 
 export type TSupplierRegistrationForm = z.input<typeof supplierRegistrationFormSchema>;
 
+export const defaultValues: TSupplierRegistrationForm = {
+  name: '',
+  email: '',
+  continent: '' as TSupplierRegistrationForm['continent'],
+  address: '',
+  city: '',
+  region: '',
+  country: '',
+  phoneNumber: '',
+  contactName: '',
+  enable: 'true'
+};
+
 export { supplierRegistrationFormSchema };
