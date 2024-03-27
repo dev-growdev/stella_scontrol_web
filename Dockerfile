@@ -6,8 +6,6 @@ COPY ./package.json ./package.json
 COPY ./.npmrc ./.npmrc
 COPY ./package-lock.json ./package-lock.json
 
-RUN ls
-
 COPY . .
 
 RUN npm ci --legacy-peer-deps
