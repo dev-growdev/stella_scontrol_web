@@ -228,12 +228,13 @@ export default function PaymentRequestFormGeneral() {
 		});
 
 		if (editMode) {
-			const dataToUpate = {
+			const dataToUpdate = {
 				form: formData,
 				userUid: user.uid,
 				requestUid
 			};
-			dispatch(updateRequestsPaymentsByUser(dataToUpate)).then(res => {
+
+			dispatch(updateRequestsPaymentsByUser(dataToUpdate)).then(res => {
 				if (res.payload) {
 					clearFormState();
 					navigate('/scontrol/solicitacoes');
@@ -442,7 +443,6 @@ export default function PaymentRequestFormGeneral() {
 						getFiles={watch('getFiles')}
 						handleFileChange={handleFileChange}
 						handleFileRemove={handleFileRemove}
-						requestUid={requestUid}
 						readMode={readMode}
 						editMode={editMode}
 					/>
