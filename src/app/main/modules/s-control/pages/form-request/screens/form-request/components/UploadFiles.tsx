@@ -1,16 +1,18 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { Button, Paper, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
+import { useAppDispatch } from 'app/store';
+import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
 import { useState } from 'react';
 import { IFiles } from '../../../types/request';
-import AlertDialog from './files/AlertDialog';
+import { AlertDialog } from './files/AlertDialog';
 
 interface UploadFilesProps {
 	handleFileChange: (arg) => void;
 	uploadedFiles: File[];
 	handleFileRemove: (index: number) => void;
-	requestUid: string;
 	getFiles: IFiles[];
+	requestUid: string;
 	readMode: boolean;
 	editMode: boolean;
 }
@@ -27,15 +29,29 @@ export function UploadFiles({
 	const theme = useTheme();
 	const [open, setOpen] = useState(false);
 	const [fileUploaded, setFileUploaded] = useState({ base64: '', type: '', name: '' });
+	const dispatch = useAppDispatch();
 
 	async function handleFileView(fileKey: string, fileName: string) {
-		const res = await axios.get<{ base64: string; type: string }>(
-			`${process.env.REACT_APP_API_URL}/payment-request-general/file/${fileKey}`
-		);
+		try {
+			const res = await axios.get<{ base64: string; type: string }>(
+				`${process.env.REACT_APP_API_URL}/payment-request-general/file/${fileKey}`
+			);
 
-		const { base64, type } = res.data;
-		setOpen(true);
-		setFileUploaded({ base64, type, name: fileName });
+			const { base64, type } = res.data;
+			setOpen(true);
+			setFileUploaded({ base64, type, name: fileName });
+		} catch (error) {
+			dispatch(
+				showMessage({
+					message: 'Não foi possível localizar este arquivo.',
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+		}
 	}
 
 	function showUploadedFiles() {

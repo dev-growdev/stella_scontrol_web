@@ -16,7 +16,7 @@ import {
 	UseFormUnregister
 } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { HolderType, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { IHolder, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface AccountTypeProps {
@@ -46,9 +46,9 @@ export function AccountType({
 }: AccountTypeProps) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
-	const [creditCardHoldersBB, setCreditCardHoldersBB] = useState<HolderType[]>([]);
-	const [creditCardHoldersBRAD, setCreditCardHoldersBRAD] = useState<HolderType[]>([]);
-	const [corporateCardHolders, setCorporateCardHolders] = useState<HolderType[]>([]);
+	const [creditCardHoldersBB, setCreditCardHoldersBB] = useState<IHolder[]>([]);
+	const [creditCardHoldersBRAD, setCreditCardHoldersBRAD] = useState<IHolder[]>([]);
+	const [corporateCardHolders, setCorporateCardHolders] = useState<IHolder[]>([]);
 
 	useEffect(() => {
 		if (paymentsForm && paymentsForm.length > 0) {
@@ -56,17 +56,17 @@ export function AccountType({
 				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BB')
 			);
 
-			setCreditCardHoldersBB(bbCreditCardHolders as HolderType[]);
+			setCreditCardHoldersBB(bbCreditCardHolders as IHolder[]);
 
 			const bradCreditCardHolders = paymentsForm.filter(
 				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BRAD')
 			);
-			setCreditCardHoldersBRAD(bradCreditCardHolders as HolderType[]);
+			setCreditCardHoldersBRAD(bradCreditCardHolders as IHolder[]);
 
 			const corporateCardHolders = paymentsForm.filter(
 				holder => holder.type === 'corporate' && holder.enable === true
 			);
-			setCorporateCardHolders(corporateCardHolders as HolderType[]);
+			setCorporateCardHolders(corporateCardHolders as IHolder[]);
 		}
 	}, [paymentsForm]);
 
@@ -102,7 +102,7 @@ export function AccountType({
 		clearErrors('cardHolder');
 
 		const findHolder = paymentsForm.find(
-			(item: HolderType) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod.name
+			(item: IHolder) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod.name
 		);
 
 		setValue('cardHolder.name', findHolder.name);
@@ -204,7 +204,7 @@ export function AccountType({
 							disabled={readMode}
 							value={field.value}
 							options={creditCardHoldersBB}
-							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
+							getOptionLabel={(holder: IHolder) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
@@ -230,7 +230,7 @@ export function AccountType({
 							disabled={readMode}
 							value={field.value}
 							options={creditCardHoldersBRAD}
-							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
+							getOptionLabel={(holder: IHolder) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
@@ -256,7 +256,7 @@ export function AccountType({
 							onChange={handleAutocomplete}
 							value={field.value}
 							options={corporateCardHolders}
-							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
+							getOptionLabel={(holder: IHolder) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}

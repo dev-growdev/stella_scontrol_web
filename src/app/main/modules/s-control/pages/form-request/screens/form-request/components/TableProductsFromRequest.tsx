@@ -17,10 +17,14 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
 import { useSelectorSControl } from '~/modules/s-control/store/hooks';
-import { ProductOptionType } from '../types/productOptions';
+import { IProductOption } from '../types/productOptions';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
-interface TableProductsFromRequestProps {
+interface IProductItem {
+	name?: string;
+	uid?: string;
+}
+interface PropsTableProductsFromRequest {
 	readMode: boolean;
 	errors: FieldErrors<TPaymentRequestForm>;
 	setValueProducts: UseFormSetValue<TPaymentRequestForm>;
@@ -34,12 +38,38 @@ export function TableProductsFromRequest({
 	watch,
 	readMode,
 	handleProductsRemove
-}: TableProductsFromRequestProps) {
-	const [value, setValue] = useState<ProductOptionType | null>(null);
+}: PropsTableProductsFromRequest) {
+	const [value, setValue] = useState<IProductOption | null>(null);
 	const productsForm = watch('products');
 	const products = useSelectorSControl(selectProducts);
-	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<IProductOption[]>([]);
 	const dispatch = useAppDispatch();
+
+	function generateKey(item: string | IProductItem) {
+		if (typeof item === 'object' && item.uid) {
+			return item.uid;
+		}
+		return `${Math.floor(Math.random() * 10)}`;
+	}
+
+	function renderTableRow(item: string | IProductItem, index: number) {
+		const key = generateKey(item);
+		const itemName = typeof item === 'object' ? item.name : item;
+
+		return (
+			<TableRow key={key}>
+				<TableCell className="flex flex-row">
+					{itemName}{' '}
+					<FuseSvgIcon
+						onClick={() => handleProductsRemove(index)}
+						className="ml-20 text-grey-300"
+					>
+						heroicons-outline:trash
+					</FuseSvgIcon>
+				</TableCell>
+			</TableRow>
+		);
+	}
 
 	useEffect(() => {
 		if (products.products.length > 0) {
@@ -47,7 +77,7 @@ export function TableProductsFromRequest({
 		}
 	}, [products]);
 
-	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: ProductOptionType | null) => {
+	const handleInputValueAutoComplete = (_event: ChangeEvent, newValue: IProductOption | null) => {
 		setValue(newValue);
 	};
 
@@ -56,7 +86,7 @@ export function TableProductsFromRequest({
 	};
 
 	const handleAddProduct = () => {
-		if (!value || !value.name) {
+		if (!value) {
 			dispatch(
 				showMessage({
 					message: 'Digite um produto para adicionar.',
@@ -120,25 +150,7 @@ export function TableProductsFromRequest({
 							<TableCell sx={{ backgroundColor: '#ffffff' }}>PRODUTOS</TableCell>
 						</TableRow>
 					</TableHead>
-					<TableBody>
-						{productsForm.map((item: { name?: string; uid?: string } | string, index) => (
-							<TableRow
-								key={typeof item === 'object' ? item.uid ?? `${Math.floor(Math.random() * 10)}` : item}
-							>
-								<TableCell>
-									<div className="flex flex-row">
-										{typeof item === 'object' ? item.name : item}{' '}
-										<FuseSvgIcon
-											onClick={() => handleProductsRemove(index)}
-											className="ml-20  text-gray-300"
-										>
-											heroicons-outline:trash
-										</FuseSvgIcon>
-									</div>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
+					<TableBody>{productsForm.map((item, index) => renderTableRow(item, index))}</TableBody>
 				</Table>
 			</TableContainer>
 		</>

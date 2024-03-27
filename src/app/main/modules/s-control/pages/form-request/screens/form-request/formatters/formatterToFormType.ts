@@ -1,6 +1,6 @@
-import { IBankTransfer, IRequest } from '../../../types/request';
+import { IRequestPaymentGeneral } from '../../../types/request';
 
-export function formatterToFormType(request: IRequest) {
+export function formatterToFormType(request: IRequestPaymentGeneral) {
 	const {
 		PaymentForm,
 		sendReceipt,

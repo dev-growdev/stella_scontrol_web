@@ -5,13 +5,19 @@ import DialogContent from '@mui/material/DialogContent';
 
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 
+interface IFileDialog {
+	base64: string;
+	type: string;
+	name: string;
+}
+
 interface PropsAlertDialog {
 	open: boolean;
 	setOpen: (arg: boolean) => void;
-	file: { base64: string; type: string; name: string };
+	file: IFileDialog;
 }
 
-export default function AlertDialog({ open, file, setOpen }: PropsAlertDialog) {
+export function AlertDialog({ open, file, setOpen }: PropsAlertDialog) {
 	const handleClose = () => {
 		setOpen(false);
 	};

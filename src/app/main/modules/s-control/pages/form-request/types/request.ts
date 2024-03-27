@@ -7,14 +7,13 @@ export interface IUpdateRequest {
 }
 
 export interface IFiles {
-	uid?: string;
 	name?: string;
 	key?: string;
-	createdAt?: Date;
-	updatedAt?: Date;
+	uid?: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
-
-export interface ICreateRequestGeneralType {
+export interface ICreateRequestGeneral {
 	supplier: string;
 	description: string;
 	sendReceipt: boolean;
@@ -50,7 +49,7 @@ export interface IBankTransfer {
 	accountType: string;
 	cpfOrCnpj: string;
 }
-export interface IRequest {
+export interface IRequestPaymentGeneral {
 	PaymentForm: IPaymentForm;
 	uid: string;
 	Apportionments: IApportionment[];
@@ -78,5 +77,5 @@ export interface IPaymentRequestForm {
 
 export interface RequestPaymentGeneralType {
 	loading: boolean;
-	payload: IRequest[];
+	payload: IRequestPaymentGeneral[];
 }
