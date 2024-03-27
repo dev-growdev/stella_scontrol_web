@@ -58,14 +58,17 @@ export function TableProductsFromRequest({
 
 		return (
 			<TableRow key={key}>
-				<TableCell className="flex flex-row">
+				<TableCell className="flex flex-row items-center">
 					{itemName}{' '}
-					<FuseSvgIcon
-						onClick={() => handleProductsRemove(index)}
-						className="ml-20 text-grey-300"
-					>
-						heroicons-outline:trash
-					</FuseSvgIcon>
+					{!readMode && (
+						<FuseSvgIcon
+							onClick={() => handleProductsRemove(index)}
+							color="primary"
+							className="ml-20 cursor-pointer"
+						>
+							heroicons-outline:trash
+						</FuseSvgIcon>
+					)}
 				</TableCell>
 			</TableRow>
 		);
