@@ -19,7 +19,8 @@ import { getAccountingAccountByCostCenter, selectAccountingAccount } from '../..
 import {
 	createRequestPaymentGeneral,
 	listRequestsPaymentsByUser,
-	selectedRequestPaymentGeneral
+	selectedRequestPaymentGeneral,
+	updateRequestsPaymentsByUser
 } from '../../store/FormRequestSlice';
 import {
 	AccountType,
@@ -30,7 +31,7 @@ import {
 	UploadFiles,
 	ValueAndDueDate
 } from './components';
-import { mapToFormDTO } from './formatters/formatterToFormType';
+import { formatterToFormType } from './formatters/formatterToFormType';
 import { TPaymentRequestForm, paymentRequestFormSchema } from './validations/paymentRequestForm.schema';
 
 const defaultValues: TPaymentRequestForm = {
@@ -74,7 +75,8 @@ export default function PaymentRequestFormGeneral() {
 		setError,
 		clearErrors,
 		reset,
-		unregister
+		unregister,
+		resetField
 	} = useForm<TPaymentRequestForm>({
 		defaultValues,
 		resolver: zodResolver(paymentRequestFormSchema)
@@ -108,7 +110,7 @@ export default function PaymentRequestFormGeneral() {
 			}
 
 			const findRequest = requests.payload.find(request => request.uid === requestUid);
-			const editValues = mapToFormDTO(findRequest);
+			const editValues = formatterToFormType(findRequest);
 
 			reset(editValues as TPaymentRequestForm);
 		}
@@ -160,7 +162,7 @@ export default function PaymentRequestFormGeneral() {
 		};
 		await paymentRequestFormSchema.parseAsync(formData);
 	}
-	console.log(watch('apportionments'));
+
 	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
@@ -205,10 +207,12 @@ export default function PaymentRequestFormGeneral() {
 
 		const request = {
 			...data,
-			apportionments: data.apportionments.map(apportionment => ({
-				...apportionment,
-				value: apportionment.value
-			})),
+			apportionments: watch('isRateable')
+				? data.apportionments.map(apportionment => ({
+						...apportionment,
+						value: apportionment.value
+				  }))
+				: [],
 			userCreatedUid: user.uid,
 			totalValue: totalValue.replace(/\./g, '').replace(',', '.'),
 			payments: data.payments.map(payment => ({ ...payment, value: payment.value.replace(',', '.') }))
@@ -223,12 +227,26 @@ export default function PaymentRequestFormGeneral() {
 			formData.append('file', file);
 		});
 
-		dispatch(createRequestPaymentGeneral(formData)).then(res => {
-			if (res.payload) {
-				clearFormState();
-				navigate('/scontrol/solicitacoes');
-			}
-		});
+		if (editMode) {
+			const dataToUpate = {
+				form: formData,
+				userUid: user.uid,
+				requestUid
+			};
+			dispatch(updateRequestsPaymentsByUser(dataToUpate)).then(res => {
+				if (res.payload) {
+					clearFormState();
+					navigate('/scontrol/solicitacoes');
+				}
+			});
+		} else {
+			dispatch(createRequestPaymentGeneral(formData)).then(res => {
+				if (res.payload) {
+					clearFormState();
+					navigate('/scontrol/solicitacoes');
+				}
+			});
+		}
 	}
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -243,8 +261,24 @@ export default function PaymentRequestFormGeneral() {
 
 	const handleFileRemove = (indexToRemove: number) => {
 		const currentFiles = [...watch('uploadedFiles')];
-		const updatedFiles = currentFiles.filter((_file, index) => index !== indexToRemove);
-		setValue('uploadedFiles', updatedFiles);
+		const getFiles = [...watch('getFiles')];
+
+		if (currentFiles.length > 0) {
+			const updatedFiles = currentFiles.filter((_file, index) => index !== indexToRemove);
+			setValue('uploadedFiles', updatedFiles);
+		} else {
+			const updateFiles = getFiles.filter((_file, index) => index !== indexToRemove);
+			setValue('getFiles', updateFiles);
+		}
+	};
+
+	const handleProductsRemove = (indexToRemove: number) => {
+		const currentProducts = [...watch('products')];
+
+		if (currentProducts.length > 0) {
+			const updatedProducts = currentProducts.filter((_file, index) => index !== indexToRemove);
+			setValue('products', updatedProducts);
+		}
 	};
 
 	function clearFormState() {
@@ -310,6 +344,7 @@ export default function PaymentRequestFormGeneral() {
 						errors={errors}
 						setValueProducts={setValue}
 						watch={watch}
+						handleProductsRemove={handleProductsRemove}
 					/>
 
 					<Controller
@@ -395,6 +430,7 @@ export default function PaymentRequestFormGeneral() {
 						setError={setError}
 						unregister={unregister}
 						clearErrors={clearErrors}
+						resetField={resetField}
 					/>
 					<RequiredReceipt
 						sendReceipt={watch('sendReceipt')}
@@ -408,6 +444,7 @@ export default function PaymentRequestFormGeneral() {
 						handleFileRemove={handleFileRemove}
 						requestUid={requestUid}
 						readMode={readMode}
+						editMode={editMode}
 					/>
 					<IsRateable
 						isRateable={watch('isRateable')}
