@@ -65,7 +65,7 @@ const defaultValues: TSupplierRegistrationForm = {
   country: '',
   phoneNumber: '',
   contactName: '',
-  enable: true
+  enable: 'true'
 };
 const i18nKey = 'supplierDetail';
 i18next.addResourceBundle('br', i18nKey, i18nBR);
@@ -91,7 +91,7 @@ export default function SupplierDetail() {
   const navigate = useNavigate();
 
   async function onSubmit(data: TSupplierRegistrationForm) {
-    const { payload } = await dispatchSQuality(createSupplier(data));
+    const { payload } = await dispatchSQuality(createSupplier({ ...data, enable: data.enable === 'true' }));
     if ('success' in payload) return;
     handleReset();
   }
@@ -134,7 +134,7 @@ export default function SupplierDetail() {
           className="mt-24 p-36 flex flex-col gap-24"
         >
           <form
-            onSubmit={handleSubmit(onSubmit, error => console.log(error))}
+            onSubmit={handleSubmit(onSubmit)}
             onReset={handleReset}
           >
             <div className="flex flex-col gap-24 sm:flex-row">
@@ -350,7 +350,6 @@ export default function SupplierDetail() {
                         labelId="status-select-label"
                         fullWidth
                         {...field}
-                        value={field.value}
                         label={t('STATUS')}
                       >
                         <MenuItem value="true">{t('ENABLE')}</MenuItem>
