@@ -92,6 +92,7 @@ export default function SupplierDetail() {
 
   async function onSubmit(data: TSupplierRegistrationForm) {
     const { payload } = await dispatchSQuality(createSupplier({ ...data, enable: data.enable === 'true' }));
+    // @ts-expect-error - payload always return unknown
     if ('success' in payload) return;
     handleReset();
   }
@@ -232,7 +233,7 @@ export default function SupplierDetail() {
                       onChange={(_, value) => {
                         field.onChange(value?.value);
                       }}
-                      value={optionsContinents.find(option => option.value === field.value)}
+                      value={optionsContinents.find(option => option.value === field.value) || null}
                       renderInput={params => (
                         <TextField
                           {...params}
@@ -259,7 +260,7 @@ export default function SupplierDetail() {
                       onChange={(_, value) => {
                         field.onChange(value?.value);
                       }}
-                      value={optionsCountries.find(option => option.value === field.value)}
+                      value={optionsCountries.find(option => option.value === field.value) || null}
                       renderInput={params => (
                         <TextField
                           {...params}
@@ -285,7 +286,7 @@ export default function SupplierDetail() {
                       onChange={(_, value) => {
                         field.onChange(value?.value);
                       }}
-                      value={optionsRegions.find(option => option.value === field.value)}
+                      value={optionsRegions.find(option => option.value === field.value) || null}
                       renderInput={params => (
                         <TextField
                           {...params}
@@ -328,7 +329,7 @@ export default function SupplierDetail() {
                       onChange={(_, value) => {
                         field.onChange(value?.value);
                       }}
-                      value={optionsCities.find(option => option.value === field.value)}
+                      value={optionsCities.find(option => option.value === field.value) || null}
                       renderInput={params => (
                         <TextField
                           {...params}
