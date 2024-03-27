@@ -10,6 +10,7 @@ import {
 	FieldErrors,
 	UseFormClearErrors,
 	UseFormRegister,
+	UseFormResetField,
 	UseFormSetError,
 	UseFormSetValue,
 	UseFormUnregister
@@ -28,6 +29,7 @@ interface AccountTypeProps {
 	setError: UseFormSetError<TPaymentRequestForm>;
 	clearErrors: UseFormClearErrors<TPaymentRequestForm>;
 	readMode: boolean;
+	resetField: UseFormResetField<TPaymentRequestForm>;
 }
 
 export function AccountType({
@@ -39,7 +41,8 @@ export function AccountType({
 	errors,
 	setError,
 	clearErrors,
-	readMode
+	readMode,
+	resetField
 }: AccountTypeProps) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
@@ -70,20 +73,27 @@ export function AccountType({
 	useEffect(() => {
 		if (paymentMethod.name === 'Pix') {
 			unregister('bankTransfer');
-			unregister('cardHolder');
+			setValue('cardHolder', { name: '', code: '' });
 		}
 		if (paymentMethod.name.includes('crédito') || paymentMethod.name.includes('corporativo')) {
 			unregister('bankTransfer');
+			resetField('cardHolder');
 			unregister('pix');
 		}
 		if (paymentMethod.name === 'Transferência bancária') {
-			unregister('cardHolder');
+			setValue('cardHolder', { name: '', code: '' });
 			unregister('pix');
 		}
-	}, [paymentMethod]);
+		if (paymentMethod.name === 'Boleto') {
+			setValue('cardHolder', { name: '', code: '' });
+			unregister('pix');
+			unregister('bankTransfer');
+		}
+	}, [paymentMethod.name]);
 
 	function handleAutocomplete(event: ChangeEvent<HTMLInputElement>) {
 		const { outerText } = event.target;
+
 		if (!outerText) {
 			setError('cardHolder.name', { message: 'É necessário adicionar um portador.' });
 			return;
@@ -91,13 +101,13 @@ export function AccountType({
 
 		clearErrors('cardHolder');
 
-		setValue('cardHolder.name', outerText);
-
 		const findHolder = paymentsForm.find(
 			(item: HolderType) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod.name
 		);
 
+		setValue('cardHolder.name', findHolder.name);
 		setValue('cardHolder.uid', findHolder.uid);
+		setValue('cardHolder.code', findHolder.code);
 	}
 
 	return (
