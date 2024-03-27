@@ -12,11 +12,12 @@ interface RequestTableProps {
 }
 
 export default function RequestsTable({ rows }: RequestTableProps) {
-	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const navigate = useNavigate();
 
-	const handleChangePage = (event: unknown, newPage: number) => {
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	const handleChangePage = (_event: unknown, newPage: number) => {
 		setPage(newPage);
 	};
 
@@ -25,18 +26,26 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 		setPage(0);
 	};
 
+	const validateData = (value: number) => {
+		if (value < 10) {
+			return `0${value}`;
+		}
+		return value;
+	};
+
 	function formatDate(dateParam: Date) {
 		const date = new Date(dateParam);
 		const day = date.getDate();
 		const month = date.getMonth() + 1;
 		const year = date.getFullYear();
 
-		return `${day}/${month}/${year}`;
+		return `${validateData(day)}/${validateData(month)}/${year}`;
 	}
 
 	function handleEditPaymentRequest(uid: string) {
 		navigate(`cadastro/${uid}/edit`);
 	}
+
 	function handleReadPaymentRequest(uid: string) {
 		navigate(`cadastro/${uid}`);
 	}
