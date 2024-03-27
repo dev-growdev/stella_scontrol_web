@@ -20,8 +20,8 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { StyledTableCell, StyledTableRow } from '../tableStyles';
 import { ProductType, ProductsType } from '../../pages/products/types/product';
+import { StyledTableCell, StyledTableRow } from '../tableStyles';
 
 interface ProductTableProps {
 	selectItem: (item: ProductType | null) => void;
@@ -44,7 +44,7 @@ export function ProductTable({ selectItem, productsData, handleStatus }: Product
 		}
 	}, [selectedItemId, productsData.products]);
 
-	const handleChangePage = (event: unknown, newPage: number) => {
+	const handleChangePage = (_, newPage: number) => {
 		setPage(newPage);
 	};
 

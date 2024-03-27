@@ -3,7 +3,7 @@ import { Chip, Paper, Stack, Table, TableBody, TableContainer, TableHead, TableP
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { IRequestPaymentGeneral } from '../../pages/form-request/types/request';
+import { IRequestPaymentGeneral } from '../../pages/form-request/types/requestPaymentsGeneral';
 import { formattedNumeral } from '../../utils/formatters/formatted-value';
 import { StyledTableCell, StyledTableRow } from './styles';
 
@@ -17,7 +17,7 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const handleChangePage = (_event: unknown, newPage: number) => {
+	const handleChangePage = (_, newPage: number) => {
 		setPage(newPage);
 	};
 

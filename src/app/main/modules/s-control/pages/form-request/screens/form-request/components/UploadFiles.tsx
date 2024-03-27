@@ -4,7 +4,7 @@ import { useAppDispatch } from 'app/store';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
 import { useState } from 'react';
-import { IFiles } from '../../../types/request';
+import { IFiles } from '../../../types/requestPaymentsGeneral';
 import { AlertDialog } from './files/AlertDialog';
 
 interface UploadFilesProps {

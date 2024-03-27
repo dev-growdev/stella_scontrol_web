@@ -13,6 +13,7 @@ export interface IFiles {
 	createdAt?: string;
 	updatedAt?: string;
 }
+
 export interface ICreateRequestGeneral {
 	supplier: string;
 	description: string;
@@ -49,6 +50,7 @@ export interface IBankTransfer {
 	accountType: string;
 	cpfOrCnpj: string;
 }
+
 export interface IRequestPaymentGeneral {
 	PaymentForm: IPaymentForm;
 	uid: string;
