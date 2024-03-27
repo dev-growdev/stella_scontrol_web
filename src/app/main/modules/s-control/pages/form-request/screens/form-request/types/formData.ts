@@ -17,7 +17,7 @@ interface CardHolderToForm {
 export interface FormDataType {
 	paymentMethod: string;
 	cardHolder?: CardHolderToForm;
-	requiredReceipt: boolean;
+	sendReceipt: boolean;
 	isRateable: boolean;
 	products: { product: string }[];
 	description?: string;

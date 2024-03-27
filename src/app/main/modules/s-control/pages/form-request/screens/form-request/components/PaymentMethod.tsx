@@ -1,9 +1,9 @@
 import { FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 
-import { PaymentForm, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { IPaymentForm, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 const itemHeight = 48;
@@ -19,17 +19,18 @@ const MenuProps = {
 };
 
 interface PaymentMethod {
-	selectedPaymentMethod: string;
-	register: UseFormRegister<TPaymentRequestForm>;
+	selectedPaymentMethod: { name?: string; uid?: string };
+	setValue: UseFormSetValue<TPaymentRequestForm>;
 	control: Control<TPaymentRequestForm>;
 	errors: FieldErrors<TPaymentRequestForm>;
+	readMode: boolean;
 }
 
-export function PaymentMethod({ selectedPaymentMethod, register, control, errors }: PaymentMethod) {
+export function PaymentMethod({ selectedPaymentMethod, setValue, control, errors, readMode }: PaymentMethod) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
 
-	const [payments, setPayments] = useState<PaymentForm[]>([]);
+	const [payments, setPayments] = useState<IPaymentForm[]>([]);
 
 	useEffect(() => {
 		let paymentsFormFiltered = paymentsForm.filter(holder => holder.type === '' && holder.enable);
@@ -43,6 +44,14 @@ export function PaymentMethod({ selectedPaymentMethod, register, control, errors
 		}
 		setPayments(paymentsFormFiltered);
 	}, [paymentsForm]);
+
+	function handleChangePaymentMethod(event: ChangeEvent<HTMLInputElement>) {
+		const { value } = event.target;
+		const findPaymentMethod = payments.find(payment => payment.name === value);
+		const { name, uid } = findPaymentMethod;
+		setValue('paymentMethod', { name, uid });
+	}
+
 	return (
 		<Controller
 			name="paymentMethod"
@@ -55,16 +64,13 @@ export function PaymentMethod({ selectedPaymentMethod, register, control, errors
 					<InputLabel id="demo-multiple-name-label">Forma de pagamento</InputLabel>
 					<Select
 						{...field}
+						disabled={readMode}
 						labelId="demo-multiple-name-label"
 						id="demo-multiple-name"
-						value={selectedPaymentMethod}
+						value={selectedPaymentMethod.name}
 						error={!!errors?.paymentMethod}
-						input={
-							<OutlinedInput
-								{...register('paymentMethod')}
-								label="Forma de pagamento"
-							/>
-						}
+						onChange={handleChangePaymentMethod}
+						input={<OutlinedInput label="Forma de pagamento" />}
 						MenuProps={MenuProps}
 					>
 						{payments.map(item => (

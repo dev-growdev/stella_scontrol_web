@@ -1,11 +1,12 @@
 import { Checkbox, FormControlLabel, FormGroup, Typography } from '@mui/material';
 
 interface RequiredReceiptProps {
-	requiredReceipt: boolean;
+	sendReceipt: boolean;
 	setToggleCheck: (arg: boolean) => void;
+	readMode: boolean;
 }
 
-export function RequiredReceipt({ requiredReceipt, setToggleCheck }: RequiredReceiptProps) {
+export function RequiredReceipt({ sendReceipt, setToggleCheck, readMode }: RequiredReceiptProps) {
 	return (
 		<div className="flex flex-row items-center">
 			<Typography
@@ -18,8 +19,9 @@ export function RequiredReceipt({ requiredReceipt, setToggleCheck }: RequiredRec
 				<FormControlLabel
 					control={
 						<Checkbox
+							disabled={readMode}
 							onClick={() => setToggleCheck(true)}
-							checked={requiredReceipt}
+							checked={sendReceipt}
 							color="primary"
 						/>
 					}
@@ -28,8 +30,9 @@ export function RequiredReceipt({ requiredReceipt, setToggleCheck }: RequiredRec
 				<FormControlLabel
 					control={
 						<Checkbox
+							disabled={readMode}
 							onClick={() => setToggleCheck(false)}
-							checked={!requiredReceipt}
+							checked={!sendReceipt}
 							color="primary"
 						/>
 					}

@@ -1,39 +1,66 @@
-interface Payment {
+import { ProductType } from '../../products/types/product';
+
+export interface IFiles {
+	name?: string;
+	key?: string;
+	uid?: string;
+	createdAt?: string;
+	updatedAt?: string;
+}
+export interface ICreateRequestGeneral {
+	supplier: string;
+	description: string;
+	sendReceipt: boolean;
+	uploadedFiles: File[];
+	totalValue: string;
+	accountingAccount: string;
+	payments: IPaymentRequestForm[];
+}
+
+export interface IPaymentForm {
+	uid: string;
+	name: string;
+}
+
+export interface ICardHolder {
+	uid: string;
+	name: string;
+	code: number;
+}
+
+export interface IApportionment {
+	accountingAccount: string;
+	costCenter: string;
+	paymentRequestsGeneralUid: string;
+	uid: string;
+	value: string;
+}
+export interface IRequestPaymentGeneral {
+	PaymentForm: IPaymentForm;
+	uid: string;
+	Apportionments: IApportionment[];
+	supplier: string;
+	bankTransfer: string | null;
+	description?: string;
+	sendReceipt: boolean;
+	totalValue: string;
+	pix: string;
+	accountingAccount: string;
+	payments: IPaymentRequestForm[];
+	createdAt: Date;
+	files: IFiles[];
+	cardHolder: ICardHolder;
+	isRateable: boolean;
+	Products: ProductType[];
+	unregisteredProducts: string[];
+}
+
+export interface IPaymentRequestForm {
 	value: string;
 	dueDate: Date;
 }
 
-interface Files {
-	uid: string;
-	name: string;
-	key: string;
-	createdAt: Date;
-	updatedAt: Date;
-}
-
-export interface CreateRequestGeneralType {
-	supplier: string;
-	description: string;
-	requiredReceipt: boolean;
-	uploadedFiles: File[];
-	totalValue: string;
-	accountingAccount: string;
-	payments: Payment[];
-}
-
-export interface RequestType {
-	uid: string;
-	supplier: string;
-	description?: string;
-	sendReceipt: boolean;
-	totalValue: string;
-	accountingAccount: string;
-	payments: Payment[];
-	createdAt: Date;
-	files: Files[];
-}
-
 export interface RequestPaymentGeneralType {
 	loading: boolean;
-	requests: RequestType[];
+	payload: IRequestPaymentGeneral[];
 }

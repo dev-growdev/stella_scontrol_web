@@ -6,17 +6,21 @@ import { showMessage } from 'app/store/fuse/messageSlice';
 import { selectUser } from 'app/store/user/userSlice';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { IsRateable } from './components/rateable/IsRateable';
 
-import { getProducts, selectProducts } from '~/modules/s-control/pages/products/store/productsSlice';
+import { getProducts } from '~/modules/s-control/pages/products/store/productsSlice';
 import { useDispatchSControl, useSelectorSControl } from '~/modules/s-control/store/hooks';
 import { getPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
 import { getCostCenters } from '~/modules/s-control/store/slices/costCenterSlice';
 import { formattedNumeral } from '~/modules/s-control/utils/formatters/formatted-value';
 import { getAccountingAccountByCostCenter, selectAccountingAccount } from '../../store/AccountingAccountSlice';
-import { createRequestPaymentGeneral } from '../../store/FormRequestSlice';
+import {
+	createRequestPaymentGeneral,
+	listRequestsPaymentsByUser,
+	selectedRequestPaymentGeneral
+} from '../../store/FormRequestSlice';
 import {
 	AccountType,
 	PaymentMethod,
@@ -26,14 +30,13 @@ import {
 	UploadFiles,
 	ValueAndDueDate
 } from './components';
-import { FormDataType } from './types/formData';
-import { ProductOptionType } from './types/productOptions';
+import { mapToFormDTO } from './formatters/formatterToFormType';
 import { TPaymentRequestForm, paymentRequestFormSchema } from './validations/paymentRequestForm.schema';
 
 const defaultValues: TPaymentRequestForm = {
-	paymentMethod: '',
+	paymentMethod: { name: '', uid: '' },
 	valueProducts: null,
-	requiredReceipt: false,
+	sendReceipt: false,
 	isRateable: false,
 	products: [],
 	description: '',
@@ -48,13 +51,18 @@ export default function PaymentRequestFormGeneral() {
 	const dispatch = useDispatchSControl();
 	const navigate = useNavigate();
 	const user = useAppSelector(selectUser);
-	const productsRedux = useSelectorSControl(selectProducts);
-	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<ProductOptionType[]>([]);
+	const requests = useSelectorSControl(selectedRequestPaymentGeneral);
 	const [totalApportionmentsValue, setTotalApportionmentsValue] = useState(0);
 	const [accountingAccountToOptionsSelect, setAccountingAccountToOptionsSelect] = useState<string[]>([]);
 	const accountingAccountRedux = useSelectorSControl(selectAccountingAccount);
 	const [totalValue, setTotalValue] = useState('');
-	const [totalValueUnformated, setTotalValueUnformated] = useState(0);
+	const [editMode, setEditMode] = useState(false);
+	const [readMode, setReadMode] = useState(false);
+
+	const { requestUid } = useParams();
+	const { edit } = useParams();
+
+	const [totalValueUnformatted, setTotalValueUnformatted] = useState(0);
 
 	const {
 		control,
@@ -62,10 +70,10 @@ export default function PaymentRequestFormGeneral() {
 		setValue,
 		watch,
 		register,
-		reset,
 		formState: { errors },
 		setError,
 		clearErrors,
+		reset,
 		unregister
 	} = useForm<TPaymentRequestForm>({
 		defaultValues,
@@ -86,25 +94,36 @@ export default function PaymentRequestFormGeneral() {
 		name: 'apportionments'
 	});
 
-	async function validatePixAndCardHolder() {
-		const formData = {
-			...watch(),
-			userCreatedUid: user.uid,
-			totalValue
-		};
-		await paymentRequestFormSchema.parseAsync(formData);
-	}
+	useEffect(() => {
+		dispatch(listRequestsPaymentsByUser(user.uid));
+	}, []);
+
+	useEffect(() => {
+		if (requestUid && requests.payload.length > 0) {
+			if (edit) {
+				setEditMode(true);
+				setReadMode(false);
+			} else {
+				setReadMode(true);
+			}
+
+			const findRequest = requests.payload.find(request => request.uid === requestUid);
+			const editValues = mapToFormDTO(findRequest);
+
+			reset(editValues as TPaymentRequestForm);
+		}
+	}, [requestUid, requests]);
 
 	useEffect(() => {
 		const subscription = watch(value => {
 			if (Array.isArray(value.payments)) {
 				const total = value.payments.reduce((acc, current) => {
-					const value = parseFloat(current.value) || 0;
+					const value = parseFloat(current.value.replace(',', '.')) || 0;
 					return acc + value;
 				}, 0);
 
 				setTotalValue(formattedNumeral(total));
-				setTotalValueUnformated(total);
+				setTotalValueUnformatted(total);
 			}
 		});
 		return () => subscription.unsubscribe();
@@ -118,20 +137,13 @@ export default function PaymentRequestFormGeneral() {
 	}, []);
 
 	useEffect(() => {
-		if (productsRedux.products.length > 0) {
-			const refProducts = productsRedux.products
-				.map(product => product.enable && { product: product.name })
-				.filter(product => product);
-			setProductsToOptionsSelect(refProducts);
-		}
-
 		if (accountingAccountRedux.accountingAccount.length > 0) {
 			const refAccountingAccount = accountingAccountRedux.accountingAccount
 				.map(accountingAccount => accountingAccount.name)
 				.filter(accountingAccount => accountingAccount);
 			setAccountingAccountToOptionsSelect(refAccountingAccount);
 		}
-	}, [productsRedux, accountingAccountRedux]);
+	}, [accountingAccountRedux]);
 
 	useEffect(() => {
 		const apportionments = watch('apportionments');
@@ -140,7 +152,16 @@ export default function PaymentRequestFormGeneral() {
 		}
 	}, [watch('apportionments')]);
 
-	async function handleSubmitFormRequest(data: FormDataType) {
+	async function validatePixAndCardHolder() {
+		const formData = {
+			...watch(),
+			userCreatedUid: user.uid,
+			totalValue
+		};
+		await paymentRequestFormSchema.parseAsync(formData);
+	}
+
+	async function handleSubmitFormRequest(data: TPaymentRequestForm) {
 		await validatePixAndCardHolder();
 		if (watch('isRateable')) {
 			setValue('accountingAccount', '');
@@ -186,10 +207,11 @@ export default function PaymentRequestFormGeneral() {
 			...data,
 			apportionments: data.apportionments.map(apportionment => ({
 				...apportionment,
-				value: apportionment.value.replace(/\./g, '').replace(',', '.')
+				value: apportionment.value
 			})),
 			userCreatedUid: user.uid,
-			totalValue: totalValue.replace(/\./g, '').replace(',', '.')
+			totalValue: totalValue.replace(/\./g, '').replace(',', '.'),
+			payments: data.payments.map(payment => ({ ...payment, value: payment.value.replace(',', '.') }))
 		};
 
 		const formData = new FormData();
@@ -227,6 +249,19 @@ export default function PaymentRequestFormGeneral() {
 
 	function clearFormState() {
 		reset();
+		if (readMode) {
+			navigate(-1);
+		}
+	}
+
+	function pageTitle() {
+		if (editMode) {
+			return 'Editar solicitação';
+		}
+		if (readMode) {
+			return 'Visualizar solicitação';
+		}
+		return 'Abrir nova solicitação';
 	}
 
 	return (
@@ -255,7 +290,7 @@ export default function PaymentRequestFormGeneral() {
 						fontWeight={500}
 						sx={{ color: theme => theme.palette.secondary.main }}
 					>
-						Abrir nova solicitação
+						{pageTitle()}
 					</Typography>
 				</Paper>
 
@@ -264,12 +299,15 @@ export default function PaymentRequestFormGeneral() {
 					className="mt-24 p-36 flex flex-col gap-24"
 				>
 					<RequestUser user={user} />
-					<Typography color="GrayText">Adicione os produtos para solicitação de pagamento</Typography>
+					<Typography color="GrayText">
+						{readMode
+							? 'Visualize os produtos da sua solicitação.'
+							: 'Adicione os produtos para solicitação de pagamento'}
+					</Typography>
 
 					<TableProductsFromRequest
-						control={control}
+						readMode={readMode}
 						errors={errors}
-						productsToOptions={productsToOptionsSelect}
 						setValueProducts={setValue}
 						watch={watch}
 					/>
@@ -281,6 +319,7 @@ export default function PaymentRequestFormGeneral() {
 							<TextField
 								{...field}
 								{...register('description')}
+								disabled={readMode}
 								error={!!errors.description}
 								helperText={errors?.description?.message}
 								rows={4}
@@ -296,6 +335,7 @@ export default function PaymentRequestFormGeneral() {
 							<TextField
 								{...field}
 								{...register('supplier')}
+								disabled={readMode}
 								error={!!errors.supplier}
 								helperText={errors?.supplier?.message}
 								label="Fornecedor"
@@ -311,7 +351,7 @@ export default function PaymentRequestFormGeneral() {
 									key={field.id}
 								>
 									<ValueAndDueDate
-										setValue={setValue}
+										readMode={readMode}
 										errors={errors}
 										index={index}
 										control={control}
@@ -324,25 +364,29 @@ export default function PaymentRequestFormGeneral() {
 							<Typography>Valor total: R$ {totalValue}</Typography>
 						</div>
 						<div className="flex items-center">
-							<Button
-								onClick={() => appendPayments({ value: '', dueDate: null })}
-								className="rounded-4"
-								variant="contained"
-							>
-								<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
-								{watch('payments').length > 0
-									? 'Adicionar mais pagamentos'
-									: 'Adicionar algum pagamento'}
-							</Button>
+							{!readMode && (
+								<Button
+									onClick={() => appendPayments({ value: '', dueDate: null })}
+									className="rounded-4"
+									variant="contained"
+								>
+									<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>
+									{watch('payments').length > 0
+										? 'Adicionar mais pagamentos'
+										: 'Adicionar algum pagamento'}
+								</Button>
+							)}
 						</div>
 					</div>
 					<PaymentMethod
+						readMode={readMode}
 						selectedPaymentMethod={watch('paymentMethod')}
 						control={control}
-						register={register}
+						setValue={setValue}
 						errors={errors}
 					/>
 					<AccountType
+						readMode={readMode}
 						paymentMethod={watch('paymentMethod')}
 						control={control}
 						register={register}
@@ -353,13 +397,17 @@ export default function PaymentRequestFormGeneral() {
 						clearErrors={clearErrors}
 					/>
 					<RequiredReceipt
-						requiredReceipt={watch('requiredReceipt')}
-						setToggleCheck={e => setValue('requiredReceipt', e)}
+						sendReceipt={watch('sendReceipt')}
+						setToggleCheck={e => setValue('sendReceipt', e)}
+						readMode={readMode}
 					/>
 					<UploadFiles
 						uploadedFiles={watch('uploadedFiles')}
 						handleFileChange={handleFileChange}
 						handleFileRemove={handleFileRemove}
+						getFiles={watch('getFiles')}
+						requestUid={requestUid}
+						readMode={readMode}
 					/>
 					<IsRateable
 						isRateable={watch('isRateable')}
@@ -370,19 +418,31 @@ export default function PaymentRequestFormGeneral() {
 						errors={errors}
 						setError={setError}
 						totalApportionmentsValue={setTotalApportionmentsValue}
-						totalValue={totalValueUnformated}
+						totalValue={totalValueUnformatted}
+						readMode={readMode}
 					/>
 					{!watch('isRateable') && (
-						<Autocomplete
-							className="w-full"
-							options={accountingAccountToOptionsSelect}
-							renderInput={params => (
-								<TextField
-									{...params}
-									label="Escolha a Conta Contábil"
-									{...register('accountingAccount')}
-									error={!!errors.accountingAccount}
-									helperText={errors?.accountingAccount?.message}
+						<Controller
+							control={control}
+							name="accountingAccount"
+							render={({ field }) => (
+								<Autocomplete
+									className="w-full"
+									value={field.value}
+									disabled={readMode}
+									onChange={(event: ChangeEvent<HTMLInputElement>) => {
+										field.onChange(event.target.outerText);
+									}}
+									onBlur={field.onBlur}
+									options={accountingAccountToOptionsSelect}
+									renderInput={params => (
+										<TextField
+											{...params}
+											label="Adicione uma conta contábil"
+											error={!!errors.accountingAccount}
+											helperText={errors?.accountingAccount?.message}
+										/>
+									)}
 								/>
 							)}
 						/>
@@ -393,15 +453,17 @@ export default function PaymentRequestFormGeneral() {
 							className="rounded-4"
 							onClick={clearFormState}
 						>
-							CANCELAR
+							{!readMode ? 'CANCELAR' : 'VOLTAR'}
 						</Button>
-						<Button
-							className="rounded-4"
-							type="submit"
-							variant="contained"
-						>
-							ENVIAR
-						</Button>
+						{!readMode && (
+							<Button
+								className="rounded-4"
+								type="submit"
+								variant="contained"
+							>
+								ENVIAR
+							</Button>
+						)}
 					</div>
 				</Paper>
 			</form>

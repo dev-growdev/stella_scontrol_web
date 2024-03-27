@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios from 'axios';
-import { CreateProductType, FormProductType, ProductsType } from '../types/product';
 import { ReduxStateScontrol } from '~/modules/s-control/store';
+import { CreateProductType, FormProductType, ProductsType } from '../types/product';
 
 export const createProduct = createAppAsyncThunk(
 	'products/createProduct',
@@ -96,11 +96,7 @@ export const updateProduct = createAppAsyncThunk(
 export const disableProduct = createAsyncThunk('products/disableProduct', async (data: FormProductType) => {
 	try {
 		const body = {
-			categoryId: data.category,
-			name: data.name,
-			enable: data.enable,
-			measurement: data.measurement,
-			quantity: data.quantity
+			enable: data.enable
 		};
 
 		const response = await axios.put(`${process.env.REACT_APP_API_URL}/products/${data.uid}/disable`, body);

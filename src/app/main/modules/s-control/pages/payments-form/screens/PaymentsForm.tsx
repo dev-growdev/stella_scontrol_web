@@ -2,8 +2,8 @@ import { Box, Paper, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { PaymentsFormTable } from '../../../components/payment-form-table/PaymentsFormTable';
 import {
-	HolderType,
-	PaymentForm,
+	IHolder,
+	IPaymentForm,
 	disablePaymentsForm,
 	getPaymentsForm,
 	selectPaymentsForm
@@ -18,7 +18,7 @@ export default function PaymentsForm() {
 		dispatchScontrol(getPaymentsForm());
 	}, []);
 
-	async function handleGetStatus(item: PaymentForm | HolderType) {
+	async function handleGetStatus(item: IPaymentForm | IHolder) {
 		dispatchScontrol(disablePaymentsForm(item));
 	}
 

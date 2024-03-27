@@ -1,3 +1,4 @@
-export interface ProductOptionType {
-	product: string;
+export interface IProductOption {
+	name: string;
+	uid?: string;
 }

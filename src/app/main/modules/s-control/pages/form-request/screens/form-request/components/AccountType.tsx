@@ -15,11 +15,11 @@ import {
 	UseFormUnregister
 } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { HolderType, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
+import { IHolder, selectPaymentsForm } from '~/modules/s-control/store/slices/PaymentsFormSlice';
 import { TPaymentRequestForm } from '../validations/paymentRequestForm.schema';
 
 interface AccountTypeProps {
-	paymentMethod: string;
+	paymentMethod: { name?: string; uid?: string };
 	control: Control<TPaymentRequestForm>;
 	register: UseFormRegister<TPaymentRequestForm>;
 	setValue: UseFormSetValue<TPaymentRequestForm>;
@@ -27,6 +27,7 @@ interface AccountTypeProps {
 	errors: FieldErrors<TPaymentRequestForm>;
 	setError: UseFormSetError<TPaymentRequestForm>;
 	clearErrors: UseFormClearErrors<TPaymentRequestForm>;
+	readMode: boolean;
 }
 
 export function AccountType({
@@ -37,13 +38,14 @@ export function AccountType({
 	unregister,
 	errors,
 	setError,
-	clearErrors
+	clearErrors,
+	readMode
 }: AccountTypeProps) {
 	const paymentsFormRedux = useSelector(selectPaymentsForm);
 	const { paymentsForm } = paymentsFormRedux;
-	const [creditCardHoldersBB, setCreditCardHoldersBB] = useState<HolderType[]>([]);
-	const [creditCardHoldersBRAD, setCreditCardHoldersBRAD] = useState<HolderType[]>([]);
-	const [corporateCardHolders, setCorporateCardHolders] = useState<HolderType[]>([]);
+	const [creditCardHoldersBB, setCreditCardHoldersBB] = useState<IHolder[]>([]);
+	const [creditCardHoldersBRAD, setCreditCardHoldersBRAD] = useState<IHolder[]>([]);
+	const [corporateCardHolders, setCorporateCardHolders] = useState<IHolder[]>([]);
 
 	useEffect(() => {
 		if (paymentsForm && paymentsForm.length > 0) {
@@ -51,30 +53,30 @@ export function AccountType({
 				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BB')
 			);
 
-			setCreditCardHoldersBB(bbCreditCardHolders as HolderType[]);
+			setCreditCardHoldersBB(bbCreditCardHolders as IHolder[]);
 
 			const bradCreditCardHolders = paymentsForm.filter(
 				holder => holder.type === 'credit' && holder.enable === true && holder.namePaymentForm.includes('BRAD')
 			);
-			setCreditCardHoldersBRAD(bradCreditCardHolders as HolderType[]);
+			setCreditCardHoldersBRAD(bradCreditCardHolders as IHolder[]);
 
 			const corporateCardHolders = paymentsForm.filter(
 				holder => holder.type === 'corporate' && holder.enable === true
 			);
-			setCorporateCardHolders(corporateCardHolders as HolderType[]);
+			setCorporateCardHolders(corporateCardHolders as IHolder[]);
 		}
 	}, [paymentsForm]);
 
 	useEffect(() => {
-		if (paymentMethod === 'Pix') {
+		if (paymentMethod.name === 'Pix') {
 			unregister('bankTransfer');
 			unregister('cardHolder');
 		}
-		if (paymentMethod.includes('crédito') || paymentMethod.includes('corporativo')) {
+		if (paymentMethod.name.includes('crédito') || paymentMethod.name.includes('corporativo')) {
 			unregister('bankTransfer');
 			unregister('pix');
 		}
-		if (paymentMethod === 'Transferência bancária') {
+		if (paymentMethod.name === 'Transferência bancária') {
 			unregister('cardHolder');
 			unregister('pix');
 		}
@@ -92,7 +94,7 @@ export function AccountType({
 		setValue('cardHolder.name', outerText);
 
 		const findHolder = paymentsForm.find(
-			(item: HolderType) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod
+			(item: IHolder) => outerText.includes(item.name) && item.namePaymentForm === paymentMethod.name
 		);
 
 		setValue('cardHolder.uid', findHolder.uid);
@@ -100,26 +102,29 @@ export function AccountType({
 
 	return (
 		<>
-			{paymentMethod === 'Pix' && (
+			{paymentMethod.name === 'Pix' && (
 				<TextField
 					label="Informe a chave pix"
 					{...register('pix')}
+					disabled={readMode}
 					error={!!errors.pix?.message}
 					helperText={errors.pix?.message ?? ''}
 				/>
 			)}
-			{paymentMethod === 'Transferência bancária' && (
+			{paymentMethod.name === 'Transferência bancária' && (
 				<div className="flex gap-24 justify-center">
 					<div className="flex flex-col w-full gap-24">
 						<div className="flex flex-col sm:flex-row gap-24 w-full justify-between">
 							<TextField
 								fullWidth
 								label="Banco"
+								disabled={readMode}
 								{...register('bankTransfer.bank')}
 								error={!!errors.bankTransfer?.bank?.message}
 								helperText={errors.bankTransfer?.bank?.message ?? ''}
 							/>
 							<TextField
+								disabled={readMode}
 								fullWidth
 								label="Numero da conta"
 								{...register('bankTransfer.accountNumber')}
@@ -127,6 +132,7 @@ export function AccountType({
 								helperText={errors.bankTransfer?.accountNumber?.message ?? ''}
 							/>
 							<TextField
+								disabled={readMode}
 								fullWidth
 								label="Agência"
 								{...register('bankTransfer.agency')}
@@ -148,11 +154,13 @@ export function AccountType({
 										</InputLabel>
 										<Select
 											labelId="demo-simple-select-label"
+											label="Tipo de conta"
+											disabled={readMode}
 											id="demo-simple-select"
+											value={field.field.value}
 											{...field}
 											{...register('bankTransfer.accountType')}
 											error={!!errors.bankTransfer?.accountType?.message}
-											label="Age"
 										>
 											<MenuItem value="Conta poupança">Conta poupança</MenuItem>
 											<MenuItem value="Conta corrente">Conta corrente</MenuItem>
@@ -167,6 +175,7 @@ export function AccountType({
 								fullWidth
 								error={!!errors.bankTransfer?.cpfOrCnpj?.message}
 								helperText={errors.bankTransfer?.cpfOrCnpj?.message ?? ''}
+								disabled={readMode}
 								label="CPF ou CNPJ do Beneficiário"
 								{...register('bankTransfer.cpfOrCnpj')}
 							/>
@@ -174,7 +183,7 @@ export function AccountType({
 					</div>
 				</div>
 			)}
-			{paymentMethod === 'Cartão de crédito BB' && (
+			{paymentMethod.name === 'Cartão de crédito BB' && (
 				<Controller
 					control={control}
 					name="cardHolder"
@@ -182,14 +191,17 @@ export function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
+							disabled={readMode}
+							value={field.value}
 							options={creditCardHoldersBB}
-							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
+							getOptionLabel={(holder: IHolder) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
 									{...params}
 									error={!!errors.cardHolder?.message}
 									helperText={errors.cardHolder?.message ?? ''}
+									disabled={readMode}
 									label="Selecionar portador"
 								/>
 							)}
@@ -197,7 +209,7 @@ export function AccountType({
 					)}
 				/>
 			)}
-			{paymentMethod === 'Cartão de crédito BRAD' && (
+			{paymentMethod.name === 'Cartão de crédito BRAD' && (
 				<Controller
 					control={control}
 					name="cardHolder"
@@ -205,11 +217,14 @@ export function AccountType({
 						<Autocomplete
 							id="credit-card-holder"
 							onChange={handleAutocomplete}
+							disabled={readMode}
+							value={field.value}
 							options={creditCardHoldersBRAD}
-							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
+							getOptionLabel={(holder: IHolder) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
+									disabled={readMode}
 									{...params}
 									error={!!errors.cardHolder?.message}
 									helperText={errors.cardHolder?.message ?? ''}
@@ -220,19 +235,22 @@ export function AccountType({
 					)}
 				/>
 			)}
-			{paymentMethod.includes('corporativo') && (
+			{paymentMethod.name.includes('corporativo') && (
 				<Controller
 					control={control}
 					name="cardHolder"
 					render={({ field }) => (
 						<Autocomplete
+							disabled={readMode}
 							id="corporate-card-holder"
 							onChange={handleAutocomplete}
+							value={field.value}
 							options={corporateCardHolders}
-							getOptionLabel={(holder: HolderType) => `${holder.code} - ${holder.name}`}
+							getOptionLabel={(holder: IHolder) => `${holder.code} - ${holder.name}`}
 							renderInput={params => (
 								<TextField
 									{...field}
+									disabled={readMode}
 									{...params}
 									error={!!errors.cardHolder?.message}
 									helperText={errors.cardHolder?.message ?? ''}

@@ -3,7 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios, { AxiosError } from 'axios';
 import { ReduxStateScontrol } from '../../../store';
-import { RequestPaymentGeneralType, RequestType } from '../types/request';
+import { IRequestPaymentGeneral, RequestPaymentGeneralType } from '../types/request';
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',
@@ -12,7 +12,7 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 			const response = await axios.post<{
 				code: number;
 				success: boolean;
-				data: { request: RequestType };
+				data: { request: IRequestPaymentGeneral };
 			}>(`${process.env.REACT_APP_API_URL}/payment-request-general`, data, {
 				headers: { 'Content-Type': 'multipart/form-data' }
 			});
@@ -28,6 +28,7 @@ export const createRequestPaymentGeneral = createAppAsyncThunk(
 						variant: 'success'
 					})
 				);
+
 				return response.data.data.request;
 			}
 			throw new Error('Algo deu errado, tente novamente.');
@@ -53,7 +54,7 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk('requestPaymentGen
 		const response = await axios.get<{
 			code: number;
 			success: boolean;
-			data: RequestType[];
+			data: IRequestPaymentGeneral[];
 		}>(`${process.env.REACT_APP_API_URL}/payment-request-general/${userUid}`);
 		const { data } = response.data;
 
@@ -66,7 +67,7 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk('requestPaymentGen
 
 const initialState: RequestPaymentGeneralType = {
 	loading: false,
-	requests: []
+	payload: []
 };
 
 const requestPaymentGeneralSlice = createSlice({
@@ -81,7 +82,7 @@ const requestPaymentGeneralSlice = createSlice({
 			.addCase(createRequestPaymentGeneral.fulfilled, (state, action) => {
 				state.loading = false;
 				if (action.payload) {
-					state.requests.push(action.payload);
+					state.payload.push(action.payload);
 				}
 			})
 			.addCase(listRequestsPaymentsByUser.pending, state => {
@@ -90,7 +91,7 @@ const requestPaymentGeneralSlice = createSlice({
 			.addCase(listRequestsPaymentsByUser.fulfilled, (state, action) => {
 				state.loading = false;
 				if (action.payload) {
-					state.requests = action.payload;
+					state.payload = action.payload;
 				}
 			});
 	}
