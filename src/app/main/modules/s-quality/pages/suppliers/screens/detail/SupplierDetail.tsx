@@ -1,18 +1,6 @@
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Autocomplete,
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
@@ -26,6 +14,8 @@ import {
 import { useDispatchSQuality } from '~/modules/s-quality/store/hooks';
 import { createSupplier } from '../../store/suppliersSlice';
 import { i18nBR, i18nEN } from './i18n';
+import { TextFieldControlled } from '~/shared/components/forms/TextFieldControlled';
+import { AutocompleteControlled } from '~/shared/components/forms/AutocompleteControlled';
 
 const optionsContinents = [
   { value: 'Africa', label: 'Africa' },
@@ -73,7 +63,6 @@ i18next.addResourceBundle('en', i18nKey, i18nEN);
 export default function SupplierDetail() {
   const { t } = useTranslation(i18nKey);
   const dispatchSQuality = useDispatchSQuality();
-  const [continentInputValue, setContinentInputValue] = useState('');
   const [countryInputValue, setCountryInputValue] = useState('');
   const [cityInputValue, setCityInputValue] = useState('');
   const [regionInputValue, setRegionInputValue] = useState('');
@@ -149,19 +138,12 @@ export default function SupplierDetail() {
                   sm={6}
                   className="mb-24"
                 >
-                  <Controller
+                  <TextFieldControlled
+                    required
+                    fullWidth
                     control={control}
                     name="name"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        required
-                        label={t('NAME')}
-                        error={!!errors.name}
-                        helperText={errors.name?.message}
-                      />
-                    )}
+                    label={t('NAME')}
                   />
                 </Grid>
                 <Grid
@@ -170,177 +152,81 @@ export default function SupplierDetail() {
                   sm={6}
                   className="mb-24"
                 >
-                  <Controller
+                  <TextFieldControlled
+                    required
+                    fullWidth
                     control={control}
                     name="email"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        required
-                        label={t('EMAIL')}
-                        error={!!errors.email}
-                        helperText={errors.email?.message}
-                      />
-                    )}
+                    label={t('EMAIL')}
                   />
                 </Grid>
               </Grid>
             </div>
             <div className="flex flex-col w-full gap-24">
               <div className="flex flex-col sm:flex-row gap-24 w-full justify-between mb-24">
-                <Controller
+                <TextFieldControlled
+                  fullWidth
                   control={control}
                   name="phoneNumber"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label={t('PHONE')}
-                      error={!!errors.phoneNumber}
-                      helperText={errors.phoneNumber?.message}
-                    />
-                  )}
+                  label={t('PHONE')}
                 />
-                <Controller
+
+                <TextFieldControlled
+                  fullWidth
                   control={control}
                   name="contactName"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label={t('CONTACT_NAME')}
-                      error={!!errors.contactName}
-                      helperText={errors.contactName?.message}
-                    />
-                  )}
+                  label={t('CONTACT_NAME')}
                 />
               </div>
             </div>
             <div className="flex flex-col w-full gap-24">
               <div className="flex flex-col sm:flex-row gap-24 w-full justify-between mb-24">
-                <Controller
+                <AutocompleteControlled
+                  fullWidth
+                  required
                   control={control}
                   name="continent"
-                  render={({ field, fieldState }) => (
-                    <Autocomplete
-                      fullWidth
-                      options={optionsContinents}
-                      getOptionLabel={option => option.label}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      inputValue={continentInputValue}
-                      onInputChange={(e, value) => setContinentInputValue(value)}
-                      onChange={(_, value) => {
-                        field.onChange(value?.value);
-                      }}
-                      value={optionsContinents.find(option => option.value === field.value) || null}
-                      renderInput={params => (
-                        <TextField
-                          {...params}
-                          label={t('CONTINENT')}
-                          required
-                          error={fieldState.invalid}
-                          helperText={fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  )}
+                  label={t('CONTINENT')}
+                  options={optionsContinents}
+                  noOptionsText={t('CONTINENT.NO_OPTIONS')}
                 />
-                <Controller
+                <AutocompleteControlled
+                  fullWidth
                   control={control}
                   name="country"
-                  render={({ field, fieldState }) => (
-                    <Autocomplete
-                      fullWidth
-                      options={optionsCountries}
-                      getOptionLabel={option => option.label}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      inputValue={countryInputValue}
-                      onInputChange={(e, value) => setCountryInputValue(value)}
-                      onChange={(_, value) => {
-                        field.onChange(value?.value);
-                      }}
-                      value={optionsCountries.find(option => option.value === field.value) || null}
-                      renderInput={params => (
-                        <TextField
-                          {...params}
-                          label={t('COUNTRY')}
-                          error={fieldState.invalid}
-                          helperText={fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  )}
+                  label={t('COUNTRY')}
+                  options={optionsCountries}
+                  noOptionsText={t('COUNTRY.NO_OPTIONS')}
                 />
-                <Controller
+
+                <AutocompleteControlled
+                  fullWidth
                   control={control}
                   name="region"
-                  render={({ field, fieldState }) => (
-                    <Autocomplete
-                      fullWidth
-                      options={optionsRegions}
-                      getOptionLabel={option => option.label}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      inputValue={regionInputValue}
-                      onInputChange={(e, value) => setRegionInputValue(value)}
-                      onChange={(_, value) => {
-                        field.onChange(value?.value);
-                      }}
-                      value={optionsRegions.find(option => option.value === field.value) || null}
-                      renderInput={params => (
-                        <TextField
-                          {...params}
-                          label={t('REGION')}
-                          error={fieldState.invalid}
-                          helperText={fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  )}
+                  label={t('REGION')}
+                  options={optionsRegions}
+                  noOptionsText={t('REGION.NO_OPTIONS')}
                 />
               </div>
             </div>
             <div className="flex flex-col w-full gap-24">
               <div className="flex flex-col sm:flex-row gap-24 w-full justify-between mb-24">
-                <Controller
+                <TextFieldControlled
+                  fullWidth
                   control={control}
                   name="address"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label={t('ADDRESS')}
-                      error={!!errors.address}
-                      helperText={errors.address?.message}
-                    />
-                  )}
+                  label={t('ADDRESS')}
                 />
-                <Controller
+
+                <AutocompleteControlled
+                  fullWidth
                   control={control}
                   name="city"
-                  render={({ field, fieldState }) => (
-                    <Autocomplete
-                      fullWidth
-                      options={optionsCities}
-                      getOptionLabel={option => option.label}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      inputValue={cityInputValue}
-                      onInputChange={(e, value) => setCityInputValue(value)}
-                      onChange={(_, value) => {
-                        field.onChange(value?.value);
-                      }}
-                      value={optionsCities.find(option => option.value === field.value) || null}
-                      renderInput={params => (
-                        <TextField
-                          {...params}
-                          label={t('CITY')}
-                          error={fieldState.invalid}
-                          helperText={fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  )}
+                  label={t('CITY')}
+                  options={optionsCities}
+                  noOptionsText={t('CITY.NO_OPTIONS')}
                 />
+
                 <Controller
                   control={control}
                   name="enable"
