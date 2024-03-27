@@ -76,10 +76,24 @@ export function IsRateable({
 	};
 
 	useEffect(() => {
-		const remaining = totalValue - totalApportionmentsValueState;
+		const totalApportionments = parseFloat(
+			formattedNumeral(totalApportionmentsValueState).replace(/\./g, '').replace(',', '.')
+		);
+		const remaining = totalValue - totalApportionments;
 
-		if (Number.isNaN(totalApportionmentsValueState)) {
+		if (shouldDisableButtonAdd(totalApportionments, totalValue)) {
+			setDisableButtonAdd(true);
+		} else {
+			setDisableButtonAdd(false);
+		}
+
+		if (Number.isNaN(totalApportionments)) {
 			setRemainingValue(totalValue);
+		}
+
+		if (totalValue === totalApportionments) {
+			setRemainingValue(0);
+			setValueInputValue('');
 		}
 
 		setRemainingValue(remaining);

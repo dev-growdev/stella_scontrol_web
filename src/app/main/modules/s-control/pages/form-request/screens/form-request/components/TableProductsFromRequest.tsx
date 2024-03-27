@@ -29,32 +29,50 @@ interface PropsTableProductsFromRequest {
 	errors: FieldErrors<TPaymentRequestForm>;
 	setValueProducts: UseFormSetValue<TPaymentRequestForm>;
 	watch: UseFormWatch<TPaymentRequestForm>;
+	handleProductsRemove: (arg: number) => void;
 }
 
-function generateKey(item: IProductItem) {
-	if (typeof item === 'object' && item.uid) {
-		return item.uid;
-	}
-	return `${Math.floor(Math.random() * 10)}`;
-}
-
-function renderTableRow(item: IProductItem) {
-	const key = generateKey(item);
-	const itemName = typeof item === 'object' ? item.name : item;
-
-	return (
-		<TableRow key={key}>
-			<TableCell>{itemName}</TableCell>
-		</TableRow>
-	);
-}
-
-export function TableProductsFromRequest({ errors, setValueProducts, watch, readMode }: PropsTableProductsFromRequest) {
+export function TableProductsFromRequest({
+	errors,
+	setValueProducts,
+	watch,
+	readMode,
+	handleProductsRemove
+}: PropsTableProductsFromRequest) {
 	const [value, setValue] = useState<IProductOption | null>(null);
 	const productsForm = watch('products');
 	const products = useSelectorSControl(selectProducts);
 	const [productsToOptionsSelect, setProductsToOptionsSelect] = useState<IProductOption[]>([]);
 	const dispatch = useAppDispatch();
+
+	function generateKey(item: string | IProductItem) {
+		if (typeof item === 'object' && item.uid) {
+			return item.uid;
+		}
+		return `${Math.floor(Math.random() * 10)}`;
+	}
+
+	function renderTableRow(item: string | IProductItem, index: number) {
+		const key = generateKey(item);
+		const itemName = typeof item === 'object' ? item.name : item;
+
+		return (
+			<TableRow key={key}>
+				<TableCell className="flex flex-row items-center">
+					{itemName}{' '}
+					{!readMode && (
+						<FuseSvgIcon
+							onClick={() => handleProductsRemove(index)}
+							color="primary"
+							className="ml-20 cursor-pointer"
+						>
+							heroicons-outline:trash
+						</FuseSvgIcon>
+					)}
+				</TableCell>
+			</TableRow>
+		);
+	}
 
 	useEffect(() => {
 		if (products.products.length > 0) {
@@ -135,7 +153,7 @@ export function TableProductsFromRequest({ errors, setValueProducts, watch, read
 							<TableCell sx={{ backgroundColor: '#ffffff' }}>PRODUTOS</TableCell>
 						</TableRow>
 					</TableHead>
-					<TableBody>{productsForm.map(item => renderTableRow(item))}</TableBody>
+					<TableBody>{productsForm.map((item, index) => renderTableRow(item, index))}</TableBody>
 				</Table>
 			</TableContainer>
 		</>

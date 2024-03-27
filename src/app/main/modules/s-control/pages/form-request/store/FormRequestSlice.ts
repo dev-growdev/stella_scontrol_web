@@ -3,7 +3,7 @@ import createAppAsyncThunk from 'app/store/createAppAsyncThunk';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import axios, { AxiosError } from 'axios';
 import { ReduxStateScontrol } from '../../../store';
-import { IRequestPaymentGeneral, RequestPaymentGeneralType } from '../types/request';
+import { IRequestPaymentGeneral, IUpdateRequest, RequestPaymentGeneralType } from '../types/requestPaymentsGeneral';
 
 export const createRequestPaymentGeneral = createAppAsyncThunk(
 	'requestPaymentGeneral/create',
@@ -64,6 +64,50 @@ export const listRequestsPaymentsByUser = createAppAsyncThunk('requestPaymentGen
 		throw new Error(axiosError.response?.data.message);
 	}
 });
+
+export const updateRequestsPaymentsByUser = createAppAsyncThunk(
+	'requestPaymentGeneral/put',
+	async (updateRequest: IUpdateRequest, { dispatch }) => {
+		try {
+			const res = await axios.put<{
+				code: number;
+				success: boolean;
+				data: IRequestPaymentGeneral[];
+			}>(
+				`${process.env.REACT_APP_API_URL}/payment-request-general/${updateRequest.userUid}/${updateRequest.requestUid}`,
+				updateRequest.form
+			);
+
+			if (res.data.code === 200) {
+				dispatch(
+					showMessage({
+						message: 'Solicitação atualizada com sucesso.',
+						anchorOrigin: {
+							vertical: 'top',
+							horizontal: 'center'
+						},
+						variant: 'success'
+					})
+				);
+			}
+
+			return res.data.data;
+		} catch (error) {
+			const axiosError = error as AxiosError<{ message: string }>;
+			dispatch(
+				showMessage({
+					message: `${axiosError.response?.data.message}`,
+					anchorOrigin: {
+						vertical: 'top',
+						horizontal: 'center'
+					},
+					variant: 'error'
+				})
+			);
+			throw new Error(axiosError.response?.data.message);
+		}
+	}
+);
 
 const initialState: RequestPaymentGeneralType = {
 	loading: false,

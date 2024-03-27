@@ -1,5 +1,13 @@
 import * as z from 'zod';
 
+const productSchema = z.object({
+	name: z.string({
+		required_error: 'É necessário adicionar um produto.'
+	}),
+	uid: z.string().optional()
+});
+const stringSchema = z.string();
+
 const paymentRequestFormSchema = z
 	.object({
 		paymentMethod: z.object({
@@ -15,10 +23,12 @@ const paymentRequestFormSchema = z
 		isRateable: z.boolean(),
 		cardHolder: z
 			.object({
-				uid: z.string().uuid(),
-				name: z.string().min(1, 'É necessário adicionar um portador.')
+				uid: z.string().uuid().optional(),
+				name: z.string().min(1, 'É necessário adicionar um portador.').optional(),
+				code: z.number().optional()
 			})
-			.optional(),
+			.optional()
+			.nullable(),
 		bankTransfer: z
 			.object({
 				bank: z.string().min(2, 'É necessário adicionar um banco'),
@@ -31,17 +41,11 @@ const paymentRequestFormSchema = z
 					.min(2, 'É necessário adicionar um tipo de conta.'),
 				cpfOrCnpj: z.string().min(11, 'É necessário adicionar um CPF ou CNPJ.')
 			})
-			.optional(),
-		pix: z.string().optional(),
+			.optional()
+			.nullable(),
+		pix: z.string().optional().nullable(),
 
-		products: z.array(
-			z.object({
-				name: z.string({
-					required_error: 'É necessário adicionar um produto.'
-				}),
-				uid: z.string().optional()
-			})
-		),
+		products: z.array(productSchema.or(stringSchema)),
 		description: z.string(),
 		supplier: z.string().min(5, 'É necessário adicionar um fornecedor.'),
 		payments: z.array(
@@ -50,12 +54,13 @@ const paymentRequestFormSchema = z
 				dueDate: z.date({
 					required_error: 'É necessário adicionar uma data.',
 					invalid_type_error: 'É necessário adicionar uma data de vencimento.'
-				})
+				}),
+				uid: z.string().optional()
 			})
 		),
 		uploadedFiles: z.array(z.instanceof(File)),
 		getFiles: z.array(z.object({ name: z.string(), key: z.string(), uid: z.string() })).optional(),
-		accountingAccount: z.string().optional(),
+		accountingAccount: z.string().optional().nullable(),
 		apportionments: z
 			.array(
 				z.object({
@@ -74,7 +79,8 @@ const paymentRequestFormSchema = z
 							required_error: 'É necessário um valor.',
 							invalid_type_error: 'É necessário adicionar uma string.'
 						})
-						.min(1, 'É necessário adicionar um valor.')
+						.min(1, 'É necessário adicionar um valor.'),
+					uid: z.string().optional()
 				})
 			)
 			.optional()

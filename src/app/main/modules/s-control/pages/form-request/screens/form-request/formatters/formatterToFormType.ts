@@ -1,6 +1,6 @@
-import { IRequestPaymentGeneral } from '../../../types/request';
+import { IBankTransfer, IRequestPaymentGeneral } from '../../../types/requestPaymentsGeneral';
 
-export function mapToFormDTO(request: IRequestPaymentGeneral) {
+export function formatterToFormType(request: IRequestPaymentGeneral) {
 	const {
 		PaymentForm,
 		sendReceipt,
@@ -21,16 +21,25 @@ export function mapToFormDTO(request: IRequestPaymentGeneral) {
 	return {
 		paymentMethod: { name: PaymentForm.name, uid: PaymentForm.uid },
 		valueProducts: null,
-		bankTransfer: bankTransfer || null,
+		bankTransfer: bankTransfer ? (JSON.parse(bankTransfer as string) as IBankTransfer) : null,
+		getFiles: files,
 		sendReceipt,
 		isRateable,
 		pix,
-		cardHolder: { uid: cardHolder?.uid, name: cardHolder?.name, code: cardHolder?.code },
+		cardHolder: cardHolder
+			? { uid: cardHolder?.uid, name: cardHolder?.name, code: cardHolder?.code }
+			: {
+					name: '',
+					code: ''
+			  },
 		products: [...Products, ...unregisteredProducts],
 		description,
 		supplier,
-		payments: payments.map(payment => ({ value: `${payment.value}`, dueDate: new Date(payment.dueDate) })),
-		getFiles: files,
+		payments: payments.map(payment => ({
+			value: `${payment.value}`,
+			dueDate: new Date(payment.dueDate),
+			uid: payment.uid
+		})),
 		uploadedFiles: [],
 		accountingAccount,
 		apportionments: Apportionments

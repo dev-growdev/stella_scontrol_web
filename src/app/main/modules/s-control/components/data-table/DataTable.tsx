@@ -48,7 +48,7 @@ export function DataTable({ selectItem, categoriesData, handleStatus }: DataTabl
 		}
 	}, [selectedItemId, categoriesData.categories]);
 
-	const handleChangePage = (_: unknown, newPage: number) => {
+	const handleChangePage = (_, newPage: number) => {
 		setPage(newPage);
 	};
 

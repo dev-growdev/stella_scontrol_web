@@ -33,7 +33,6 @@ export function RateableTable({ apportionments, remove, totalApportionmentsValue
 
 		apportionments.forEach(apportionment => {
 			const stringValue = apportionment.value.replace(',', '.');
-
 			if (stringValue) {
 				total += parseFloat(stringValue);
 			}
