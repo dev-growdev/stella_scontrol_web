@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TextField } from '@mui/material';
-import { Control, Controller } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useState } from 'react';
 
@@ -9,8 +9,8 @@ type TOption = {
   value: string;
 };
 
-type AutocompleteControlledProps<T extends Control = any> = {
-  name: T extends { _defaultValues: infer U } ? keyof U : T extends object ? keyof T : string;
+type AutocompleteControlledProps<T> = {
+  name: T extends object ? keyof T : string;
   control: any;
   label: string;
   options: TOption[];
@@ -20,7 +20,7 @@ type AutocompleteControlledProps<T extends Control = any> = {
   onInputChange?: (value: string) => void;
 } & Omit<React.ComponentProps<typeof Autocomplete>, 'renderInput' | 'onInputChange' | 'getOptionLabel'>;
 
-export function AutocompleteControlled<T extends Control = Control>({
+export function AutocompleteControlled<T = unknown>({
   control,
   onChangeHelperFields,
   label,
