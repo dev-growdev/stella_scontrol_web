@@ -3,15 +3,17 @@ import { Chip, Paper, Stack, Table, TableBody, TableContainer, TableHead, TableP
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { ISearchFilter } from '../../pages/form-request/screens/types/FilterSearch';
 import { IRequestPaymentGeneral } from '../../pages/form-request/types/requestPaymentsGeneral';
 import { formattedNumeral } from '../../utils/formatters/formatted-value';
 import { StyledTableCell, StyledTableRow } from './styles';
 
 interface RequestTableProps {
 	rows: IRequestPaymentGeneral[];
+	searchFilters: ISearchFilter | null;
 }
 
-export default function RequestsTable({ rows }: RequestTableProps) {
+export default function RequestsTable({ rows, searchFilters }: RequestTableProps) {
 	const navigate = useNavigate();
 
 	const [page, setPage] = useState(0);
@@ -50,6 +52,68 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 		navigate(`cadastro/${uid}`);
 	}
 
+	function filterRows(row: IRequestPaymentGeneral, filters: ISearchFilter | null, index: number) {
+		const {
+			supplier,
+			type,
+			status,
+			createdAt: { from: createdAtFrom, to: createdAtTo },
+			dueDate: { from: dueDateFrom, to: dueDateTo }
+		} = filters || {};
+
+		const rowWithMockTypeAndStatus = {
+			...row,
+			type: index % 2 === 0 ? 'Pagamento geral' : 'Compras',
+			status: index % 2 === 0 ? 'Concluído' : 'Em andamento'
+		};
+
+		const createdAtFromDate = createdAtFrom ? new Date(createdAtFrom) : null;
+		const createdAtToDate = createdAtTo ? new Date(createdAtTo) : null;
+
+		const dueDateFromDate = dueDateFrom ? new Date(dueDateFrom) : null;
+		const dueDateToDate = dueDateTo ? new Date(dueDateTo) : null;
+
+		const isDateInRange = (date: Date, fromDate: Date, toDate: Date) => {
+			if (fromDate && toDate) {
+				const dateWithoutTime = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				const fromDateWithoutTime = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+				const toDateWithoutTime = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+
+				return dateWithoutTime >= fromDateWithoutTime && dateWithoutTime <= toDateWithoutTime;
+			}
+			if (fromDate) {
+				const dateWithoutTime = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				const fromDateWithoutTime = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+				return dateWithoutTime.getTime() === fromDateWithoutTime.getTime();
+			}
+
+			if (toDate) {
+				const dateWithoutTime = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				const toDateWithoutTime = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+				return dateWithoutTime.getTime() <= toDateWithoutTime.getTime();
+			}
+
+			return true;
+		};
+
+		const isAllFiltersEmpty =
+			!supplier &&
+			type.length === 0 &&
+			status.length === 0 &&
+			!createdAtFrom &&
+			!createdAtTo &&
+			!dueDateFrom &&
+			!dueDateTo;
+		return (
+			isAllFiltersEmpty ||
+			((!supplier || rowWithMockTypeAndStatus.supplier.toLowerCase().includes(supplier.toLowerCase())) &&
+				(type.length === 0 || type.includes(rowWithMockTypeAndStatus.type)) &&
+				(status.length === 0 || status.includes(rowWithMockTypeAndStatus.status)) &&
+				isDateInRange(new Date(rowWithMockTypeAndStatus.createdAt), createdAtFromDate, createdAtToDate) &&
+				isDateInRange(new Date(rowWithMockTypeAndStatus.payments[0].dueDate), dueDateFromDate, dueDateToDate))
+		);
+	}
+
 	return (
 		<Paper
 			className="mt-32"
@@ -72,56 +136,60 @@ export default function RequestsTable({ rows }: RequestTableProps) {
 					<TableBody>
 						{Array.isArray(rows) &&
 							rows
+
 								.slice()
 								.reverse()
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((row, index) => {
-									return (
-										<StyledTableRow
-											hover
-											role="checkbox"
-											tabIndex={-1}
-											key={row.uid}
-										>
-											<StyledTableCell>
-												{index % 2 === 0 ? 'Pagamento geral' : 'Compras'}
-											</StyledTableCell>
-											<StyledTableCell>
-												<Stack
-													direction="row"
-													spacing={1}
-												>
-													<Chip
-														color={index % 2 === 0 ? 'success' : 'primary'}
-														label={index % 2 === 0 ? 'Concluído' : 'Em andamento'}
-													/>
-												</Stack>
-											</StyledTableCell>
-											<StyledTableCell>{row.supplier}</StyledTableCell>
-											<StyledTableCell>
-												R${formattedNumeral(parseFloat(row.totalValue))}
-											</StyledTableCell>
-											<StyledTableCell>{formatDate(row.createdAt)}</StyledTableCell>
-											<StyledTableCell>{formatDate(row.payments[0].dueDate)}</StyledTableCell>
+									if (!searchFilters || filterRows(row, searchFilters, index)) {
+										return (
+											<StyledTableRow
+												hover
+												role="checkbox"
+												tabIndex={-1}
+												key={row.uid}
+											>
+												<StyledTableCell>
+													{index % 2 === 0 ? 'Pagamento geral' : 'Compras'}
+												</StyledTableCell>
+												<StyledTableCell>
+													<Stack
+														direction="row"
+														spacing={1}
+													>
+														<Chip
+															color={index % 2 === 0 ? 'success' : 'primary'}
+															label={index % 2 === 0 ? 'Concluído' : 'Em andamento'}
+														/>
+													</Stack>
+												</StyledTableCell>
+												<StyledTableCell>{row.supplier}</StyledTableCell>
+												<StyledTableCell>
+													R${formattedNumeral(parseFloat(row.totalValue))}
+												</StyledTableCell>
+												<StyledTableCell>{formatDate(row.createdAt)}</StyledTableCell>
+												<StyledTableCell>{formatDate(row.payments[0].dueDate)}</StyledTableCell>
 
-											<StyledTableCell className="flex gap-28 justify-end">
-												<FuseSvgIcon
-													className="cursor-pointer"
-													onClick={() => handleEditPaymentRequest(row.uid)}
-													color="primary"
-												>
-													heroicons-outline:pencil
-												</FuseSvgIcon>
-												<FuseSvgIcon
-													className="cursor-pointer"
-													onClick={() => handleReadPaymentRequest(row.uid)}
-													color="primary"
-												>
-													heroicons-outline:eye
-												</FuseSvgIcon>
-											</StyledTableCell>
-										</StyledTableRow>
-									);
+												<StyledTableCell className="flex gap-28 justify-end">
+													<FuseSvgIcon
+														className="cursor-pointer"
+														onClick={() => handleEditPaymentRequest(row.uid)}
+														color="primary"
+													>
+														heroicons-outline:pencil
+													</FuseSvgIcon>
+													<FuseSvgIcon
+														className="cursor-pointer"
+														onClick={() => handleReadPaymentRequest(row.uid)}
+														color="primary"
+													>
+														heroicons-outline:eye
+													</FuseSvgIcon>
+												</StyledTableCell>
+											</StyledTableRow>
+										);
+									}
+									return null;
 								})}
 					</TableBody>
 				</Table>
